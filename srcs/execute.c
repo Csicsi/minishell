@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/08/15 17:38:08 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/08/15 17:50:34 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,19 +74,6 @@ int	builtin_unset(t_command *cmd)
 {
 	(void)cmd; // Ignore unused parameter
 	printf("builtin_unset: Unsetting environment variable...\n"); // Placeholder message
-	return (0);
-}
-
-/**
- * @brief Handles the `pwd` builtin command.
- *
- * @param cmd The command structure containing arguments.
- * @return int Always returns 0 for success.
- */
-int	builtin_pwd(t_command *cmd)
-{
-	(void)cmd; // Ignore unused parameter
-	printf("builtin_pwd: Printing working directory...\n"); // Placeholder message
 	return (0);
 }
 
