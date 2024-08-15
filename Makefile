@@ -6,7 +6,7 @@
 #    By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 11:03:22 by dcsicsak          #+#    #+#              #
-#    Updated: 2024/08/15 15:48:05 by dcsicsak         ###   ########.fr        #
+#    Updated: 2024/08/15 17:37:06 by dcsicsak         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ CFLAGS = -Wall -Wextra -Werror -g
 LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRCS = srcs/execute.c srcs/builtins/cd.c srcs/builtins/cd_utils.c
+SRCS = srcs/execute.c  srcs/builtins/echo.c
 
 OBJS = $(SRCS:.c=.o)
 

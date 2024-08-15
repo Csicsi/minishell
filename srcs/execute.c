@@ -6,22 +6,22 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/08/15 16:12:28 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/08/15 17:38:08 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 /**
- * @brief Handles the `echo` builtin command.
+ * @brief Handles the `cd` builtin command.
  *
  * @param cmd The command structure containing arguments.
  * @return int Always returns 0 for success.
  */
-int	builtin_echo(t_command *cmd)
+int	builtin_cd(t_command *cmd)
 {
 	(void)cmd; // Ignore unused parameter
-	printf("builtin_echo: \n"); // Placeholder message
+	printf("builtin_cd: Changing Directory...\n"); // Placeholder message
 	return (0);
 }
 
