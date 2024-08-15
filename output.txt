@@ -1,0 +1,10 @@
+drwxr-xr-x  6 dcsicsak 2024_vienna   127 Aug 15 16:12 .
+drwx------ 27 dcsicsak 2024_vienna  4096 Aug 15 15:36 ..
+drwxr-xr-x  8 dcsicsak 2024_vienna  4096 Aug 15 12:08 .git
+drwxr-xr-x  2 dcsicsak 2024_vienna    25 Aug 14 14:13 includes
+drwxr-xr-x  2 dcsicsak 2024_vienna  4096 Aug 15 13:07 libft
+-rw-r--r--  1 dcsicsak 2024_vienna  1466 Aug 15 15:48 Makefile
+-rwxr-xr-x  1 dcsicsak 2024_vienna 31528 Aug 15 16:12 minishell
+-rw-r--r--  1 dcsicsak 2024_vienna    65 Aug 15 16:12 output.txt
+-rw-r--r--  1 dcsicsak 2024_vienna    11 Aug 14 14:11 README.md
+drwxr-xr-x  3 dcsicsak 2024_vienna    56 Aug 15 16:12 srcs

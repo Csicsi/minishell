@@ -3,65 +3,100 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/08/14 18:00:01 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/08/15 16:12:28 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	builtin_cd(t_command *cmd)
-{
-	(void)cmd;
-	printf("builtin_cd: Changing directory...\n");
-	return (0);
-}
-
+/**
+ * @brief Handles the `echo` builtin command.
+ *
+ * @param cmd The command structure containing arguments.
+ * @return int Always returns 0 for success.
+ */
 int	builtin_echo(t_command *cmd)
 {
-	(void)cmd;
-	printf("builtin_echo: \n");
+	(void)cmd; // Ignore unused parameter
+	printf("builtin_echo: \n"); // Placeholder message
 	return (0);
 }
 
+/**
+ * @brief Handles the `exit` builtin command.
+ *
+ * @param cmd The command structure containing arguments.
+ * @return int Always returns 0 for success.
+ */
 int	builtin_exit(t_command *cmd)
 {
-	(void)cmd;
-	printf("builtin_exit: Exiting shell...\n");
+	(void)cmd; // Ignore unused parameter
+	printf("builtin_exit: Exiting shell...\n"); // Placeholder message
 	return (0);
 }
 
+/**
+ * @brief Handles the `env` builtin command.
+ *
+ * @param cmd The command structure containing arguments.
+ * @return int Always returns 0 for success.
+ */
 int	builtin_env(t_command *cmd)
 {
-	(void)cmd;
-	printf("builtin_env: Displaying environment variables...\n");
+	(void)cmd; // Ignore unused parameter
+	printf("builtin_env: Displaying environment variables...\n"); // Placeholder message
 	return (0);
 }
 
+/**
+ * @brief Handles the `export` builtin command.
+ *
+ * @param cmd The command structure containing arguments.
+ * @return int Always returns 0 for success.
+ */
 int	builtin_export(t_command *cmd)
 {
-	(void)cmd;
-	printf("builtin_export: Exporting environment variable...\n");
+	(void)cmd; // Ignore unused parameter
+	printf("builtin_export: Exporting environment variable...\n"); // Placeholder message
 	return (0);
 }
 
+/**
+ * @brief Handles the `unset` builtin command.
+ *
+ * @param cmd The command structure containing arguments.
+ * @return int Always returns 0 for success.
+ */
 int	builtin_unset(t_command *cmd)
 {
-	(void)cmd;
-	printf("builtin_unset: Unsetting environment variable...\n");
+	(void)cmd; // Ignore unused parameter
+	printf("builtin_unset: Unsetting environment variable...\n"); // Placeholder message
 	return (0);
 }
 
+/**
+ * @brief Handles the `pwd` builtin command.
+ *
+ * @param cmd The command structure containing arguments.
+ * @return int Always returns 0 for success.
+ */
 int	builtin_pwd(t_command *cmd)
 {
-	(void)cmd;
-	printf("builtin_pwd: Printing working directory...\n");
+	(void)cmd; // Ignore unused parameter
+	printf("builtin_pwd: Printing working directory...\n"); // Placeholder message
 	return (0);
 }
 
-int	is_builtin(char *command_name) // return 1 if command is a builtin, 0 if not
+/**
+ * @brief Checks if a command is a recognized builtin.
+ *
+ * @param command_name The name of the command.
+ * @return int 1 if the command is a builtin, 0 if it is not.
+ */
+int	is_builtin(char *command_name)
 {
 	if (ft_strncmp(command_name, "cd", 3) == 0)
 		return (1);
@@ -80,7 +115,12 @@ int	is_builtin(char *command_name) // return 1 if command is a builtin, 0 if not
 	return (0);
 }
 
-// Execute the appropriate builtin command based on the command name
+/**
+ * @brief Executes the appropriate builtin command based on the command name.
+ *
+ * @param cmd The command structure containing arguments.
+ * @return int The exit status of the executed builtin command.
+ */
 int	execute_builtin(t_command *cmd)
 {
 	if (ft_strncmp(cmd->name, "cd", 3) == 0)
@@ -97,10 +137,16 @@ int	execute_builtin(t_command *cmd)
 		return (builtin_unset(cmd));
 	else if (ft_strncmp(cmd->name, "pwd", 4) == 0)
 		return (builtin_pwd(cmd));
-	return (1); // Return 1 if the command is not a recognized builtin, for safety
+	return (1); // Return 1 if the command is not recognized as a builtin
 }
 
-void	execute_single_cmd(t_command *cmd)
+/**
+ * @brief Executes a single command, handling input/output redirection and builtins.
+ *
+ * @param cmd The command structure containing arguments.
+ * @return int The exit status of the executed command.
+ */
+int	execute_single_cmd(t_command *cmd)
 {
 	int		fd_in;
 	int		fd_out;
@@ -113,12 +159,11 @@ void	execute_single_cmd(t_command *cmd)
 		if (fd_in < 0) // Check for errors
 		{
 			perror("minishell: input redirection");
-			return ;
+			return (1);
 		}
 		dup2(fd_in, STDIN_FILENO); // Redirect standard input
 		close(fd_in); // Close file descriptor
 	}
-
 	// Handle output redirection if specified
 	if (cmd->output != NULL)
 	{
@@ -126,15 +171,14 @@ void	execute_single_cmd(t_command *cmd)
 		if (fd_out < 0) // Check for errors
 		{
 			perror("minishell: output redirection");
-			return ;
+			return (1);
 		}
 		dup2(fd_out, STDOUT_FILENO); // Redirect standard output
 		close(fd_out); // Close file descriptor
 	}
-
-	// Check if the command is a builtin
+	// Check if the command is a builtin and execute it
 	if (is_builtin(cmd->name))
-		cmd->exit_status = execute_builtin(cmd); // Execute builtin command
+		return (execute_builtin(cmd));
 	else
 	{
 		pid = fork(); // Fork the process
@@ -145,19 +189,30 @@ void	execute_single_cmd(t_command *cmd)
 			exit(EXIT_FAILURE); // Exit child process
 		}
 		else if (pid > 0 && !cmd->background) // In parent process, wait for child if not background
+		{
 			waitpid(pid, &cmd->exit_status, 0);
+			if (WIFEXITED(cmd->exit_status))
+				return (WEXITSTATUS(cmd->exit_status)); // Return the exit status of the command
+		}
 		else if (pid < 0) // If fork fails, print error
 			perror("minishell: fork");
 	}
+	return (1); // Return 1 if something went wrong
 }
 
-// Function to execute a list of commands, handling piping and redirection
-void	execute_cmd_list(t_command *cmd)
+/**
+ * @brief Executes a list of commands with optional piping and redirection.
+ *
+ * @param cmd The first command in the linked list of commands.
+ * @return int The exit status of the last command executed.
+ */
+int	execute_cmd_list(t_command *cmd)
 {
 	t_command	*current;
 	int			pipe_fd[2];
 	int			prev_fd;
 	pid_t		pid;
+	int			exit_status;
 
 	current = cmd;
 	prev_fd = -1;
@@ -191,8 +246,7 @@ void	execute_cmd_list(t_command *cmd)
 				dup2(fd_out, STDOUT_FILENO); // Redirect standard output
 				close(fd_out); // Close file descriptor
 			}
-			execute_single_cmd(current); // Execute the current command
-			exit(current->exit_status); // Exit with the command's status
+			exit(execute_single_cmd(current)); // Execute the current command and exit with its status
 		}
 		else if (pid > 0) // In parent process
 		{
@@ -206,48 +260,94 @@ void	execute_cmd_list(t_command *cmd)
 			else
 				prev_fd = -1;
 			if (!current->background)
-				waitpid(pid, &current->exit_status, 0); // Wait for child process if not background
+				waitpid(pid, &exit_status, 0); // Wait for child process if not background
 		}
 		else
 			perror("minishell: fork"); // If fork fails, print error
+
 		current = current->next; // Move to the next command in the list
 	}
+	return (exit_status); // Return the exit status of the last command executed
 }
 
-// Main function to set up and execute commands
+/**
+ * @brief Parses the command-line arguments into a command structure.
+ *
+ * @param cmd The command structure to fill.
+ * @param argv The array of command-line arguments.
+ * @param index Pointer to the current argument index.
+ * @param envp The environment variables.
+ */
+void	parse_command(t_command *cmd, char **argv, int *index, char **envp)
+{
+	cmd->name = argv[*index];
+	cmd->args = &argv[*index];
+	cmd->input = NULL;
+	cmd->output = NULL;
+	cmd->append_output = 0;
+	cmd->background = 0;
+	cmd->exit_status = 0;
+	cmd->env_vars = envp;
+	while (argv[*index] != NULL)
+		(*index)++;
+	cmd->next = NULL;
+}
+
+/**
+ * @brief The main entry point for the shell program.
+ *
+ * @param argc The number of command-line arguments.
+ * @param argv The array of command-line arguments.
+ * @param envp The environment variables.
+ * @return int The exit status of the shell.
+ */
 int	main(int argc, char **argv, char **envp)
 {
 	t_command	cmd1;
 	t_command	cmd2;
+	int			command_count;
+	int			index;
+	int			last_exit_status;
 
-	(void)argc;
-	(void)argv;
+	if (argc < 3)
+	{
+		fprintf(stderr, "Usage: %s <1|2> <command1> [args]\n", argv[0]);
+		return (1);
+	}
 
-	///bin/ls -la | /usr/bin/grep e > output.txt
-	// Set up the first command: "ls -la"
-	cmd1.name = "/bin/ls";
-	cmd1.args = (char*[]){"/bin/ls", "-la", NULL};
-	cmd1.input = NULL;
-	cmd1.output = NULL;
-	cmd1.append_output = 0;
-	cmd1.background = 0;
-	cmd1.exit_status = 0;
-	cmd1.next = &cmd2; // Link to the next command
-	cmd1.env_vars = envp;
+	// Determine if there is one command or two
+	command_count = atoi(argv[1]);
+	if (command_count != 1 && command_count != 2)
+	{
+		fprintf(stderr, "Error: First argument must be 1 or 2.\n");
+		return (1);
+	}
 
-	// Set up the second command: "grep e", output to "output.txt"
-	cmd2.name = "/usr/bin/grep";
-	cmd2.args = (char*[]){"/usr/bin/grep", "e", NULL};
-	cmd2.input = NULL;
-	cmd2.output = "output.txt";
-	cmd2.append_output = 0;
-	cmd2.background = 0;
-	cmd2.exit_status = 0;
-	cmd2.next = NULL; // No next command, end of list
-	cmd2.env_vars = envp;
+	index = 2; // Start after the first two arguments
+	parse_command(&cmd1, argv, &index, envp);
+
+	// If two commands are specified, set up the hardcoded second command
+	if (command_count == 2)
+	{
+		cmd2.name = "/usr/bin/grep";
+		cmd2.args = (char*[]){"/usr/bin/grep", "e", NULL};
+		cmd2.input = NULL;
+		cmd2.output = "output.txt";
+		cmd2.append_output = 0;
+		cmd2.background = 0;
+		cmd2.exit_status = 0;
+		cmd2.next = NULL; // No next command, end of list
+		cmd2.env_vars = envp;
+
+		cmd1.next = &cmd2; // Link the first command to the hardcoded second command
+	}
 
 	// Execute the list of commands
-	execute_cmd_list(&cmd1);
+	last_exit_status = execute_cmd_list(&cmd1);
 
-	return (0); // Return success status
+	// Return the exit status of the last command
+	if (WIFEXITED(last_exit_status))
+		return (WEXITSTATUS(last_exit_status));
+	else
+		return (1); // Return 1 if the process terminated abnormally
 }
