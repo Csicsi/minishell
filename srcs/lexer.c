@@ -47,20 +47,32 @@ char *extract_single_quoted_word(char *cursor, t_token *token)
  */
 char *expand_env_var(char **result, int *index, char *cursor)
 {
-	char var_name[256]; // Buffer to store the environment variable name
-	int var_len = 0;
+	char *start = cursor + 1; // Skip the dollar sign
+	int len = 0;
 
-	cursor++; // Skip the dollar sign '$'
-	while (isalnum(*cursor) || *cursor == '_') // Continue while the character is alphanumeric or underscore
-		var_name[var_len++] = *cursor++; // Append to variable name
-	var_name[var_len] = '\0'; // Null-terminate the variable name
+	// Measure the length of the environment variable name
+	while (isalnum(start[len]) || start[len] == '_')
+		len++;
 
-	char *env_value = getenv(var_name); // Fetch the value of the environment variable
-	if (env_value) {
-		strcpy(&(*result)[*index], env_value); // Copy the environment variable's value to the result
-		*index += strlen(env_value); // Update the index
+	// Dynamically allocate memory for the variable name
+	char *var_name = malloc(len + 1);
+	strncpy(var_name, start, len); // Copy the variable name
+	var_name[len] = '\0'; // Null-terminate
+
+	// Fetch the environment variable value
+	char *env_value = getenv(var_name);
+	free(var_name); // Free the variable name buffer
+
+	if (env_value)
+	{
+		// Reallocate memory for the result if necessary
+		int env_len = strlen(env_value);
+		*result = realloc(*result, (*index + env_len + 1)); // Resize to fit the new value
+		strcpy(&(*result)[*index], env_value); // Copy the value
+		*index += env_len; // Update the index
 	}
-	return cursor; // Return the updated cursor position
+
+	return cursor + len; // Return the updated cursor position
 }
 
 /**
@@ -75,21 +87,34 @@ char *expand_env_var(char **result, int *index, char *cursor)
  */
 char *extract_double_quoted_word(char *cursor, t_token *token)
 {
-	char *result = malloc(256); // Temporary buffer to hold the extracted content
-	int i = 0;
+	char *start = cursor + 1; // Skip the opening double quote
+	int len = 0;
 
-	cursor++; // Skip the opening double quote
-	while (*cursor && *cursor != '"') // Process until the closing double quote
+	// Measure the length of the quoted string
+	while (start[len] && start[len] != '"')
 	{
-		if (*cursor == '$') // Handle environment variable expansion
+		if (start[len] == '\\' && (start[len + 1] == '"' || start[len + 1] == '$' || start[len + 1] == '\\'))
+			len++; // Skip escape sequences
+		len++;
+	}
+
+	// Allocate the exact amount of memory needed for the quoted content
+	char *result = malloc(len + 1); // +1 for the null terminator
+
+	// Extract the content, handling escape sequences and variable expansions
+	int i = 0;
+	cursor++; // Move past the opening double quote
+	while (*cursor && *cursor != '"')
+	{
+		if (*cursor == '$')
 		{
 			cursor = expand_env_var(&result, &i, cursor);
 		}
-		else if (*cursor == '\\') // Handle escape sequences (e.g., \$, \")
+		else if (*cursor == '\\')
 		{
 			cursor++;
 			if (*cursor == '$' || *cursor == '"' || *cursor == '\\')
-				result[i++] = *cursor; // Add the escaped character
+				result[i++] = *cursor; // Handle escape characters
 		}
 		else
 			result[i++] = *cursor; // Copy the character to result
@@ -98,6 +123,7 @@ char *extract_double_quoted_word(char *cursor, t_token *token)
 	result[i] = '\0'; // Null-terminate the result string
 	token->value = strdup(result); // Store the result in the token
 	free(result); // Free the temporary buffer
+
 	return (++cursor); // Move past the closing double quote
 }
 
@@ -320,7 +346,6 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count)
 		i++;
 	}
 	tokens[i].type = TOKEN_END; // Mark the end of tokens
-	tokens[i].value = strdup("END"); // Set the end marker
 	*tokens_ptr = tokens; // Assign the token array to the pointer
 	return (token_count);
 }
@@ -339,36 +364,9 @@ void	free_tokens(t_token *tokens, int token_count)
 	int i;
 
 	for (i = 0; i < token_count; i++)
-		free(tokens[i].value); // Free each token's value
-	free(tokens); // Free the token array
-}
-
-/**
- * @brief Debug function to print tokens for testing purposes.
- *
- * This function prints each token type and its associated value, useful for debugging.
- *
- * @param tokens The array of tokens to print.
- * @param token_count The total number of tokens in the array.
- */
-void	parse_tokens(t_token *tokens, int token_count)
-{
-	int i = 0;
-
-	while (i < token_count)
 	{
-		if (tokens[i].type == TOKEN_WORD)
-			printf("WORD: %s\n", tokens[i].value);
-		else if (tokens[i].type == TOKEN_OPERATOR)
-			printf("OPERATOR: %s\n", tokens[i].value);
-		else if (tokens[i].type == TOKEN_ENV_VAR)
-			printf("ENV_VAR: %s\n", tokens[i].value);
-		else if (tokens[i].type == TOKEN_WILDCARD)
-			printf("WILDCARD: %s\n", tokens[i].value);
-		else if (tokens[i].type == TOKEN_DOT)
-			printf("DOT: %s\n", tokens[i].value);
-		else if (tokens[i].type == TOKEN_DOTDOT)
-			printf("DOTDOT: %s\n", tokens[i].value);
-		i++;
+		if (tokens[i].value)
+			free(tokens[i].value); // Free each token's value
 	}
+	free(tokens); // Free the token array
 }

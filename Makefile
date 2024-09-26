@@ -6,13 +6,13 @@
 #    By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 11:03:22 by dcsicsak          #+#    #+#              #
-#    Updated: 2024/09/21 17:11:46 by dcsicsak         ###   ########.fr        #
+#    Updated: 2024/09/26 09:51:27 by dcsicsak         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 LDFLAGS = -lreadline
 
 LIBFT_DIR = ./libft

@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/09/21 17:50:12 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/09/26 09:52:14 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ typedef struct s_command
 	char				*input;
 	char				*output;
 	int					append_output;
-	int					background;
 	int					exit_status;
 	struct s_command	*next;
 	char				**env_vars;
