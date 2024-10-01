@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/09/30 15:05:57 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/01 20:24:07 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,22 @@ char	*resolve_cdpath_if_needed(const char *path);
 int		update_directory_env(const char *cwd, char ***env_vars);
 char	*normalize_path(const char *path);
 int		builtin_echo(t_command *cmd);
+//int		builtin_echo(t_command *cmd, int last_exit_status);
 int		builtin_pwd(t_command *cmd);
 void	free_tokens(t_token *tokens, int token_count);
-int		lexer(char *input, t_token **tokens_ptr, int token_count);
+//int		lexer(char *input, t_token **tokens_ptr, int token_count);
+int		lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status);
 int		count_tokens(char *cursor);
 
-char *expand_env_var(char **result, int *index, char *cursor);
+//char *expand_env_var(char **result, int *index, char *cursor);
+char	*expand_env_var(char **result, int *index, char *cursor, int last_exit_status, int len_result);
+char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status);
+
+
+// prototypes in "pure_utilities.c":
+char	*ft_strjoin_pipex(char *s1, char *s2);
+void	free_array_of_strs(char **tab);
+char	*free_null(char *str);
+
 
 #endif
