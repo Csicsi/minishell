@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/09/26 14:13:10 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/09/30 16:39:05 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -368,6 +368,10 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 	// Iterate through all tokens
 	while (i < token_count)
 	{
+
+		printf("tokens[%d].type: %d\n", i, tokens[i].type);
+		printf("tokens[%d].value: %s\n", i, tokens[i].value);
+		
 		// Handle command words (non-operator tokens)
 		if (tokens[i].type == TOKEN_WORD)
 		{
@@ -420,6 +424,36 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 }
 
 /**
+ * @brief Checks if (single or double) quotes in input string remain open
+ * This function checks if there are (single or double) quotes opening up from 
+ * readline but don't close. If they remain open, return in_quote = 1
+ *
+ * @param cursor The input string.
+ * @return a flag that is in_quote = 1 if quotes remain open, in_quote = 0 if quotes are closed
+ */
+int	check_for_unclosed_quotes(char *cursor)
+{
+	int		in_quote = 0;
+	char	quote_char = '\0';
+
+	while (*cursor)
+	{
+		// Handle quotes in the first pass
+		if ((*cursor == '"' || *cursor == '\'') && in_quote == 0)
+		{
+			in_quote = 1;
+			quote_char = *cursor;
+		}
+		else if (*cursor == quote_char && in_quote == 1)
+		{
+			in_quote = 0;  // Quote closed
+		}
+		cursor++;
+	}
+	return (in_quote);		
+}
+
+/**
  * @brief Entry point for the minishell program.
  *
  * The main function is responsible for running the main input loop of the shell,
@@ -435,7 +469,10 @@ int	main(void)
 	t_command	*cmd_list;      // Linked list of parsed commands
 	int			token_count;    // Number of tokens in the input
 	int			last_exit_status; // Exit status of the last command executed
-
+    char		*temp_input;
+    char		*full_input = NULL;
+	int			in_quote; 
+	
 	// Infinite loop to keep the shell running until "exit" is entered
 	while (1)
 	{
@@ -449,6 +486,9 @@ int	main(void)
 			break;
 		}
 
+        if (*input)  // Only add non-empty input to history
+            add_history(input);
+
 		// If the user types "exit", break the loop and exit the shell
 		if (strcmp(input, "exit") == 0)
 		{
@@ -457,8 +497,27 @@ int	main(void)
 			break;
 		}
 
+		in_quote = check_for_unclosed_quotes(input);
+		
+    	while (in_quote == 1)
+    	{
+           	temp_input = readline("> "); // Show a different prompt for continued input
+           	if (temp_input)
+           	{
+	            // Concatenate input with previous input
+    	        full_input = ft_strjoin(input, "\n");
+        	    full_input = ft_strjoin(full_input, temp_input);
+               	free(input);
+               	free(temp_input);
+               	input = full_input;
+            }
+			in_quote = check_for_unclosed_quotes(input);
+        }
+        
 		// Count the number of tokens in the input string
 		token_count = count_tokens(input);
+
+		printf("TOKEN COUNT is: %d\n", token_count);
 
 		// Tokenize the input string and check for errors during lexing
 		if (lexer(input, &tokens, token_count) == -1)

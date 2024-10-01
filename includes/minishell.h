@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/09/26 09:52:14 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/09/30 15:05:57 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,5 +67,6 @@ void	free_tokens(t_token *tokens, int token_count);
 int		lexer(char *input, t_token **tokens_ptr, int token_count);
 int		count_tokens(char *cursor);
 
+char *expand_env_var(char **result, int *index, char *cursor);
 
 #endif

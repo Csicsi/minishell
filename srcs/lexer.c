@@ -106,7 +106,7 @@ char *extract_double_quoted_word(char *cursor, t_token *token)
 	cursor++; // Move past the opening double quote
 	while (*cursor && *cursor != '"')
 	{
-		if (*cursor == '$')
+		if (*cursor == '$' && (*(cursor + 1) != ' ' && *(cursor + 1) != '\0'))
 		{
 			cursor = expand_env_var(&result, &i, cursor);
 		}
