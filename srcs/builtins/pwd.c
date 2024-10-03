@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 17:47:27 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/08/15 17:50:43 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/03 12:52:41 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,9 @@
  * @param cmd The command structure containing arguments.
  * @return int Returns 0 on success, or 1 if an error occurs.
  */
-int	builtin_pwd(t_command *cmd)
+int	builtin_pwd(void)
 {
 	char	cwd[PATH_MAX];
-
-	// Check if there are any extra arguments passed to the pwd command.
-	if (cmd->args[1] != NULL)
-	{
-		// Print an error message if there are too many arguments.
-		ft_putstr_fd("minishell: pwd: too many arguments\n", STDERR_FILENO);
-		return (1);
-	}
 
 	// Attempt to retrieve the current working directory.
 	if (getcwd(cwd, sizeof(cwd)) == NULL)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/01 20:24:07 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/03 13:21:03 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <sys/wait.h>
 # include <string.h>
 # include <ctype.h>
+# include <stdbool.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../libft/libft.h"
@@ -63,7 +64,7 @@ int		update_directory_env(const char *cwd, char ***env_vars);
 char	*normalize_path(const char *path);
 int		builtin_echo(t_command *cmd);
 //int		builtin_echo(t_command *cmd, int last_exit_status);
-int		builtin_pwd(t_command *cmd);
+int		builtin_pwd(void);
 void	free_tokens(t_token *tokens, int token_count);
 //int		lexer(char *input, t_token **tokens_ptr, int token_count);
 int		lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status);

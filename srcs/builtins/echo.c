@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 16:22:47 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/01 16:57:18 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/03 13:21:18 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,26 @@
 int	builtin_echo(t_command *cmd)
 {
 	int		i;
-	int		no_newline;
+	bool	no_newline;
 
-	// Check if the first argument is "-n"
-	i = 0;
-	no_newline = 0;
-	if (cmd->args[i] && ft_strcmp(cmd->args[i], "-n") == 0)
+	// Check if arguments exist
+	if (!cmd || !cmd->args || !cmd->args[0])
+		return (1); // Return an error if no arguments
+
+	// Check for the "-n" flag(s)
+	i = 1;
+	no_newline = false;
+	while (cmd->args[i] && cmd->args[i][0] == '-' && cmd->args[i][1] == 'n')
 	{
-		no_newline = 1;
-		i++; // Skip the "-n" argument
+		int j = 2;
+		while (cmd->args[i][j] == 'n') // Ensure all characters after "-" are "n"
+			j++;
+		if (cmd->args[i][j] != '\0') // If there's any non-'n' character, stop checking flags
+			break;
+		no_newline = true;
+		i++;
 	}
-	
+
 	// Print the remaining arguments
 	while (cmd->args[i])
 	{
@@ -47,3 +56,4 @@ int	builtin_echo(t_command *cmd)
 
 	return (0);
 }
+

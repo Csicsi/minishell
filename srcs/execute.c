@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/01 21:00:07 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/03 12:53:03 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int	execute_builtin(t_command *cmd)
 	else if (ft_strncmp(cmd->name, "unset", 6) == 0)
 		return (builtin_unset(cmd));
 	else if (ft_strncmp(cmd->name, "pwd", 4) == 0)
-		return (builtin_pwd(cmd));
+		return (builtin_pwd());
 	return (1); // Return 1 if the command is not recognized as a builtin
 }
 
@@ -408,8 +408,8 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 	while (i < token_count)
 	{
 		//printf("tokens[%d].type: %d\n", i, tokens[i].type);
-		//printf("tokens[%d].value: %s\n", i, tokens[i].value);	
-		
+		//printf("tokens[%d].value: %s\n", i, tokens[i].value);
+
 		// Handle command words (non-operator tokens)
 		if (tokens[i].type == TOKEN_WORD)
 		{
@@ -469,7 +469,7 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 
 /**
  * @brief Checks if (single or double) quotes in input string remain open
- * This function checks if there are (single or double) quotes opening up from 
+ * This function checks if there are (single or double) quotes opening up from
  * readline but don't close. If they remain open, return in_quote = 1
  *
  * @param cursor The input string.
@@ -494,7 +494,7 @@ int	check_for_unclosed_quotes(char *cursor)
 		}
 		cursor++;
 	}
-	return (in_quote);		
+	return (in_quote);
 }
 
 /**
@@ -515,8 +515,8 @@ int	main(void)
 	int			last_exit_status; // Exit status of the last command executed
     char		*temp_input;
     char		*full_input = NULL;
-	int			in_quote; 
-	
+	int			in_quote;
+
 	last_exit_status = 0;
 	// Infinite loop to keep the shell running until "exit" is entered
 	while (1)
@@ -543,7 +543,7 @@ int	main(void)
 		}
 
 		in_quote = check_for_unclosed_quotes(input);
-		
+
     	while (in_quote == 1)
     	{
            	temp_input = readline("> "); // Show a different prompt for continued input
@@ -558,7 +558,7 @@ int	main(void)
             }
 			in_quote = check_for_unclosed_quotes(input);
         }
-        
+
 		// Count the number of tokens in the input string
 		token_count = count_tokens(input);
 
