@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/09/30 16:39:05 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/01 21:00:07 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,41 @@ void	free_cmd_list(t_command *cmd_list)
 }
 
 /**
+ * @brief Finds the appropriate path to run executables from the environment variable $PATH (typically in /usr/bin)
+ *
+ *
+ * @param cmd_args The command structure containing arguments.
+ * @return char * The path where the cmd (executable) was found
+ */
+
+char	*find_cmd_path(char **cmd_args)
+{
+	int		i;
+	char	**allpath;
+	char	*path_env;
+	char	*path_for_execve;
+
+	path_env = getenv("PATH");  // Retrieve the PATH environment variable
+	//if (path_env == NULL)
+	allpath = ft_split(path_env, ':');
+	//if (allpath == NULL)
+	//	return (free_as(cmd_args), NULL);
+	i = -1;
+	while (allpath[++i])
+	{
+		path_for_execve = ft_strjoin_pipex(allpath[i], cmd_args[0]);
+		//if (path_for_execve == NULL)
+		//	return (free_array_of_strs(cmd_args), free_as(allpath), NULL);
+		if (access(path_for_execve, F_OK | X_OK) == 0)
+			return (free_array_of_strs(allpath), path_for_execve);
+		path_for_execve = free_null(path_for_execve);
+	}
+	return (free_array_of_strs(allpath), free(path_for_execve), NULL);
+}
+
+
+
+/**
  * @brief Executes a single command, handling input/output redirection and builtins.
  *
  * This function forks the process to run external commands and manages redirection.
@@ -190,6 +225,7 @@ int	execute_single_cmd(t_command *cmd, t_token *tokens, int token_count)
 	int		fd_in;
 	int		fd_out;
 	pid_t	pid;
+	char	*cmd_path;
 
 	// Handle input redirection if specified
 	if (cmd->input != NULL)
@@ -223,7 +259,10 @@ int	execute_single_cmd(t_command *cmd, t_token *tokens, int token_count)
 		pid = fork(); // Fork the process
 		if (pid == 0) // In child process
 		{
-			execve(cmd->name, cmd->args, cmd->env_vars); // Execute the command
+			cmd_path = find_cmd_path(cmd->args);
+			//printf("cmd_path: %s\n", cmd_path);
+			execve(cmd_path, cmd->args, cmd->env_vars); // Execute the command
+			//execve(cmd->name, cmd->args, cmd->env_vars); // Execute the command
 			free_cmd_list(cmd); // Free resources before exiting
 			free_tokens(tokens, token_count);
 			perror("minishell"); // If execve fails, print error
@@ -368,17 +407,22 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 	// Iterate through all tokens
 	while (i < token_count)
 	{
-
-		printf("tokens[%d].type: %d\n", i, tokens[i].type);
-		printf("tokens[%d].value: %s\n", i, tokens[i].value);
+		//printf("tokens[%d].type: %d\n", i, tokens[i].type);
+		//printf("tokens[%d].value: %s\n", i, tokens[i].value);	
 		
 		// Handle command words (non-operator tokens)
 		if (tokens[i].type == TOKEN_WORD)
 		{
+			/*
 			if (current_cmd->name == NULL)
 				current_cmd->name = strdup(tokens[i].value);  // First word is the command name
 			else
 				current_cmd->args[arg_index++] = strdup(tokens[i].value);  // Subsequent words are arguments
+			*/
+			// corrected the above (as cmd args were constructed incorrectly, e.g. ls -la gave args[0] = "-la" )
+			if (current_cmd->name == NULL)
+				current_cmd->name = strdup(tokens[i].value);  // First word is the command name
+			current_cmd->args[arg_index++] = strdup(tokens[i].value);  // First word and subsequent words are arguments
 		}
 		// Handle operators (such as pipes and redirection)
 		else if (tokens[i].type == TOKEN_OPERATOR)
@@ -473,6 +517,7 @@ int	main(void)
     char		*full_input = NULL;
 	int			in_quote; 
 	
+	last_exit_status = 0;
 	// Infinite loop to keep the shell running until "exit" is entered
 	while (1)
 	{
@@ -517,10 +562,10 @@ int	main(void)
 		// Count the number of tokens in the input string
 		token_count = count_tokens(input);
 
-		printf("TOKEN COUNT is: %d\n", token_count);
+		//printf("TOKEN COUNT is: %d\n", token_count);
 
 		// Tokenize the input string and check for errors during lexing
-		if (lexer(input, &tokens, token_count) == -1)
+		if (lexer(input, &tokens, token_count, last_exit_status) == -1)
 		{
 			printf("Error tokenizing input!\n");
 			free(input); // Free input string on error
