@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 09:47:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 13:26:51 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/04 15:34:19 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,15 @@ int	ft_strisnum(const char *str)
  * @param exit_flag A flag to signal the main process to exit.
  * @return int The exit status (0-255).
  */
-int	builtin_exit(t_command *cmd, t_data *data)
+int	builtin_exit(t_command *cmd, t_data *data, bool print_exit)
 {
 
 	// Signal to the main process to exit the shell
 	data->exit_flag = true;
 
 	// Print exit message
-	fprintf(stderr, "exit\n");
+	if (print_exit)
+		fprintf(stderr, "exit\n");
 
 	// Handle too many arguments error
 	if (cmd->args[1] && cmd->args[2])
