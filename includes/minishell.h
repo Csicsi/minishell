@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/03 13:21:03 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/04 09:56:10 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ char	*resolve_cdpath_if_needed(const char *path);
 int		update_directory_env(const char *cwd, char ***env_vars);
 char	*normalize_path(const char *path);
 int		builtin_echo(t_command *cmd);
+int		builtin_exit(t_command *cmd, bool *exit_flag);
 //int		builtin_echo(t_command *cmd, int last_exit_status);
 int		builtin_pwd(void);
 void	free_tokens(t_token *tokens, int token_count);

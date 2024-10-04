@@ -96,7 +96,7 @@ char *expand_env_var(char **result, int *index, char *cursor, int last_exit_stat
 		*result = realloc(*result, (len_result - (len + 1) + 1)); // Resize to fit the new value
     }
 
-	//return (cursor + len); // Return the updated cursor position	
+	//return (cursor + len); // Return the updated cursor position
 	return (cursor + len + 1); // Return the updated cursor position: len for the length of the env var + 1 for the $-sign
 }
 
@@ -124,7 +124,7 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
 	}
 
 	// Allocate the exact amount of memory needed for the quoted content
-	
+
 	//char *result = (char *)calloc(len + 1, sizeof(char));
 	char *result = malloc(len + 1); // +1 for the null terminator
 	result[len] = '\0';
@@ -264,7 +264,7 @@ int	count_tokens(char *cursor)
 			token_count++;
 			continue;
 		}
-*/		
+*/
 		// Handle regular words
 /*		while (*cursor && !isspace(*cursor) && *cursor != '|' && *cursor != '&' &&
 				*cursor != '>' && *cursor != '<' && *cursor != '$' && *cursor != '*')
@@ -439,7 +439,7 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
 			length++;
 			cursor++;
 		}
-		char *tmp = strndup(cursor - length, length); 
+		char *tmp = strndup(cursor - length, length);
 		if (ft_strchr(tmp, '$'))
 		{
 			tmp = expand_env_var_in_str(&tmp, last_exit_status);
