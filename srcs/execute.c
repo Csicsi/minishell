@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 11:41:40 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:19:06 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,12 +149,6 @@ void	free_cmd_list(t_command *cmd_list)
 			free(cmd_list->input); // Free input redirection file
 		if (cmd_list->output)
 			free(cmd_list->output); // Free output redirection file
-		if (cmd_list->env_vars)
-		{
-			for (int i = 0; cmd_list->env_vars[i]; i++)
-				free(cmd_list->env_vars[i]); // Free each environment variable
-			free(cmd_list->env_vars); // Free the environment variable list
-		}
 		cmd_list = cmd_list->next; // Move to the next command
 		free(tmp); // Free the current command structure
 	}
@@ -248,7 +242,7 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		{
 			cmd_path = find_cmd_path(cmd->args);
 			//printf("cmd_path: %s\n", cmd_path);
-			execve(cmd_path, cmd->args, cmd->env_vars); // Execute the command
+			execve(cmd_path, cmd->args, data->env_vars); // Execute the command
 			//execve(cmd->name, cmd->args, cmd->env_vars); // Execute the command
 			free_cmd_list(cmd); // Free resources before exiting
 			free_tokens(data);
@@ -405,7 +399,6 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 	current_cmd->append_output = 0;              // Default to not appending output
 	current_cmd->exit_status = 0;                // Exit status set to 0
 	current_cmd->next = NULL;                    // No next command yet
-	current_cmd->env_vars = NULL;                // No environment variables yet
 
 	// Iterate through all tokens
 	while (i < token_count)
@@ -441,7 +434,6 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 				current_cmd->output = NULL;                     // Initialize output redirection to NULL
 				current_cmd->append_output = 0;                 // Default to no append mode
 				current_cmd->exit_status = 0;                   // Initialize exit status to 0
-				current_cmd->env_vars = NULL;                   // No environment variables for this command yet
 
 				arg_index = 0;                                  // Reset argument index for the new command
 			}
@@ -510,7 +502,7 @@ int	check_for_unclosed_quotes(char *cursor)
  *
  * @return int Exit status of the program (0 for success, 1 for errors).
  */
-int	main(void)
+int	main(int argc, char **argv, char **env_vars)
 {
 	char		*input;         // Input string entered by the user
 	char		*temp_input;
@@ -518,8 +510,12 @@ int	main(void)
 	int			in_quote;
 	t_data		data;
 
+	(void)argc;
+	(void)argv;
+	
 	data.last_exit_status = 0;
 	data.exit_flag = false;
+	data.env_vars = env_vars;
 	// Infinite loop to keep the shell running until "exit" is entered
 	while (1)
 	{

@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 11:27:29 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:02:05 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ typedef struct s_command
 	int					append_output;
 	int					exit_status;
 	struct s_command	*next;
-	char				**env_vars;
+	//char				**env_vars;
 }	t_command;
 
 typedef enum e_token_type
@@ -62,6 +62,7 @@ typedef struct s_data
 	bool		exit_flag;
 	int			last_exit_status;
 	int			token_count;
+	char		**env_vars;
 	t_token		*tokens;
 	t_command	*cmd_list;
 }	t_data;
