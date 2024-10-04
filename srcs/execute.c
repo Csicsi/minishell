@@ -77,14 +77,14 @@ int	is_builtin(char *command_name)
  * @param cmd The command structure containing arguments.
  * @return int The exit status of the executed builtin command.
  */
-int	execute_builtin(t_command *cmd, t_data *data)
+int	execute_builtin(t_command *cmd, t_data *data, bool print_exit)
 {
 	if (ft_strncmp(cmd->name, "cd", 3) == 0)
 		return (builtin_cd(cmd));
 	else if (ft_strncmp(cmd->name, "echo", 5) == 0)
 		return (builtin_echo(cmd));
 	else if (ft_strncmp(cmd->name, "exit", 5) == 0)
-		return (builtin_exit(cmd, data));
+		return (builtin_exit(cmd, data, print_exit));
 	else if (ft_strncmp(cmd->name, "env", 4) == 0)
 		return (builtin_env(data));
 	else if (ft_strncmp(cmd->name, "export", 7) == 0)
@@ -110,17 +110,41 @@ void	free_cmd_list(t_command *cmd_list)
 	while (cmd_list)
 	{
 		tmp = cmd_list;
-		if (cmd_list->name)
+
+		// Free command name if allocated
+		if (cmd_list->name) {
 			free(cmd_list->name);
-		for (int i = 0; cmd_list->args[i]; i++)
-			free(cmd_list->args[i]); // Free each argument
-		free(cmd_list->args); // Free the argument list
-		if (cmd_list->input)
-			free(cmd_list->input); // Free input redirection file
-		if (cmd_list->output)
-			free(cmd_list->output); // Free output redirection file
-		cmd_list = cmd_list->next; // Move to the next command
-		free(tmp); // Free the current command structure
+			cmd_list->name = NULL;
+		}
+
+		// Free each argument in the args array if allocated
+		if (cmd_list->args)
+		{
+			for (int i = 0; cmd_list->args[i]; i++)
+			{
+				free(cmd_list->args[i]);
+				cmd_list->args[i] = NULL;
+			}
+			free(cmd_list->args); // Free the args array itself
+			cmd_list->args = NULL;
+		}
+
+		// Free input redirection file name if allocated
+		if (cmd_list->input) {
+			free(cmd_list->input);
+			cmd_list->input = NULL;
+		}
+
+		// Free output redirection file name if allocated
+		if (cmd_list->output) {
+			free(cmd_list->output);
+			cmd_list->output = NULL;
+		}
+
+		// Move to the next command and free the current one
+		cmd_list = cmd_list->next;
+		free(tmp);
+		tmp = NULL;
 	}
 }
 
@@ -190,6 +214,7 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		dup2(fd_in, STDIN_FILENO); // Redirect standard input
 		close(fd_in); // Close file descriptor
 	}
+
 	// Handle output redirection if specified
 	if (cmd->output != NULL)
 	{
@@ -205,7 +230,7 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 
 	// Check if the command is a builtin and execute it
 	if (is_builtin(cmd->name))
-		return (execute_builtin(cmd, data));
+		return (execute_builtin(cmd, data, false));
 
 	else
 	{
@@ -214,10 +239,8 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		{
 			cmd_path = find_cmd_path(cmd->args);
 			execve(cmd_path, cmd->args, data->env_vars); // Execute the command
-			free_cmd_list(cmd); // Free resources before exiting
-			free_tokens(data);
 			perror("minishell"); // If execve fails, print error
-			exit(EXIT_FAILURE);
+			exit(EXIT_FAILURE);  // Exit child process
 		}
 		else if (pid > 0) // In parent process
 		{
@@ -242,108 +265,126 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
  * @param cmd The first command in the linked list of commands.
  * @return int The exit status of the last command executed.
  */
-int	execute_cmd_list(t_data *data)
+int execute_cmd_list(t_data *data)
 {
-	t_command	*current;
-	int			pipe_fd[2];
-	int			prev_fd;
-	pid_t		pid;
-	pid_t		child_pids[256]; // Array to store PIDs of child processes (adjust size if needed)
-	int			num_children = 0;  // Counter for the number of child processes
+    t_command *current;
+    int pipe_fd[2];
+    int prev_fd;
+    pid_t pid;
+    pid_t child_pids[256]; // Array to store PIDs of child processes (adjust size if needed)
+    int num_children = 0;  // Counter for the number of child processes
 
-	current = data->cmd_list;
-	prev_fd = -1;
+    current = data->cmd_list;
+    prev_fd = -1;
 
-	while (current != NULL) // Loop through each command in the list
-	{
-		// If the command is a built-in, execute it in the parent process
-		if (is_builtin(current->name))
-		{
-			data->last_exit_status = execute_builtin(current, data);
-			if (data->exit_flag)  // If the built-in was `exit`, exit immediately
-			{
-				free_cmd_list(data->cmd_list);    // Free memory
-				return (data->last_exit_status);
-			}
-		}
-		else
-		{
-			// Continue with forking for external commands
-			if (current->next != NULL)
-				pipe(pipe_fd); // Create a pipe if there's a next command
+	if (strcmp(current->name, "exit") == 0 && current->next == NULL)
+    {
+        data->last_exit_status = execute_builtin(current, data, true); // Execute exit command directly
+        free_cmd_list(data->cmd_list);
+        return (data->last_exit_status); // Return exit status directly
+    }
+    while (current != NULL) // Loop through each command in the list
+    {
 
-			pid = fork(); // Fork the process for the current command
-			if (pid == 0) // In child process
-			{
-				if (prev_fd != -1) // If there's a previous command, set up input redirection
-				{
-					dup2(prev_fd, STDIN_FILENO); // Redirect input to previous pipe
-					close(prev_fd);
-				}
-				if (current->next != NULL) // If there's a next command, set up output redirection
-				{
-					dup2(pipe_fd[1], STDOUT_FILENO); // Redirect output to next pipe
-					close(pipe_fd[0]);
-					close(pipe_fd[1]);
-				}
-				else if (current->output != NULL) // Handle output redirection for the last command
-				{
-					int fd_out = open(current->output, O_WRONLY | O_CREAT | (current->append_output ? O_APPEND : O_TRUNC), 0644);
-					if (fd_out < 0) // Check for errors
-					{
-						perror("minishell: output redirection");
-						free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
-						free_tokens(data); // Free tokens in the child before exiting
-						exit(EXIT_FAILURE);
-					}
-					dup2(fd_out, STDOUT_FILENO); // Redirect standard output
-					close(fd_out); // Close file descriptor
-				}
+        if (current->next != NULL)
+            pipe(pipe_fd); // Create a pipe if there's a next command
 
-				// Execute the command and free resources before exiting
-				data->last_exit_status = execute_single_cmd(current, data);
+        pid = fork(); // Fork the process for the current command
+        if (pid == 0) // In child process
+        {
+            if (prev_fd != -1) // If there's a previous command, set up input redirection
+            {
+                dup2(prev_fd, STDIN_FILENO); // Redirect input to previous pipe
+                close(prev_fd);
+            }
+            if (current->next != NULL) // If there's a next command, set up output redirection
+            {
+                dup2(pipe_fd[1], STDOUT_FILENO); // Redirect output to next pipe
+                close(pipe_fd[0]);
+                close(pipe_fd[1]);
+            }
+            else if (current->output != NULL) // Handle output redirection for the last command
+            {
+                int fd_out = open(current->output, O_WRONLY | O_CREAT | (current->append_output ? O_APPEND : O_TRUNC), 0644);
+                if (fd_out < 0) // Check for errors
+                {
+                    perror("minishell: output redirection");
+                    free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
+                    free_tokens(data); // Free tokens in the child before exiting
+                    exit(EXIT_FAILURE);
+                }
+                dup2(fd_out, STDOUT_FILENO); // Redirect standard output
+                close(fd_out); // Close file descriptor
+            }
 
-				free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
-				free_tokens(data);  // Free tokens in the child before exiting
-				exit(data->last_exit_status);
-			}
-			else if (pid > 0) // In parent process
-			{
-				child_pids[num_children++] = pid; // Store the PID of the child process
-				if (prev_fd != -1)
-					close(prev_fd); // Close previous pipe read end
-				if (current->next != NULL)
-				{
-					close(pipe_fd[1]); // Close current pipe write end
-					prev_fd = pipe_fd[0]; // Set up previous pipe read end for next iteration
-				}
-				else
-					prev_fd = -1;
-			}
-			else
-			{
-				perror("minishell: fork"); // If fork fails, print error
-				free_cmd_list(data->cmd_list);  // Free memory on error
-				free_tokens(data);  // Free tokens on error
-				return (1);
-			}
-		}
+            // Execute the command (built-in or external)
+            if (is_builtin(current->name)) // If built-in, execute it in the child
+            {
+                // Check if the builtin is "exit" and there are other commands in the pipeline
+                if (strcmp(current->name, "exit") == 0)
+                {
+                    // Free resources but don't terminate the shell
+                    free_cmd_list(data->cmd_list);
+                    free_tokens(data);
+					data->last_exit_status = 1;
+                    exit (data->last_exit_status); // Exit the child normally without terminating the shell
+                }
 
-		current = current->next; // Move to the next command in the list
-	}
+                data->last_exit_status = execute_builtin(current, data, false);
 
-	// Wait for all child processes to finish
-	for (int i = 0; i < num_children; i++)
-	{
-		waitpid(child_pids[i], &data->last_exit_status, 0); // Wait for each child
-		if (WIFEXITED(data->last_exit_status))
-			data->last_exit_status = WEXITSTATUS(data->last_exit_status); // Get the exit status of the last child process
-	}
+                if (data->exit_flag) // If it's exit, terminate the shell if there is no pipe
+                {
+                    free_cmd_list(data->cmd_list);
+                    free_tokens(data);
+                    exit(data->last_exit_status);
+                }
+                exit(data->last_exit_status); // Exit with the status of the built-in
+            }
+            else
+            {
+                data->last_exit_status = execute_single_cmd(current, data);
+                free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
+                free_tokens(data);  // Free tokens in the child before exiting
+                exit(data->last_exit_status);
+            }
+        }
+        else if (pid > 0) // In parent process
+        {
+            child_pids[num_children++] = pid; // Store the PID of the child process
+            if (prev_fd != -1)
+                close(prev_fd); // Close previous pipe read end
+            if (current->next != NULL)
+            {
+                close(pipe_fd[1]); // Close current pipe write end
+                prev_fd = pipe_fd[0]; // Set up previous pipe read end for next iteration
+            }
+            else
+                prev_fd = -1;
+        }
+        else
+        {
+            perror("minishell: fork"); // If fork fails, print error
+            free_cmd_list(data->cmd_list);  // Free memory on error
+            free_tokens(data);  // Free tokens on error
+            return (1);
+        }
 
-	free_cmd_list(data->cmd_list);  // Free memory in the parent after all children have finished
-	free_tokens(data);  // Free tokens in the parent after all children have finished
-	return (data->last_exit_status); // Return the exit status of the last command executed
+        current = current->next; // Move to the next command in the list
+    }
+
+    // Wait for all child processes to finish
+    for (int i = 0; i < num_children; i++)
+    {
+        waitpid(child_pids[i], &data->last_exit_status, 0); // Wait for each child
+        if (WIFEXITED(data->last_exit_status))
+            data->last_exit_status = WEXITSTATUS(data->last_exit_status); // Get the exit status of the last child process
+    }
+
+    free_cmd_list(data->cmd_list);  // Free memory in the parent after all children have finished
+    free_tokens(data);  // Free tokens in the parent after all children have finished
+    return (data->last_exit_status); // Return the exit status of the last command executed
 }
+
 
 /**
  * @brief Parses tokens into a linked list of command structures.
