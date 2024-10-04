@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 09:47:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 10:05:47 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:26:51 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,11 @@ int	ft_strisnum(const char *str)
  * @param exit_flag A flag to signal the main process to exit.
  * @return int The exit status (0-255).
  */
-int	builtin_exit(t_command *cmd, bool *exit_flag)
+int	builtin_exit(t_command *cmd, t_data *data)
 {
-	int	exit_status;
 
 	// Signal to the main process to exit the shell
-	*exit_flag = true;
+	data->exit_flag = true;
 
 	// Print exit message
 	fprintf(stderr, "exit\n");
@@ -78,12 +77,10 @@ int	builtin_exit(t_command *cmd, bool *exit_flag)
 
 	// Set exit status based on the argument or default to 0
 	if (cmd->args[1])
-		exit_status = atoi(cmd->args[1]);
-	else
-		exit_status = 0;
+		data->last_exit_status = atoi(cmd->args[1]);
 
 	// Mask exit status to fit within the 0-255 range
-	exit_status &= 255;
+	data->last_exit_status &= 255;
 
-	return exit_status;
+	return data->last_exit_status;
 }

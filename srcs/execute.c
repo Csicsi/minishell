@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 12:19:06 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:29:40 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,14 +107,14 @@ int	is_builtin(char *command_name)
  * @param cmd The command structure containing arguments.
  * @return int The exit status of the executed builtin command.
  */
-int	execute_builtin(t_command *cmd, bool *exit_flag)
+int	execute_builtin(t_command *cmd, t_data *data)
 {
 	if (ft_strncmp(cmd->name, "cd", 3) == 0)
 		return (builtin_cd(cmd));
 	else if (ft_strncmp(cmd->name, "echo", 5) == 0)
 		return (builtin_echo(cmd));
 	else if (ft_strncmp(cmd->name, "exit", 5) == 0)
-		return (builtin_exit(cmd, exit_flag));
+		return (builtin_exit(cmd, data));
 	else if (ft_strncmp(cmd->name, "env", 4) == 0)
 		return (builtin_env(cmd));
 	else if (ft_strncmp(cmd->name, "export", 7) == 0)
@@ -232,18 +232,18 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		dup2(fd_out, STDOUT_FILENO); // Redirect standard output
 		close(fd_out); // Close file descriptor
 	}
+
 	// Check if the command is a builtin and execute it
 	if (is_builtin(cmd->name))
-		return (execute_builtin(cmd, &data->exit_flag));
+		return (execute_builtin(cmd, data));
+
 	else
 	{
 		pid = fork(); // Fork the process
 		if (pid == 0) // In child process
 		{
 			cmd_path = find_cmd_path(cmd->args);
-			//printf("cmd_path: %s\n", cmd_path);
 			execve(cmd_path, cmd->args, data->env_vars); // Execute the command
-			//execve(cmd->name, cmd->args, cmd->env_vars); // Execute the command
 			free_cmd_list(cmd); // Free resources before exiting
 			free_tokens(data);
 			perror("minishell"); // If execve fails, print error
@@ -253,7 +253,10 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		{
 			waitpid(pid, &cmd->exit_status, 0); // Wait for the child to finish
 			if (WIFEXITED(cmd->exit_status))
-				return (WEXITSTATUS(cmd->exit_status)); // Return the child's exit status
+			{
+				data->last_exit_status = WEXITSTATUS(cmd->exit_status); // Update the last_exit_status
+			}
+			return (data->last_exit_status); // Return the exit status
 		}
 		else if (pid < 0) // If fork fails, print error
 			perror("minishell: fork");
@@ -275,7 +278,6 @@ int	execute_cmd_list(t_data *data)
 	int			pipe_fd[2];
 	int			prev_fd;
 	pid_t		pid;
-	int			exit_status = 0;
 	pid_t		child_pids[256]; // Array to store PIDs of child processes (adjust size if needed)
 	int			num_children = 0;  // Counter for the number of child processes
 
@@ -287,11 +289,11 @@ int	execute_cmd_list(t_data *data)
 		// If the command is a built-in, execute it in the parent process
 		if (is_builtin(current->name))
 		{
-			exit_status = execute_builtin(current, &data->exit_flag);
+			data->last_exit_status = execute_builtin(current, data);
 			if (data->exit_flag)  // If the built-in was `exit`, exit immediately
 			{
 				free_cmd_list(data->cmd_list);    // Free memory
-				return exit_status;
+				return (data->last_exit_status);
 			}
 		}
 		else
@@ -329,11 +331,11 @@ int	execute_cmd_list(t_data *data)
 				}
 
 				// Execute the command and free resources before exiting
-				exit_status = execute_single_cmd(current, data);
+				data->last_exit_status = execute_single_cmd(current, data);
 
 				free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
 				free_tokens(data);  // Free tokens in the child before exiting
-				exit(exit_status);
+				exit(data->last_exit_status);
 			}
 			else if (pid > 0) // In parent process
 			{
@@ -363,14 +365,14 @@ int	execute_cmd_list(t_data *data)
 	// Wait for all child processes to finish
 	for (int i = 0; i < num_children; i++)
 	{
-		waitpid(child_pids[i], &exit_status, 0); // Wait for each child
-		if (WIFEXITED(exit_status))
-			exit_status = WEXITSTATUS(exit_status); // Get the exit status of the last child process
+		waitpid(child_pids[i], &data->last_exit_status, 0); // Wait for each child
+		if (WIFEXITED(data->last_exit_status))
+			data->last_exit_status = WEXITSTATUS(data->last_exit_status); // Get the exit status of the last child process
 	}
 
 	free_cmd_list(data->cmd_list);  // Free memory in the parent after all children have finished
 	free_tokens(data);  // Free tokens in the parent after all children have finished
-	return (exit_status); // Return the exit status of the last command executed
+	return (data->last_exit_status); // Return the exit status of the last command executed
 }
 
 /**
@@ -512,7 +514,7 @@ int	main(int argc, char **argv, char **env_vars)
 
 	(void)argc;
 	(void)argv;
-	
+
 	data.last_exit_status = 0;
 	data.exit_flag = false;
 	data.env_vars = env_vars;
