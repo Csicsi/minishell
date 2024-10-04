@@ -57,8 +57,6 @@ char *expand_env_var(char **result, int *index, char *cursor, int last_exit_stat
 		char	*exit_status_str = ft_itoa(last_exit_status);
         // Allocate and copy the exit status into result
         int exit_status_len = strlen(exit_status_str);
-        //*result = realloc(*result, (*index + exit_status_len + 1)); // Resize to fit the new value
-		// more robust and can handle cases where the string after env var expansion continues: e.g. echo hi$?****)
 		*result = realloc(*result, (len_result - 2 + exit_status_len + 1)); // Resize to fit the new value
         strcpy(&(*result)[*index], exit_status_str); // Copy the exit status value
         *index += exit_status_len; // Update the index
@@ -83,20 +81,15 @@ char *expand_env_var(char **result, int *index, char *cursor, int last_exit_stat
 	{
 		// Reallocate memory for the result if necessary
 		int env_len = strlen(env_value);
-		//*result = realloc(*result, (*index + env_len + 1)); // Resize to fit the new value
-		// more robust and can handle cases where the string after env var expansion continues: e.g. echo hi$HOME****)
 		*result = realloc(*result, (len_result - (len + 1) + env_len + 1)); // Resize to fit the new value
 		strcpy(&(*result)[*index], env_value); // Copy the value
 		*index += env_len; // Update the index
 	}
     else
     {
-		//printf("len_result:      %d\n", len_result);
-		//printf("len of var_name: %d\n", len);
 		*result = realloc(*result, (len_result - (len + 1) + 1)); // Resize to fit the new value
     }
 
-	//return (cursor + len); // Return the updated cursor position
 	return (cursor + len + 1); // Return the updated cursor position: len for the length of the env var + 1 for the $-sign
 }
 
@@ -124,11 +117,8 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
 	}
 
 	// Allocate the exact amount of memory needed for the quoted content
-
-	//char *result = (char *)calloc(len + 1, sizeof(char));
 	char *result = malloc(len + 1); // +1 for the null terminator
 	result[len] = '\0';
-	//printf("len_result in doublequoted: %d\n", len);
 
 	// Extract the content, handling escape sequences and variable expansions
 	int i = 0;
@@ -137,12 +127,6 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
 	{
 		if (*cursor == '$' && (*(cursor + 1) != ' ' && *(cursor + 1) != '\0'  && *(cursor + 1) != '"'))
 		{
-			/*
-			printf("result:  %s\n", result);
-			printf("i:       %d\n", i);
-			printf("cursor:  %s\n", cursor);
-			printf("len_res: %d\n", len);
-			*/
 			cursor = expand_env_var(&result, &i, cursor, last_exit_status, len);
 		}
 		else if (*cursor == '\\')
@@ -255,22 +239,10 @@ int	count_tokens(char *cursor)
 			token_count++;
 			continue;
 		}
-/*		// Handle environment variables
-		if (*cursor == '$')
-		{
-			cursor++;
-			while (isalnum(*cursor) || *cursor == '?') // Skip the environment variable name
-				cursor++;
-			token_count++;
-			continue;
-		}
-*/
+
 		// Handle regular words
-/*		while (*cursor && !isspace(*cursor) && *cursor != '|' && *cursor != '&' &&
-				*cursor != '>' && *cursor != '<' && *cursor != '$' && *cursor != '*')
-*/
 		while (*cursor && !isspace(*cursor) && *cursor != '|' && *cursor != '&' &&
-				*cursor != '>' && *cursor != '<' && *cursor != '*')
+				*cursor != '>' && *cursor != '<')
 			cursor++;
 		token_count++; // Increment token count for each word
 	}
@@ -299,17 +271,10 @@ char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status)
 	result[len] = '\0';
 	// Extract the content, handling escape sequences and variable expansions
 	int		i = 0;
-	//cursor++; NO opening double quote here// Move past the opening double quote
 	while (*cursor)
 	{
 		if (*cursor == '$' && (*(cursor + 1) != ' ' && *(cursor + 1) != '\0'))
 		{
-			/*
-			printf("result:  %s\n", result);
-			printf("i:       %d\n", i);
-			printf("cursor:  %s\n", cursor);
-			printf("len_res: %d\n", len);
-			*/
 			cursor = expand_env_var(&result, &i, cursor, last_exit_status, len);
 		}
 		else if (*cursor == '\\')
@@ -327,9 +292,8 @@ char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status)
 	free(*ptr_to_cursor);
 	free(result); // Free the temporary buffer
 
-	return (tmp); // Move past the closing double quote
+	return (tmp);
 }
-
 
 /**
  * @brief Tokenizes the input string into an array of tokens.
@@ -383,32 +347,7 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
 			i++;
 			continue;
 		}
-/*
-		// Handle environment variables
-		if (*cursor == '$')
-		{
-			tokens[i].type = TOKEN_ENV_VAR;
-			cursor++;
-			length = 0;
-			while (isalnum(*cursor) || *cursor == '?')
-			{
-				length++;
-				cursor++;
-			}
-			tokens[i].value = strndup(cursor - length, length); // Copy the environment variable name
-			i++;
-			continue;
-		}
-*/
-		// Handle wildcard characters (*)
-		if (*cursor == '*')
-		{
-			tokens[i].type = TOKEN_WILDCARD;
-			tokens[i].value = strdup("*");
-			cursor++;
-			i++;
-			continue;
-		}
+
 		// Handle single and double dots (., ..)
 		if (*cursor == '.' && (*(cursor + 1) == ' ' || *(cursor + 1) == '\0'))
 		{
@@ -428,13 +367,8 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
 		}
 		// Handle regular words
 		length = 0;
-/*		while (!isspace(*cursor) && *cursor != '|' && *cursor != '&'
-			&& *cursor != '>' && *cursor != '<' && *cursor != '$'
-			&& *cursor != '*' && *cursor != '.' && *cursor != '\0')
-*/
 		while (!isspace(*cursor) && *cursor != '|' && *cursor != '&'
-			&& *cursor != '>' && *cursor != '<'
-			&& *cursor != '*' && *cursor != '.' && *cursor != '\0')
+			&& *cursor != '>' && *cursor != '<' && *cursor != '.' && *cursor != '\0')
 		{
 			length++;
 			cursor++;
@@ -445,7 +379,6 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
 			tmp = expand_env_var_in_str(&tmp, last_exit_status);
 		}
 
-		//tokens[i].value = strndup(cursor - length, length); // Copy the word into the token
 		tokens[i].value = tmp; // Copy the word into the token
 		tokens[i].type = TOKEN_WORD;
 		i++;
@@ -464,14 +397,14 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
  * @param tokens The array of tokens.
  * @param token_count The number of tokens in the array.
  */
-void	free_tokens(t_token *tokens, int token_count)
+void	free_tokens(t_data *data)
 {
 	int i;
 
-	for (i = 0; i < token_count; i++)
+	for (i = 0; i < data->token_count; i++)
 	{
-		if (tokens[i].value)
-			free(tokens[i].value); // Free each token's value
+		if (data->tokens[i].value)
+			free(data->tokens[i].value); // Free each token's value
 	}
-	free(tokens); // Free the token array
+	free(data->tokens); // Free the token array
 }
