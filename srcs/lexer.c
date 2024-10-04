@@ -35,62 +35,155 @@ char *extract_single_quoted_word(char *cursor, t_token *token)
 }
 
 /**
- * @brief Expands environment variables (e.g., $HOME) in the input.
+ * @brief Calculates the final length of the string after expanding environment variables.
  *
- * This function extracts an environment variable name, fetches its value, and appends
- * it to the result string.
+ * This function goes through the input string and calculates how long the result string
+ * will be after expanding all the environment variables.
  *
- * @param result A pointer to the result string where the variable's value will be appended.
- * @param index A pointer to the current index in the result string.
  * @param cursor The current position in the input string.
- * @return char* The updated position in the input string after processing the variable.
+ * @param last_exit_status The value of the last exit status for handling "$?".
+ * @return int The total length required for the result string.
  */
-char *expand_env_var(char **result, int *index, char *cursor, int last_exit_status, int len_result)
+int calculate_expanded_length(char *cursor, int last_exit_status)
 {
-	char *start = cursor + 1; // Skip the dollar sign
-	int len = 0;
+    int total_length = 0;
+    char *start;
 
-    // Check if we are dealing with the special case "$?"
-    if (*start == '?')
+    while (*cursor)
     {
-        // Convert last_exit_status to a string
-		char	*exit_status_str = ft_itoa(last_exit_status);
-        // Allocate and copy the exit status into result
-        int exit_status_len = strlen(exit_status_str);
-		*result = realloc(*result, (len_result - 2 + exit_status_len + 1)); // Resize to fit the new value
-        strcpy(&(*result)[*index], exit_status_str); // Copy the exit status value
-        *index += exit_status_len; // Update the index
-        free(exit_status_str);
-        return (cursor + 2); // Skip the "$?" (which is 2 characters)
+        if (*cursor == '$')
+        {
+            start = cursor + 1;
+
+            if (*start == '?') // Handle special case of $?
+            {
+                char *exit_status_str = ft_itoa(last_exit_status);
+                total_length += strlen(exit_status_str);
+                free(exit_status_str);
+                cursor += 2; // Skip past "$?"
+            }
+            else
+            {
+                int len = 0;
+                while (isalnum(start[len]) || start[len] == '_')
+                    len++;
+
+                if (len > 0)
+                {
+                    char *var_name = strndup(start, len);
+                    char *env_value = getenv(var_name);
+                    free(var_name);
+
+                    if (env_value)
+                        total_length += strlen(env_value);
+                    cursor += len + 1; // Skip past the variable name and '$'
+                }
+                else
+                {
+                    total_length++; // If no valid var, count the '$'
+                    cursor++;
+                }
+            }
+        }
+        else
+        {
+            total_length++; // Count normal characters
+            cursor++;
+        }
     }
 
-	// Measure the length of the environment variable name
-	while (isalnum(start[len]) || start[len] == '_')
-		len++;
+    return total_length;
+}
 
-	// Dynamically allocate memory for the variable name
-	char *var_name = malloc(len + 1);
-	strncpy(var_name, start, len); // Copy the variable name
-	var_name[len] = '\0'; // Null-terminate
+/**
+ * @brief Expands environment variables in the input string without reallocating.
+ *
+ * This function processes the input string, expands environment variables, and fills
+ * the preallocated result string with the expanded content.
+ *
+ * @param result The preallocated buffer for the result string.
+ * @param cursor The input string with potential environment variables.
+ * @param last_exit_status The last exit status for handling "$?".
+ */
+void expand_env_vars_into_buffer(char *result, char *cursor, int last_exit_status)
+{
+    int i = 0;
+    char *start;
 
-	// Fetch the environment variable value
-	char *env_value = getenv(var_name);
-	free(var_name); // Free the variable name buffer
-
-	if (env_value)
-	{
-		// Reallocate memory for the result if necessary
-		int env_len = strlen(env_value);
-		*result = realloc(*result, (len_result - (len + 1) + env_len + 1)); // Resize to fit the new value
-		strcpy(&(*result)[*index], env_value); // Copy the value
-		*index += env_len; // Update the index
-	}
-    else
+    while (*cursor)
     {
-		*result = realloc(*result, (len_result - (len + 1) + 1)); // Resize to fit the new value
+        if (*cursor == '$')
+        {
+            start = cursor + 1;
+
+            if (*start == '?') // Handle special case of $?
+            {
+                char *exit_status_str = ft_itoa(last_exit_status);
+                strcpy(&result[i], exit_status_str);
+                i += strlen(exit_status_str);
+                free(exit_status_str);
+                cursor += 2; // Skip past "$?"
+            }
+            else
+            {
+                int len = 0;
+                while (isalnum(start[len]) || start[len] == '_')
+                    len++;
+
+                if (len > 0)
+                {
+                    char *var_name = strndup(start, len);
+                    char *env_value = getenv(var_name);
+                    free(var_name);
+
+                    if (env_value)
+                    {
+                        strcpy(&result[i], env_value);
+                        i += strlen(env_value);
+                    }
+                    cursor += len + 1; // Skip past the variable name and '$'
+                }
+                else
+                {
+                    result[i++] = *cursor; // No valid variable, copy the '$'
+                    cursor++;
+                }
+            }
+        }
+        else
+        {
+            result[i++] = *cursor; // Copy normal characters
+            cursor++;
+        }
     }
 
-	return (cursor + len + 1); // Return the updated cursor position: len for the length of the env var + 1 for the $-sign
+    result[i] = '\0'; // Null-terminate the result string
+}
+
+/**
+ * @brief Expands environment variables in a string without using realloc.
+ *
+ * This function first calculates the total length required for the result string,
+ * then allocates the necessary memory and expands environment variables into it.
+ *
+ * @param cursor The input string with potential environment variables.
+ * @param last_exit_status The last exit status to expand "$?".
+ * @return char* A new string with expanded environment variables.
+ */
+char *expand_env_var(char *cursor, int last_exit_status)
+{
+    // First pass: calculate the total length required for the result
+    int final_length = calculate_expanded_length(cursor, last_exit_status);
+
+    // Allocate memory for the result string
+    char *result = malloc(final_length + 1); // +1 for the null terminator
+    if (!result)
+        return NULL; // Handle allocation failure
+
+    // Second pass: fill the result buffer
+    expand_env_vars_into_buffer(result, cursor, last_exit_status);
+
+    return result; // Return the expanded result
 }
 
 /**
@@ -105,45 +198,49 @@ char *expand_env_var(char **result, int *index, char *cursor, int last_exit_stat
  */
 char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_status)
 {
-	char *start = cursor + 1; // Skip the opening double quote
-	int len = 0;
+    char *start = cursor + 1; // Skip the opening double quote
+    int len = 0;
+    char *expanded;
 
-	// Measure the length of the quoted string
-	while (start[len] && start[len] != '"')
-	{
-		if (start[len] == '\\' && (start[len + 1] == '"' || start[len + 1] == '$' || start[len + 1] == '\\'))
-			len++; // Skip escape sequences
-		len++;
-	}
+    // Measure the length of the quoted string, considering expansions
+    while (start[len] && start[len] != '"')
+    {
+        if (start[len] == '\\' && (start[len + 1] == '"' || start[len + 1] == '$' || start[len + 1] == '\\'))
+            len++; // Skip escape sequences
+        len++;
+    }
 
-	// Allocate the exact amount of memory needed for the quoted content
-	char *result = malloc(len + 1); // +1 for the null terminator
-	result[len] = '\0';
+    // Temporarily allocate memory based on the raw content before expanding variables
+    char *temp = malloc(len + 1); // +1 for the null terminator
+    int i = 0;
 
-	// Extract the content, handling escape sequences and variable expansions
-	int i = 0;
-	cursor++; // Move past the opening double quote
-	while (*cursor && *cursor != '"')
-	{
-		if (*cursor == '$' && (*(cursor + 1) != ' ' && *(cursor + 1) != '\0'  && *(cursor + 1) != '"'))
-		{
-			cursor = expand_env_var(&result, &i, cursor, last_exit_status, len);
-		}
-		else if (*cursor == '\\')
-		{
-			cursor++;
-			if (*cursor == '$' || *cursor == '"' || *cursor == '\\')
-				result[i++] = *cursor; // Handle escape characters
-		}
-		else
-			result[i++] = *cursor; // Copy the character to result
-		cursor++;
-	}
-	result[i] = '\0'; // Null-terminate the result string
-	token->value = strdup(result); // Store the result in the token
-	free(result); // Free the temporary buffer
+    // Extract the raw content while handling escape sequences
+    cursor++; // Move past the opening double quote
+    while (*cursor && *cursor != '"')
+    {
+        if (*cursor == '\\')
+        {
+            cursor++;
+            if (*cursor == '"' || *cursor == '$' || *cursor == '\\')
+                temp[i++] = *cursor; // Handle escape characters
+        }
+        else
+        {
+            temp[i++] = *cursor;
+        }
+        cursor++;
+    }
+    temp[i] = '\0'; // Null-terminate the raw content
 
-	return (++cursor); // Move past the closing double quote
+    // Now expand any environment variables in the raw content
+    expanded = expand_env_var(temp, last_exit_status);
+    free(temp); // Free the temporary raw content
+
+    // Allocate the exact amount of memory for the expanded result
+    token->value = strdup(expanded);
+    free(expanded); // Free the expanded result
+
+    return (++cursor); // Move past the closing double quote
 }
 
 /**
@@ -260,40 +357,24 @@ int	count_tokens(char *cursor)
  * @param cursor The current position in the word that has is temporarily treated as the TOKEN_WORD (before env var expansion).
  * @return char* The token.value of that particular argument/word after env variable expansion
  */
-char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status)
+char *expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status)
 {
-	char 	*cursor;
-	int		len;
+    char *cursor = *ptr_to_cursor;
+    int final_length = calculate_expanded_length(cursor, last_exit_status);
 
-	cursor = *ptr_to_cursor;
-	len = strlen(cursor);
-	char *result = malloc(len + 1); // +1 for the null terminator
-	result[len] = '\0';
-	// Extract the content, handling escape sequences and variable expansions
-	int		i = 0;
-	while (*cursor)
-	{
-		if (*cursor == '$' && (*(cursor + 1) != ' ' && *(cursor + 1) != '\0'))
-		{
-			cursor = expand_env_var(&result, &i, cursor, last_exit_status, len);
-		}
-		else if (*cursor == '\\')
-		{
-			cursor++;
-			if (*cursor == '$' || *cursor == '"' || *cursor == '\\')
-				result[i++] = *cursor; // Handle escape characters
-		}
-		else
-			result[i++] = *cursor; // Copy the character to result
-		cursor++;
-	}
-	result[i] = '\0'; // Null-terminate the result string
-	char *tmp = strdup(result); // Store the result in the tmp (which will be passed to the token)
-	free(*ptr_to_cursor);
-	free(result); // Free the temporary buffer
+    char *result = malloc(final_length + 1);  // Allocate enough memory for the expanded string
+    if (!result)
+        return NULL; // Handle allocation failure
 
-	return (tmp);
+    expand_env_vars_into_buffer(result, cursor, last_exit_status);  // Perform the actual expansion
+
+    free(*ptr_to_cursor);  // Free the original unexpanded string
+    *ptr_to_cursor = strdup(result);  // Replace with the expanded string
+
+    free(result);  // Free the temporary buffer
+    return *ptr_to_cursor;
 }
+
 
 /**
  * @brief Tokenizes the input string into an array of tokens.

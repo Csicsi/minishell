@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 13:29:40 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/04 14:45:15 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,19 +140,44 @@ void	free_cmd_list(t_command *cmd_list)
 	while (cmd_list)
 	{
 		tmp = cmd_list;
-		if (cmd_list->name)
+
+		// Free command name if allocated
+		if (cmd_list->name) {
 			free(cmd_list->name);
-		for (int i = 0; cmd_list->args[i]; i++)
-			free(cmd_list->args[i]); // Free each argument
-		free(cmd_list->args); // Free the argument list
-		if (cmd_list->input)
-			free(cmd_list->input); // Free input redirection file
-		if (cmd_list->output)
-			free(cmd_list->output); // Free output redirection file
-		cmd_list = cmd_list->next; // Move to the next command
-		free(tmp); // Free the current command structure
+			cmd_list->name = NULL;
+		}
+
+		// Free each argument in the args array if allocated
+		if (cmd_list->args)
+		{
+			for (int i = 0; cmd_list->args[i]; i++)
+			{
+				free(cmd_list->args[i]);
+				cmd_list->args[i] = NULL;
+			}
+			free(cmd_list->args); // Free the args array itself
+			cmd_list->args = NULL;
+		}
+
+		// Free input redirection file name if allocated
+		if (cmd_list->input) {
+			free(cmd_list->input);
+			cmd_list->input = NULL;
+		}
+
+		// Free output redirection file name if allocated
+		if (cmd_list->output) {
+			free(cmd_list->output);
+			cmd_list->output = NULL;
+		}
+
+		// Move to the next command and free the current one
+		cmd_list = cmd_list->next;
+		free(tmp);
+		tmp = NULL;
 	}
 }
+
 
 /**
  * @brief Finds the appropriate path to run executables from the environment variable $PATH (typically in /usr/bin)
@@ -220,6 +245,7 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		dup2(fd_in, STDIN_FILENO); // Redirect standard input
 		close(fd_in); // Close file descriptor
 	}
+
 	// Handle output redirection if specified
 	if (cmd->output != NULL)
 	{
@@ -244,10 +270,8 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		{
 			cmd_path = find_cmd_path(cmd->args);
 			execve(cmd_path, cmd->args, data->env_vars); // Execute the command
-			free_cmd_list(cmd); // Free resources before exiting
-			free_tokens(data);
 			perror("minishell"); // If execve fails, print error
-			exit(EXIT_FAILURE);
+			exit(EXIT_FAILURE);  // Exit child process
 		}
 		else if (pid > 0) // In parent process
 		{
