@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 13:29:40 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/04 15:38:34 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,36 +24,6 @@ int	builtin_cd(t_command *cmd)
 {
 	(void)cmd; // Ignore unused parameter
 	printf("builtin_cd: Changing Directory...\n"); // Placeholder message
-	return (0);
-}
-
-/**
- * @brief Handles the `env` builtin command.
- *
- * This function displays the current environment variables.
- *
- * @param cmd The command structure containing arguments.
- * @return int Always returns 0 for success.
- */
-int	builtin_env(t_command *cmd)
-{
-	(void)cmd; // Ignore unused parameter
-	printf("builtin_env: Displaying environment variables...\n"); // Placeholder message
-	return (0);
-}
-
-/**
- * @brief Handles the `export` builtin command.
- *
- * This function sets or updates an environment variable.
- *
- * @param cmd The command structure containing arguments.
- * @return int Always returns 0 for success.
- */
-int	builtin_export(t_command *cmd)
-{
-	(void)cmd; // Ignore unused parameter
-	printf("builtin_export: Exporting environment variable...\n"); // Placeholder message
 	return (0);
 }
 
@@ -116,9 +86,9 @@ int	execute_builtin(t_command *cmd, t_data *data)
 	else if (ft_strncmp(cmd->name, "exit", 5) == 0)
 		return (builtin_exit(cmd, data));
 	else if (ft_strncmp(cmd->name, "env", 4) == 0)
-		return (builtin_env(cmd));
+		return (builtin_env(data));
 	else if (ft_strncmp(cmd->name, "export", 7) == 0)
-		return (builtin_export(cmd));
+		return (builtin_export(cmd, data));
 	else if (ft_strncmp(cmd->name, "unset", 6) == 0)
 		return (builtin_unset(cmd));
 	else if (ft_strncmp(cmd->name, "pwd", 4) == 0)
@@ -496,6 +466,53 @@ int	check_for_unclosed_quotes(char *cursor)
 }
 
 /**
+ * @brief Creates a copy of the env_vars (entered as 3rd argument in main) on dynamic memory
+ *
+ * The malloc-ed copy of environment variables passed as a third argument to the main is useful
+ * for builtin functions export and unset, which add/remove env vars. Clearer coding practise to have 
+ * everything on dynamic memory, rather than having to keep track of what is on stack and what is 
+ * dynamic/ needs to be freed
+ *
+ * @return char **Copy of env_vars on dynamic memory
+ */
+// Function to duplicate the env_vars dynamically
+char **duplicate_env_vars(char **env_vars)
+{
+    int i = 0;
+    char **new_env_vars;
+
+    // Count how many environment variables there are
+    while (env_vars[i] != NULL)
+        i++;
+
+    // Allocate memory for the array of environment variable pointers
+    new_env_vars = (char **)malloc((i + 1) * sizeof(char *));  // +1 for the NULL terminator
+    if (!new_env_vars)
+        return (NULL);  // Return NULL if memory allocation fails
+
+    // Copy each environment variable to dynamic memory
+    i = 0;
+	while (env_vars[i] != NULL)
+    {
+        // Allocate memory for each string and copy the content
+        new_env_vars[i] = strdup(env_vars[i]);
+        if (!new_env_vars[i])
+        {
+            // Free already allocated memory in case of failure
+            while (i-- > 0)
+                free(new_env_vars[i]);
+            free(new_env_vars);
+            return (NULL);
+        }
+		i++;
+    }
+    // Set the last element to NULL (to indicate the end of the env_vars array)
+    new_env_vars[i] = NULL;
+    return (new_env_vars);
+}
+
+
+/**
  * @brief Entry point for the minishell program.
  *
  * The main function is responsible for running the main input loop of the shell,
@@ -517,7 +534,14 @@ int	main(int argc, char **argv, char **env_vars)
 
 	data.last_exit_status = 0;
 	data.exit_flag = false;
-	data.env_vars = env_vars;
+	// Duplicate env_vars into dynamic memory
+	data.env_vars = duplicate_env_vars(env_vars);
+	if (!data.env_vars)
+	{
+		printf("Error allocating memory for env_vars");
+		return (1); // Return 1 to indicate an error occurred
+	}
+
 	// Infinite loop to keep the shell running until "exit" is entered
 	while (1)
 	{
@@ -561,6 +585,7 @@ int	main(int argc, char **argv, char **env_vars)
 		{
 			printf("Error tokenizing input!\n");
 			free(input); // Free input string on error
+			free_array_of_strs(data.env_vars);
 			return (1);  // Return 1 to indicate an error occurred
 		}
 
@@ -573,6 +598,7 @@ int	main(int argc, char **argv, char **env_vars)
 			printf("Error parsing commands!\n");
 			free_tokens(&data);               // Free the token array
 			free(input);                      // Free the input string
+			free_array_of_strs(data.env_vars);
 			return (1);                       // Return 1 to indicate an error occurred
 		}
 
@@ -582,6 +608,7 @@ int	main(int argc, char **argv, char **env_vars)
 		{
 			free_tokens(&data); // Free the token array
 			free(input);                      // Free the input string
+			free_array_of_strs(data.env_vars);
 			return (data.last_exit_status);        // Return 1 to indicate an error occurred
 		}
 

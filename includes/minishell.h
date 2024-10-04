@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 13:28:27 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/04 15:36:43 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ int		builtin_echo(t_command *cmd);
 int		builtin_exit(t_command *cmd, t_data *data);
 //int		builtin_echo(t_command *cmd, int last_exit_status);
 int		builtin_pwd(void);
+int		builtin_export(t_command *cmd, t_data *data);
+int		builtin_env(t_data *data);
 void	free_tokens(t_data *data);
 //int		lexer(char *input, t_token **tokens_ptr, int token_count);
 int		lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status);
