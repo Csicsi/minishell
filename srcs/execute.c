@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 15:38:34 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/05 20:15:47 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void	free_cmd_list(t_command *cmd_list)
 		tmp = cmd_list;
 
 		// Free command name if allocated
-		if (cmd_list->name) {
+		if (cmd_list->name != NULL) {
 			free(cmd_list->name);
 			cmd_list->name = NULL;
 		}
@@ -401,6 +401,8 @@ int execute_cmd_list(t_data *data)
 static t_command *parse_tokens(t_token *tokens, int token_count)
 {
 	t_command *cmd = malloc(sizeof(t_command));  // Allocate memory for the first command structure
+	if (!cmd)
+		return (NULL);
 	t_command *current_cmd = cmd;                // Set current command pointer to the first command
 	int i = 0, arg_index = 0;                    // Initialize counters for token and argument indices
 
@@ -510,8 +512,8 @@ int	check_for_unclosed_quotes(char *cursor)
  * @brief Creates a copy of the env_vars (entered as 3rd argument in main) on dynamic memory
  *
  * The malloc-ed copy of environment variables passed as a third argument to the main is useful
- * for builtin functions export and unset, which add/remove env vars. Clearer coding practise to have 
- * everything on dynamic memory, rather than having to keep track of what is on stack and what is 
+ * for builtin functions export and unset, which add/remove env vars. Clearer coding practise to have
+ * everything on dynamic memory, rather than having to keep track of what is on stack and what is
  * dynamic/ needs to be freed
  *
  * @return char **Copy of env_vars on dynamic memory
@@ -628,6 +630,13 @@ int	main(int argc, char **argv, char **env_vars)
 			free(input); // Free input string on error
 			free_array_of_strs(data.env_vars);
 			return (1);  // Return 1 to indicate an error occurred
+		}
+
+		if (check_commands_in_tokens(data.tokens) == -1)
+		{
+			free(input); // Free input string on error
+			free_array_of_strs(data.env_vars);
+			continue ;
 		}
 
 		// Parse the tokens into a linked list of commands

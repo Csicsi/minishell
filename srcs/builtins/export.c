@@ -14,7 +14,7 @@ int	builtin_export(t_command *cmd, t_data *data)
 	int		i;
 	char	*equal_sign;
 	char	*varname;
-	char	*value;
+	//char	*value;
 
 	char	*varname_value = cmd->args[1];
 	char	**envp = data->env_vars;
@@ -30,7 +30,7 @@ int	builtin_export(t_command *cmd, t_data *data)
 
 	// Split the input into variable name and value
 	varname = ft_substr(varname_value, 0, equal_sign - varname_value); // Get the part before '='
-	value = equal_sign + 1; // Get the part after '='
+	//value = equal_sign + 1; // Get the part after '='
 
 	// Search for the variable in the environment list
 	i = 0;

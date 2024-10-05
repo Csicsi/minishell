@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 15:36:43 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/05 20:13:05 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status);
 char	*ft_strjoin_pipex(char *s1, char *s2);
 void	free_array_of_strs(char **tab);
 char	*free_null(char *str);
+int		check_commands_in_tokens(t_token *tokens);
 
 
 #endif

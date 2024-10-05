@@ -489,3 +489,43 @@ void	free_tokens(t_data *data)
 	}
 	free(data->tokens); // Free the token array
 }
+
+/**
+ * @brief Checks if the first token and the token after a pipe are valid commands.
+ *
+ * This function loops through the tokens and ensures that the first token and
+ * any token immediately following a pipe ('|') is a word (command).
+ * If any of these tokens is not a command, it returns an error.
+ *
+ * @param tokens The array of tokens to check.
+ * @return int Returns 0 if all checks pass, otherwise -1 for an error.
+ */
+int check_commands_in_tokens(t_token *tokens)
+{
+    int i = 0;
+
+    // Ensure the first token is a valid command
+    if (tokens[i].type != TOKEN_WORD)
+    {
+        fprintf(stderr, "Error: Expected command at the start\n");
+        return (-1);
+    }
+
+    // Loop through the rest of the tokens
+    while (tokens[i].type != TOKEN_END)
+    {
+        // If a pipe is found, the next token must be a command
+        if (tokens[i].type == TOKEN_OPERATOR && strcmp(tokens[i].value, "|") == 0)
+        {
+            i++; // Move to the next token after the pipe
+            if (tokens[i].type != TOKEN_WORD)
+            {
+                fprintf(stderr, "Error: Expected command after pipe\n");
+                return (-1);
+            }
+        }
+        i++; // Move to the next token
+    }
+
+    return 0; // All checks passed
+}
