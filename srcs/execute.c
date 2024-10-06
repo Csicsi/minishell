@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 15:38:34 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/06 15:19:17 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,12 +277,19 @@ int execute_cmd_list(t_data *data)
     current = data->cmd_list;
     prev_fd = -1;
 
-	if (strcmp(current->name, "exit") == 0 && current->next == NULL)
+	if (current->name != NULL && strcmp(current->name, "exit") == 0 && current->next == NULL)
     {
         data->last_exit_status = execute_builtin(current, data, true); // Execute exit command directly
         free_cmd_list(data->cmd_list);
         return (data->last_exit_status); // Return exit status directly
     }
+	// Execute built-in functions like export, unset (and cd?) directly in the parent process. 
+	// Otherwise, env vars would only be modified in the child process, which then is terminated, and the env vars in the parent are unchanged
+	if (current->name != NULL && (strcmp(current->name, "export") == 0 && current->next == NULL))
+    {
+		data->last_exit_status = execute_builtin(current, data, false);
+	}
+	
     while (current != NULL) // Loop through each command in the list
     {
 
