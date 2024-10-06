@@ -53,6 +53,7 @@ void	sort_env_vars(char **env_vars, int count)
 	}
 }
 
+
 /**
  * @brief Helper function for 'handle_export_wo_args' to print env variables
  * @return void
@@ -61,6 +62,9 @@ void	print_sorted_env_vars(char **env_vars)
 {
 	int		i;
 	char	*equal_sign;
+	// Split the input into variable name and value
+	varname = ft_substr(varname_value, 0, equal_sign - varname_value); // Get the part before '='
+	//value = equal_sign + 1; // Get the part after '='
 
 	i = 0;
 	while (env_vars[i] != NULL)

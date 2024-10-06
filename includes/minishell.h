@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
 /*   Updated: 2024/10/06 18:38:15 by krabitsc         ###   ########.fr       */
@@ -89,6 +89,7 @@ char	*normalize_path(const char *path);
 char	*ft_strjoin_pipex(char *s1, char *s2);
 void	free_array_of_strs(char **tab);
 char	*free_null(char *str);
+int		check_commands_in_tokens(t_token *tokens);
 
 
 #endif
