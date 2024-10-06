@@ -6,7 +6,7 @@
 #    By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 11:03:22 by dcsicsak          #+#    #+#              #
-#    Updated: 2024/10/06 17:29:02 by krabitsc         ###   ########.fr        #
+#    Updated: 2024/10/04 15:36:56 by krabitsc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,15 +18,7 @@ LDFLAGS = -lreadline
 LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRCS = srcs/lexer.c \
-	   srcs/execute.c \
-	   srcs/builtins/echo.c \
-	   srcs/builtins/pwd.c \
-	   srcs/builtins/export.c \
-	   srcs/builtins/unset.c \
-	   srcs/builtins/env.c \
-	   srcs/builtins/exit.c \
-	   srcs/pure_utilities.c
+SRCS = srcs/execute.c srcs/builtins/echo.c srcs/builtins/exit.c srcs/builtins/pwd.c srcs/builtins/env.c srcs/builtins/export.c srcs/lexer.c srcs/pure_utilities.c
 
 OBJS = $(SRCS:.c=.o)
 
