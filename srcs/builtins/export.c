@@ -1,6 +1,28 @@
 #include "../includes/minishell.h"
 
 /**
+ * @brief Checks validity of environment variable name
+ *
+ * Checks if the environment variable has a valid name according to POSIX standard
+ *
+ * @param cmd
+ * @param data->env_vars The environment variables array.
+ * @return int Returns 0 on success, or 1 if an error occurs.
+ */
+static int	is_valid_env_var_name(const char *name)
+{
+    if (!ft_isalpha(*name) && *name != '_')  // Must start with letter or underscore
+        return (0);
+    while (*name) {
+        if (!ft_isalnum(*name) && *name != '_')  // Must be alphanumeric or underscore
+            return (0);
+        name++;
+    }
+    return (1);
+}
+
+
+/**
  * @brief Helper function that sorts env variables alphabetically
  * This function sorts the char** of environment variables alphabetically. 
  * Adopted from Piscine C06 ft_sort_params.c
@@ -120,86 +142,106 @@ static int	handle_export_wo_args(t_command *cmd, t_data *data)
 int	builtin_export(t_command *cmd, t_data *data)
 {
 	int		i;
+	int		arg;
 	char	*equal_sign;
 	char	*varname;
-	char	*value;
-
-	char	*varname_value = cmd->args[1];
-
- 	/*
-	// printing stuff (just debugging)
-    i = 0;
-	while (data->env_vars[i] != NULL)
-	{
-		printf("%d: %s\n", i, data->env_vars[i]);
-	    i++;
-	}
-	printf("%d: %s\n", i, data->env_vars[i]);
-	printf("nr of env vars, beginning: %d\n", i);
-	*/
-
-	if (varname_value == NULL)	
+	//char	*value;
+	char	*varname_value;
+	int		encountered_invalid_varname = 0;
+	
+	if (cmd->args[1] == NULL)	
 		return (handle_export_wo_args(cmd, data));
 
-	// Find the '=' sign in the argument
-	if (ft_strchr(varname_value, '='))
+	// Process each argument provided in the export command
+	arg = 1;
+	while (cmd->args[arg] != NULL)
 	{
-		equal_sign = ft_strchr(varname_value, '=');
-		// Split the input into variable name and value
-		varname = ft_substr(varname_value, 0, equal_sign - varname_value); // Get the part before '='
-		value = equal_sign + 1; // Get the part after '='
-	}
-	else
-		varname = strdup(varname_value);
-
-	// Search for the variable in the environment list
-	i = 0;
-	while (data->env_vars[i] != NULL)
-	{
-		// Compare the varname with the environment variable before '=' 
-		// (or for declared but unassigned env_var (e.g. with "export TEST", varname_value is equal to TEST):
-		// compare the varname_value with the environment variable before \0)
-		if (ft_strncmp(data->env_vars[i], varname, ft_strlen(varname)) == 0 && 
-			(data->env_vars[i][ft_strlen(varname)] == '=' || data->env_vars[i][ft_strlen(varname)] == '\0'))
-			break ;
-		i++;
-	}
-	// If found, update its value
-	if (data->env_vars[i] != NULL)
-	{
-		// Free the old value before assigning a new one
-		free(data->env_vars[i]);
-		data->env_vars[i] = strdup(varname_value);  // Duplicate the string into data->env_vars[i]
-		if (!data->env_vars[i])
-    		return (1);  // IMPLEMENT CLEAN UP Handle memory allocation failure
-	}
-	// If not found, add it to the environment list
-	else
-	{
-		int	env_count = i; // i is at the end of the data->env_vars list
-		// Allocate space for the new environment variable
-		data->env_vars = realloc(data->env_vars, (env_count + 2) * sizeof(char *)); // +1 for the new variable (since the count for NULL remains included))
-		if (!data->env_vars)
-			return (1); // Handle memory allocation failure
-		data->env_vars[env_count] = strdup(varname_value);  // Duplicate the string into data->env_vars[env_count]
-		if (!data->env_vars[env_count])
-    		return (1);  // IMPLEMENT CLEAN UP Handle memory allocation failure
-		data->env_vars[env_count + 1] = NULL; // Null-terminate the array
-	}
-	// Free the temporary varname allocation
-	free(varname);
-
- 	/*
-	// printing stuff (just debugging)
-    i = 0;
-	while (data->env_vars[i] != NULL)
-	{
+		varname_value = cmd->args[arg];
+		
+ 		/*
+		// printing stuff (just debugging)
+    	i = 0;
+		while (data->env_vars[i] != NULL)
+		{
+			printf("%d: %s\n", i, data->env_vars[i]);
+		    i++;
+		}
 		printf("%d: %s\n", i, data->env_vars[i]);
-	    i++;
-	}
-	printf("%d: %s\n", i, data->env_vars[i]);
-	printf("nr of env vars, end      : %d\n", i);
-	*/
+		printf("nr of env vars, beginning: %d\n", i);
+		*/
 
+		// Find the '=' sign in the argument
+		equal_sign = ft_strchr(varname_value, '=');
+		if (equal_sign)
+		{
+			// Split the input into variable name and value
+			varname = ft_substr(varname_value, 0, equal_sign - varname_value); // Get the part before '='
+			//value = equal_sign + 1; // Get the part after '=': I actually never need to use it
+		}
+		else
+			varname = strdup(varname_value);
+
+		// Check if the variable name is valid
+		if (!is_valid_env_var_name(varname))
+		{
+			fprintf(stderr, "export: `%s`: not a valid identifier\n", varname);
+			free(varname);
+			encountered_invalid_varname = 1; // set flag to 1 and return exit code 1 at the end of the function
+			arg++;
+			continue;  // Skip invalid argument and move to the next one
+		}
+
+		// Search for the variable in the environment list
+		i = 0;
+		while (data->env_vars[i] != NULL)
+		{
+			// Compare the varname with the environment variable before '=' 
+			// (or for declared but unassigned env_var (e.g. with "export TEST", varname_value is equal to TEST):
+			// compare the varname_value with the environment variable before \0)
+			if (ft_strncmp(data->env_vars[i], varname, ft_strlen(varname)) == 0 && 
+				(data->env_vars[i][ft_strlen(varname)] == '=' || data->env_vars[i][ft_strlen(varname)] == '\0'))
+				break ;
+			i++;
+		}
+		// If found, update its value
+		if (data->env_vars[i] != NULL)
+		{
+			// Free the old value before assigning a new one
+			free(data->env_vars[i]);
+			data->env_vars[i] = strdup(varname_value);  // Duplicate the string into data->env_vars[i]
+			if (!data->env_vars[i])
+    			return (1);  // IMPLEMENT CLEAN UP Handle memory allocation failure
+		}
+		// If not found, add it to the environment list
+		else
+		{
+			int	env_count = i; // i is at the end of the data->env_vars list
+			// Allocate space for the new environment variable
+			data->env_vars = realloc(data->env_vars, (env_count + 2) * sizeof(char *)); // +1 for the new variable (since the count for NULL remains included))
+			if (!data->env_vars)
+				return (1); // Handle memory allocation failure
+			data->env_vars[env_count] = strdup(varname_value);  // Duplicate the string into data->env_vars[env_count]
+			if (!data->env_vars[env_count])
+    			return (1);  // IMPLEMENT CLEAN UP Handle memory allocation failure
+			data->env_vars[env_count + 1] = NULL; // Null-terminate the array
+		}
+		// Free the temporary varname allocation
+		free(varname);
+		// Move to the next argument in the export command
+		arg++;
+ 		/*
+		// printing stuff (just debugging)
+    	i = 0;
+		while (data->env_vars[i] != NULL)
+		{
+			printf("%d: %s\n", i, data->env_vars[i]);
+	    	i++;
+		}
+		printf("%d: %s\n", i, data->env_vars[i]);
+		printf("nr of env vars, end      : %d\n", i);
+		*/
+	}
+	if (encountered_invalid_varname == 1)
+		return (1);
 	return (0);
 }

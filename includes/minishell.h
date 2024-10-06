@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/04 15:36:43 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/06 18:38:15 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,20 +67,25 @@ typedef struct s_data
 	t_command	*cmd_list;
 }	t_data;
 
-int		builtin_cd(t_command *cmd);
-char	*resolve_cdpath_if_needed(const char *path);
-int		update_directory_env(const char *cwd, char ***env_vars);
-char	*normalize_path(const char *path);
-int		builtin_echo(t_command *cmd);
-int		builtin_exit(t_command *cmd, t_data *data, bool print_exit);
-int		builtin_pwd(void);
-int		builtin_export(t_command *cmd, t_data *data);
-int		builtin_env(t_data *data);
+/* functions pretaining to lexer.c */
 void	free_tokens(t_data *data);
 int		lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status);
 int		count_tokens(char *cursor);
 char	*expand_env_var(char *cursor, int last_exit_status);
 char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status);
+/* functions pretaining to lexer.c */
+/* implementing the builtin functions */
+int		builtin_echo(t_command *cmd);
+int		builtin_cd(t_command *cmd);
+int		builtin_pwd(void);
+int		builtin_export(t_command *cmd, t_data *data);
+int		builtin_unset(t_command *cmd, t_data *data);
+int		builtin_env(t_data *data);
+int		builtin_exit(t_command *cmd, t_data *data, bool print_exit);
+char	*resolve_cdpath_if_needed(const char *path);
+int		update_directory_env(const char *cwd, char ***env_vars);
+char	*normalize_path(const char *path);
+/* pure utilities/ helper functions */
 char	*ft_strjoin_pipex(char *s1, char *s2);
 void	free_array_of_strs(char **tab);
 char	*free_null(char *str);

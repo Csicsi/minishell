@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/06 15:19:17 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/06 19:05:58 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,6 @@ int	builtin_cd(t_command *cmd)
 {
 	(void)cmd; // Ignore unused parameter
 	printf("builtin_cd: Changing Directory...\n"); // Placeholder message
-	return (0);
-}
-
-/**
- * @brief Handles the `unset` builtin command.
- *
- * This function unsets or removes an environment variable.
- *
- * @param cmd The command structure containing arguments.
- * @return int Always returns 0 for success.
- */
-int	builtin_unset(t_command *cmd)
-{
-	(void)cmd; // Ignore unused parameter
-	printf("builtin_unset: Unsetting environment variable...\n"); // Placeholder message
 	return (0);
 }
 
@@ -90,7 +75,7 @@ int	execute_builtin(t_command *cmd, t_data *data, bool print_exit)
 	else if (ft_strncmp(cmd->name, "export", 7) == 0)
 		return (builtin_export(cmd, data));
 	else if (ft_strncmp(cmd->name, "unset", 6) == 0)
-		return (builtin_unset(cmd));
+		return (builtin_unset(cmd, data));
 	else if (ft_strncmp(cmd->name, "pwd", 4) == 0)
 		return (builtin_pwd());
 	return (1); // Return 1 if the command is not recognized as a builtin
@@ -285,7 +270,8 @@ int execute_cmd_list(t_data *data)
     }
 	// Execute built-in functions like export, unset (and cd?) directly in the parent process. 
 	// Otherwise, env vars would only be modified in the child process, which then is terminated, and the env vars in the parent are unchanged
-	if (current->name != NULL && (strcmp(current->name, "export") == 0 && current->next == NULL))
+	if (current->name != NULL && ((strcmp(current->name, "export") == 0 || strcmp(current->name, "unset") == 0 )
+			&& current->next == NULL))
     {
 		data->last_exit_status = execute_builtin(current, data, false);
 	}
@@ -336,8 +322,9 @@ int execute_cmd_list(t_data *data)
 					data->last_exit_status = 1;
                     exit (data->last_exit_status); // Exit the child normally without terminating the shell
                 }
-
-                data->last_exit_status = execute_builtin(current, data, false);
+				
+				if (!((strcmp(current->name, "export") == 0) && !(strcmp(current->name, "unset") == 0 )))
+                	data->last_exit_status = execute_builtin(current, data, false);
 
                 if (data->exit_flag) // If it's exit, terminate the shell if there is no pipe
                 {
