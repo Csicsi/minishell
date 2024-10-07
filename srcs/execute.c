@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   execute.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/05 20:15:47 by csicsi           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
@@ -79,19 +68,19 @@ int	is_builtin(char *command_name)
  */
 int	execute_builtin(t_command *cmd, t_data *data, bool print_exit)
 {
-	if (ft_strncmp(cmd->name, "cd", 3) == 0)
+	if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
 		return (builtin_cd(cmd));
-	else if (ft_strncmp(cmd->name, "echo", 5) == 0)
+	else if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 		return (builtin_echo(cmd));
-	else if (ft_strncmp(cmd->name, "exit", 5) == 0)
+	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
 		return (builtin_exit(cmd, data, print_exit));
-	else if (ft_strncmp(cmd->name, "env", 4) == 0)
+	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 		return (builtin_env(data));
-	else if (ft_strncmp(cmd->name, "export", 7) == 0)
+	else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
 		return (builtin_export(cmd, data));
-	else if (ft_strncmp(cmd->name, "unset", 6) == 0)
+	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
 		return (builtin_unset(cmd));
-	else if (ft_strncmp(cmd->name, "pwd", 4) == 0)
+	else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
 		return (builtin_pwd());
 	return (1); // Return 1 if the command is not recognized as a builtin
 }
@@ -110,12 +99,6 @@ void	free_cmd_list(t_command *cmd_list)
 	while (cmd_list)
 	{
 		tmp = cmd_list;
-
-		// Free command name if allocated
-		if (cmd_list->name != NULL) {
-			free(cmd_list->name);
-			cmd_list->name = NULL;
-		}
 
 		// Free each argument in the args array if allocated
 		if (cmd_list->args)
@@ -229,7 +212,7 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 	}
 
 	// Check if the command is a builtin and execute it
-	if (is_builtin(cmd->name))
+	if (is_builtin(cmd->args[0]))
 		return (execute_builtin(cmd, data, false));
 
 	else
@@ -277,7 +260,7 @@ int execute_cmd_list(t_data *data)
     current = data->cmd_list;
     prev_fd = -1;
 
-	if (strcmp(current->name, "exit") == 0 && current->next == NULL)
+	if (strcmp(current->args[0], "exit") == 0 && current->next == NULL)
     {
         data->last_exit_status = execute_builtin(current, data, true); // Execute exit command directly
         free_cmd_list(data->cmd_list);
@@ -318,10 +301,10 @@ int execute_cmd_list(t_data *data)
             }
 
             // Execute the command (built-in or external)
-            if (is_builtin(current->name)) // If built-in, execute it in the child
+            if (is_builtin(current->args[0])) // If built-in, execute it in the child
             {
                 // Check if the builtin is "exit" and there are other commands in the pipeline
-                if (strcmp(current->name, "exit") == 0)
+                if (strcmp(current->args[0], "exit") == 0)
                 {
                     // Free resources but don't terminate the shell
                     free_cmd_list(data->cmd_list);
@@ -407,7 +390,6 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 	int i = 0, arg_index = 0;                    // Initialize counters for token and argument indices
 
 	// Initialize the first command's fields to default values
-	current_cmd->name = NULL;                    // The name of the command is set later
 	current_cmd->args = malloc(sizeof(char *) * (token_count + 1));  // Allocate memory for argument list
 	current_cmd->input = NULL;                   // No input redirection by default
 	current_cmd->output = NULL;                  // No output redirection by default
@@ -424,15 +406,6 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 		// Handle command words (non-operator tokens)
 		if (tokens[i].type == TOKEN_WORD)
 		{
-			/*
-			if (current_cmd->name == NULL)
-				current_cmd->name = strdup(tokens[i].value);  // First word is the command name
-			else
-				current_cmd->args[arg_index++] = strdup(tokens[i].value);  // Subsequent words are arguments
-			*/
-			// corrected the above (as cmd args were constructed incorrectly, e.g. ls -la gave args[0] = "-la" )
-			if (current_cmd->name == NULL)
-				current_cmd->name = strdup(tokens[i].value);  // First word is the command name
 			current_cmd->args[arg_index++] = strdup(tokens[i].value);  // First word and subsequent words are arguments
 		}
 		// Handle operators (such as pipes and redirection)

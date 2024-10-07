@@ -485,9 +485,13 @@ void	free_tokens(t_data *data)
 	for (i = 0; i < data->token_count; i++)
 	{
 		if (data->tokens[i].value)
+		{
 			free(data->tokens[i].value); // Free each token's value
+			data->tokens[i].value = NULL;
+		}
 	}
 	free(data->tokens); // Free the token array
+	data->tokens = NULL;
 }
 
 /**
