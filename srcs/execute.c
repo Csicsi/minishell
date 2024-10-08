@@ -560,13 +560,21 @@ int	main(int argc, char **argv, char **env_vars)
 		data.token_count = count_tokens(input);
 
 		// Tokenize the input string and check for errors during lexing
-		if (lexer(input, &data.tokens, data.token_count, data.last_exit_status) == -1)
+		//if (lexer(input, &data.tokens, data.token_count, data.last_exit_status) == -1)
+		if (lexer(input, &data.tokens, &data, data.last_exit_status) == -1)
 		{
 			printf("Error tokenizing input!\n");
 			free(input); // Free input string on error
 			free_tokens(&data);
 			return (1);  // Return 1 to indicate an error occurred
 		}
+
+		/*
+		printf("data.tokens[0].type:  %d\n", data.tokens[0].type);
+		printf("data.tokens[0].value: %s\n", data.tokens[0].value);
+		printf("data.tokens[1].type:  %d\n", data.tokens[1].type);
+		printf("data.tokens[1].value: %s\n", data.tokens[1].value);
+		*/
 
 		if (check_commands_in_tokens(data.tokens) == -1)
 		{
