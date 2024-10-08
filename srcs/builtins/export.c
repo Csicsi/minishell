@@ -21,7 +21,6 @@ static int	is_valid_env_var_name(const char *name)
     return (1);
 }
 
-
 /**
  * @brief Helper function that sorts env variables alphabetically
  * This function sorts the char** of environment variables alphabetically.
@@ -158,18 +157,6 @@ int	builtin_export(t_command *cmd, t_data *data)
 	{
 		varname_value = cmd->args[arg];
 
- 		/*
-		// printing stuff (just debugging)
-    	i = 0;
-		while (data->env_vars[i] != NULL)
-		{
-			printf("%d: %s\n", i, data->env_vars[i]);
-		    i++;
-		}
-		printf("%d: %s\n", i, data->env_vars[i]);
-		printf("nr of env vars, beginning: %d\n", i);
-		*/
-
 		// Find the '=' sign in the argument
 		equal_sign = ft_strchr(varname_value, '=');
 		if (equal_sign)
@@ -229,17 +216,6 @@ int	builtin_export(t_command *cmd, t_data *data)
 		free(varname);
 		// Move to the next argument in the export command
 		arg++;
- 		/*
-		// printing stuff (just debugging)
-    	i = 0;
-		while (data->env_vars[i] != NULL)
-		{
-			printf("%d: %s\n", i, data->env_vars[i]);
-	    	i++;
-		}
-		printf("%d: %s\n", i, data->env_vars[i]);
-		printf("nr of env vars, end      : %d\n", i);
-		*/
 	}
 	if (encountered_invalid_varname == 1)
 		return (1);

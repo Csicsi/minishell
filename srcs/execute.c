@@ -1,34 +1,6 @@
 #include "../includes/minishell.h"
 
 /**
- * @brief Frees the environment variables array.
- *
- * @param env_vars Pointer to the environment variable array.
- */
-void free_env_vars(char ***env_vars)
-{
-    int i = 0;
-
-    // Check if env_vars is already NULL
-    if (*env_vars == NULL)
-        return;
-
-    // Free each environment variable string and set it to NULL
-    while ((*env_vars)[i] != NULL)
-    {
-        free((*env_vars)[i]);
-        (*env_vars)[i] = NULL;  // Set each element to NULL after freeing
-        i++;
-    }
-
-    // Free the array of pointers itself
-    free(*env_vars);
-
-    // Set the env_vars pointer to NULL to avoid double free
-    *env_vars = NULL;
-}
-
-/**
  * @brief Checks if a command is a recognized builtin.
  *
  * This function compares the command name with known builtins.
@@ -134,7 +106,6 @@ void	free_cmd_list(t_command *cmd_list)
  * @param cmd_args The command structure containing arguments.
  * @return char * The path where the cmd (executable) was found
  */
-
 char	*find_cmd_path(char **cmd_args)
 {
 	int		i;
@@ -217,7 +188,6 @@ int execute_single_cmd(t_command *cmd, t_data *data)
         // If the command is not found, print an error and exit
         fprintf(stderr, "%s: command not found\n", cmd->args[0]);
         free_cmd_list(data->cmd_list); // Free the command list
-        free_env_vars(&data->env_vars); // Free the environment variables
         exit(127); // Exit with 127 to indicate "command not found"
     }
 
@@ -228,7 +198,6 @@ int execute_single_cmd(t_command *cmd, t_data *data)
     perror("minishell");
     free(cmd_path); // Free the command path
     free_cmd_list(data->cmd_list); // Free the command list
-    free_env_vars(&data->env_vars); // Free the environment variables
     exit(EXIT_FAILURE); // Exit with a failure status
 }
 
@@ -257,7 +226,7 @@ int execute_cmd_list(t_data *data)
     {
         data->last_exit_status = execute_builtin(current, data, true); // Execute exit command directly
         free_cmd_list(data->cmd_list);
-		free_env_vars(&data->env_vars); // Free the environment variables
+		//free_env_vars(&data->env_vars); // Free the environment variables
         return (data->last_exit_status); // Return exit status directly
     }
 
@@ -274,8 +243,6 @@ int execute_cmd_list(t_data *data)
 
         if (current->next != NULL)
             pipe(pipe_fd); // Create a pipe if there's a next command
-
-
 
 
         pid = fork(); // Fork the process for the current command
@@ -299,7 +266,6 @@ int execute_cmd_list(t_data *data)
                 {
                     perror("minishell: output redirection");
                     free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
-					free_env_vars(&data->env_vars); // Free the environment variables
                     exit(EXIT_FAILURE);
                 }
                 dup2(fd_out, STDOUT_FILENO); // Redirect standard output
@@ -314,7 +280,6 @@ int execute_cmd_list(t_data *data)
                 {
                     // Free resources but don't terminate the shell
                     free_cmd_list(data->cmd_list);
-					free_env_vars(&data->env_vars); // Free the environment variables
 					data->last_exit_status = 1;
                     exit (data->last_exit_status); // Exit the child normally without terminating the shell
                 }
@@ -327,7 +292,6 @@ int execute_cmd_list(t_data *data)
                 if (data->exit_flag) // If it's exit, terminate the shell if there is no pipe
                 {
                     free_cmd_list(data->cmd_list);
-					free_env_vars(&data->env_vars); // Free the environment variables
                     exit(data->last_exit_status);
                 }
                 exit(data->last_exit_status); // Exit with the status of the built-in
@@ -336,7 +300,6 @@ int execute_cmd_list(t_data *data)
             {
                 data->last_exit_status = execute_single_cmd(current, data);
                 free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
-				free_env_vars(&data->env_vars); // Free the environment variables
                 exit(data->last_exit_status);
             }
         }
@@ -357,7 +320,6 @@ int execute_cmd_list(t_data *data)
         {
             perror("minishell: fork"); // If fork fails, print error
             free_cmd_list(data->cmd_list);  // Free memory on error
-			free_env_vars(&data->env_vars); // Free the environment variables
             return (1);
         }
 
@@ -373,7 +335,6 @@ int execute_cmd_list(t_data *data)
     }
 
     free_cmd_list(data->cmd_list);  // Free memory in the parent after all children have finished
-	free_env_vars(&data->env_vars); // Free the environment variables
     return (data->last_exit_status); // Return the exit status of the last command executed
 }
 
@@ -603,7 +564,6 @@ int	main(int argc, char **argv, char **env_vars)
 		{
 			printf("Error tokenizing input!\n");
 			free(input); // Free input string on error
-			free_env_vars(&data.env_vars);  // Free env_vars on error
 			free_tokens(&data);
 			return (1);  // Return 1 to indicate an error occurred
 		}
@@ -612,9 +572,10 @@ int	main(int argc, char **argv, char **env_vars)
 		{
 			free(input); // Free input string on error
 			free_tokens(&data);
-			free_env_vars(&data.env_vars);
 			continue ;
 		}
+
+		fflush(STDIN_FILENO);
 
 		// Parse the tokens into a linked list of commands
 		data.cmd_list = parse_tokens(&data);
@@ -624,7 +585,6 @@ int	main(int argc, char **argv, char **env_vars)
 		{
 			printf("Error parsing commands!\n");
 			free(input);                      // Free the input string
-			free_env_vars(&data.env_vars);
 			free_tokens(&data);
 			return (1);                       // Return 1 to indicate an error occurred
 		}
@@ -635,16 +595,12 @@ int	main(int argc, char **argv, char **env_vars)
 		{
 			free_tokens(&data); // Free the token array
 			free(input);                      // Free the input string
-			free_env_vars(&data.env_vars);
 			return (data.last_exit_status);        // Return exit status
 		}
 
 		// Clean up the token array and free the input string
 		free(input);
 	}
-
-	// Clean up environment variables and any remaining memory at the end of the shell
-	free_env_vars(&data.env_vars);
 
 	return (0); // Return 0 to indicate successful execution of the shell
 }

@@ -48,7 +48,7 @@ int	builtin_exit(t_command *cmd, t_data *data, bool print_exit)
 	data->exit_flag = true;
 
 	// Print exit message
-	if (print_exit)
+	if (isatty(STDIN_FILENO) && print_exit)
 		fprintf(stderr, "exit\n");
 
 	// Handle too many arguments error
