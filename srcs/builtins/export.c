@@ -28,9 +28,14 @@ int	builtin_export(t_command *cmd, t_data *data)
 		return (1);
 	}
 
-	// Split the input into variable name and value
-	varname = ft_substr(varname_value, 0, equal_sign - varname_value); // Get the part before '='
-	//value = equal_sign + 1; // Get the part after '='
+/**
+ * @brief Helper function for 'handle_export_wo_args' to print env variables
+ * @return void
+ */
+void	print_sorted_env_vars(char **env_vars)
+{
+	int		i;
+	char	*equal_sign;
 
 	// Search for the variable in the environment list
 	i = 0;

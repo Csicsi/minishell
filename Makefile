@@ -1,4 +1,3 @@
-
 NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
@@ -7,7 +6,17 @@ LDFLAGS = -lreadline
 LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRCS = srcs/execute.c srcs/builtins/echo.c srcs/builtins/exit.c srcs/builtins/pwd.c srcs/builtins/env.c srcs/builtins/export.c srcs/lexer.c srcs/pure_utilities.c
+SRCS = srcs/lexer.c \
+	   srcs/execute.c \
+	   srcs/builtins/echo.c \
+	   srcs/builtins/cd.c \
+	   srcs/builtins/cd_utils.c \
+	   srcs/builtins/pwd.c \
+	   srcs/builtins/export.c \
+	   srcs/builtins/unset.c \
+	   srcs/builtins/env.c \
+	   srcs/builtins/exit.c \
+	   srcs/pure_utilities.c
 
 OBJS = $(SRCS:.c=.o)
 

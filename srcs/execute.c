@@ -1,21 +1,6 @@
 #include "../includes/minishell.h"
 
 /**
- * @brief Handles the `cd` builtin command.
- *
- * This function changes the current working directory.
- *
- * @param cmd The command structure containing arguments.
- * @return int Always returns 0 for success.
- */
-int	builtin_cd(t_command *cmd)
-{
-	(void)cmd; // Ignore unused parameter
-	printf("builtin_cd: Changing Directory...\n"); // Placeholder message
-	return (0);
-}
-
-/**
  * @brief Handles the `unset` builtin command.
  *
  * This function unsets or removes an environment variable.
@@ -290,11 +275,23 @@ int execute_cmd_list(t_data *data)
 		free_env_vars(&data->env_vars); // Free the environment variables
         return (data->last_exit_status); // Return exit status directly
     }
+
+	// Execute built-in functions like export, unset (and cd?) directly in the parent process. 
+	// Otherwise, env vars would only be modified in the child process, which then is terminated, and the env vars in the parent are unchanged
+	if (current->name != NULL && ((strcmp(current->name, "export") == 0 || strcmp(current->name, "unset") == 0
+		|| strcmp(current->name, "cd") == 0) && current->next == NULL))
+    {
+		data->last_exit_status = execute_builtin(current, data, false);
+	}
+	
     while (current != NULL) // Loop through each command in the list
     {
 
         if (current->next != NULL)
             pipe(pipe_fd); // Create a pipe if there's a next command
+
+
+
 
         pid = fork(); // Fork the process for the current command
         if (pid == 0) // In child process
@@ -337,7 +334,10 @@ int execute_cmd_list(t_data *data)
                     exit (data->last_exit_status); // Exit the child normally without terminating the shell
                 }
 
-                data->last_exit_status = execute_builtin(current, data, false);
+				if (!(strcmp(current->name, "export") == 0) && !(strcmp(current->name, "unset") == 0)
+					&& !(strcmp(current->name, "cd") == 0))
+                	data->last_exit_status = execute_builtin(current, data, false);
+
 
                 if (data->exit_flag) // If it's exit, terminate the shell if there is no pipe
                 {
