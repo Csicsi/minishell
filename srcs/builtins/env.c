@@ -14,7 +14,10 @@
 int	builtin_env(t_data *data)
 {
     int		i;
-	char	**envp = data->env_vars;	
+	char	**envp = data->env_vars;
+
+	if (!data || !data->env_vars)
+    	return (1);  // Return 1 to indicate an error
 
     // Loop through the environment variables
     i = 0;

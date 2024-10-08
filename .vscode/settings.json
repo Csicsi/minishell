@@ -8,6 +8,7 @@
 		"tuple": "c",
 		"type_traits": "c",
 		"utility": "c",
-		"minishell.h": "c"
+		"minishell.h": "c",
+		"typeinfo": "c"
 	}
 }
