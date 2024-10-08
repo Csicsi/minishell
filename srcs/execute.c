@@ -493,6 +493,57 @@ char **duplicate_env_vars(char **env_vars)
     return (new_env_vars);
 }
 
+void handle_sigint(int sig)
+{
+    (void)sig;
+    // Print a newline to move to the next line
+    write(STDOUT_FILENO, "\n", 1);
+    // Reissue the prompt on a new line
+    rl_on_new_line();
+    rl_replace_line("", 0);
+    rl_redisplay();
+}
+
+/**
+ * @brief Prints the tokens after lexing for debugging purposes.
+ *
+ * This function goes through the array of tokens and prints their types and values
+ * for each token, allowing you to inspect the output of the lexer.
+ *
+ * @param tokens The array of tokens.
+ */
+/*void print_tokens(t_token *tokens)
+{
+    int i = 0;
+
+    printf("Tokens after lexing:\n");
+    while (tokens[i].type != TOKEN_END)
+    {
+        printf("Token %d: Type = ", i);
+        switch (tokens[i].type)
+        {
+            case TOKEN_WORD:
+                printf("WORD, ");
+                break;
+            case TOKEN_OPERATOR:
+                printf("OPERATOR, ");
+                break;
+            case TOKEN_DOT:
+                printf("DOT, ");
+                break;
+            case TOKEN_DOTDOT:
+                printf("DOTDOT, ");
+                break;
+            default:
+                printf("UNKNOWN, ");
+                break;
+        }
+
+        printf("Value = '%s'\n", tokens[i].value ? tokens[i].value : "(null)");
+        i++;
+    }
+}*/
+
 /**
  * @brief Entry point for the minishell program.
  *
@@ -513,6 +564,9 @@ int	main(int argc, char **argv, char **env_vars)
 	(void)argc;
 	(void)argv;
 
+	// Set up signal handlers
+    signal(SIGINT, handle_sigint);   // Handle Ctrl+C
+
 	data.last_exit_status = 0;
 	data.exit_flag = false;
 	// Duplicate env_vars into dynamic memory
@@ -532,7 +586,7 @@ int	main(int argc, char **argv, char **env_vars)
 		// If the user inputs Ctrl-D (EOF), exit the shell
 		if (input == NULL)
 		{
-			printf("Exiting minishell...\n");
+			fprintf(stderr, "exit\n");
 			break;
 		}
 
@@ -568,14 +622,14 @@ int	main(int argc, char **argv, char **env_vars)
 			return (1);  // Return 1 to indicate an error occurred
 		}
 
+		//print_tokens(data.tokens);
+
 		if (check_commands_in_tokens(data.tokens) == -1)
 		{
 			free(input); // Free input string on error
 			free_tokens(&data);
 			continue ;
 		}
-
-		fflush(STDIN_FILENO);
 
 		// Parse the tokens into a linked list of commands
 		data.cmd_list = parse_tokens(&data);

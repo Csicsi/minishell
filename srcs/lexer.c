@@ -202,27 +202,28 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
     int len = 0;
     char *expanded;
 
-    // Measure the length of the quoted string, considering expansions
+    // Temporarily allocate memory based on the raw content before expanding variables
     while (start[len] && start[len] != '"')
     {
+        // Handle escaped characters within double quotes (e.g., \", \$, \\)
         if (start[len] == '\\' && (start[len + 1] == '"' || start[len + 1] == '$' || start[len + 1] == '\\'))
-            len++; // Skip escape sequences
+            len++; // Skip the escape character and the next one
         len++;
     }
 
-    // Temporarily allocate memory based on the raw content before expanding variables
-    char *temp = malloc(len + 1); // +1 for the null terminator
-    int i = 0;
+    // Allocate temporary buffer for the raw string content (before expansion)
+    char *temp = malloc(len + 1); // +1 for null-terminator
+    if (!temp)
+        return NULL;
 
-    // Extract the raw content while handling escape sequences
+    int i = 0;
     cursor++; // Move past the opening double quote
     while (*cursor && *cursor != '"')
     {
-        if (*cursor == '\\')
+        if (*cursor == '\\' && (*(cursor + 1) == '"' || *(cursor + 1) == '$' || *(cursor + 1) == '\\'))
         {
-            cursor++;
-            if (*cursor == '"' || *cursor == '$' || *cursor == '\\')
-                temp[i++] = *cursor; // Handle escape characters
+            // Handle escaped characters
+            temp[i++] = *(++cursor);
         }
         else
         {
@@ -230,13 +231,13 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
         }
         cursor++;
     }
-    temp[i] = '\0'; // Null-terminate the raw content
+    temp[i] = '\0'; // Null-terminate the temporary string
 
-    // Now expand any environment variables in the raw content
+    // Expand any environment variables in the raw content
     expanded = expand_env_var(temp, last_exit_status);
-    free(temp); // Free the temporary raw content
+    free(temp); // Free the raw string
 
-    // Allocate the exact amount of memory for the expanded result
+    // Assign the expanded string to the token value
     token->value = strdup(expanded);
     free(expanded); // Free the expanded result
 
@@ -404,22 +405,41 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
 
 		if (i >= token_count)
 			break;
+
 		// Handle double-quoted strings
 		if (*cursor == '"')
 		{
+			// Check if the next character is also a double quote (i.e., empty quotes "")
+			if (*(cursor + 1) == '"')
+			{
+				cursor += 2; // Skip both the opening and closing quotes
+				continue;    // Do not create a token for empty quotes
+			}
+
+			// Otherwise, process the double-quoted string
 			tokens[i].type = TOKEN_WORD;
 			cursor = extract_double_quoted_word(cursor, &tokens[i], last_exit_status);
 			i++;
 			continue;
 		}
+
 		// Handle single-quoted strings
 		if (*cursor == '\'')
 		{
+			// Check if the next character is also a single quote (i.e., empty quotes '')
+			if (*(cursor + 1) == '\'')
+			{
+				cursor += 2; // Skip both the opening and closing quotes
+				continue;    // Do not create a token for empty quotes
+			}
+
+			// Otherwise, process the single-quoted string
 			tokens[i].type = TOKEN_WORD;
 			cursor = extract_single_quoted_word(cursor, &tokens[i]);
 			i++;
 			continue;
 		}
+
 		// Handle operators
 		if (*cursor == '>' || *cursor == '<' || *cursor == '|' || *cursor == '&')
 		{
@@ -446,10 +466,11 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
 			i++;
 			continue;
 		}
+
 		// Handle regular words
 		length = 0;
 		while (!isspace(*cursor) && *cursor != '|' && *cursor != '&'
-			&& *cursor != '>' && *cursor != '<' && *cursor != '.' && *cursor != '\0')
+			&& *cursor != '>' && *cursor != '<' && *cursor != '.' && *cursor != '\0' && *cursor != '\'' && *cursor != '\"')
 		{
 			length++;
 			cursor++;

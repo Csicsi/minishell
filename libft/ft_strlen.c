@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/02 14:18:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/04/05 17:08:42 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/08 16:35:00 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ size_t	ft_strlen(const char *s)
 {
 	size_t	temp;
 
+	if (!s || !*s)
+		return (0);
 	temp = 0;
 	while (*s != '\0')
 	{
