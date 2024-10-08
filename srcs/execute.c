@@ -1,16 +1,47 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   execute.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/08 13:08:40 by krabitsc         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/minishell.h"
+
+/**
+ * @brief Handles the `unset` builtin command.
+ *
+ * This function unsets or removes an environment variable.
+ *
+ * @param cmd The command structure containing arguments.
+ * @return int Always returns 0 for success.
+ */
+int	builtin_unset(t_command *cmd)
+{
+	(void)cmd; // Ignore unused parameter
+	printf("builtin_unset: Unsetting environment variable...\n"); // Placeholder message
+	return (0);
+}
+
+/**
+ * @brief Frees the environment variables array.
+ *
+ * @param env_vars Pointer to the environment variable array.
+ */
+void free_env_vars(char ***env_vars)
+{
+    int i = 0;
+
+    // Check if env_vars is already NULL
+    if (*env_vars == NULL)
+        return;
+
+    // Free each environment variable string and set it to NULL
+    while ((*env_vars)[i] != NULL)
+    {
+        free((*env_vars)[i]);
+        (*env_vars)[i] = NULL;  // Set each element to NULL after freeing
+        i++;
+    }
+
+    // Free the array of pointers itself
+    free(*env_vars);
+
+    // Set the env_vars pointer to NULL to avoid double free
+    *env_vars = NULL;
+}
 
 /**
  * @brief Checks if a command is a recognized builtin.
@@ -49,19 +80,19 @@ int	is_builtin(char *command_name)
  */
 int	execute_builtin(t_command *cmd, t_data *data, bool print_exit)
 {
-	if (ft_strncmp(cmd->name, "cd", 3) == 0)
-		return (builtin_cd(cmd, data));
-	else if (ft_strncmp(cmd->name, "echo", 5) == 0)
+	if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
+		return (builtin_cd(cmd));
+	else if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 		return (builtin_echo(cmd));
-	else if (ft_strncmp(cmd->name, "exit", 5) == 0)
+	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
 		return (builtin_exit(cmd, data, print_exit));
-	else if (ft_strncmp(cmd->name, "env", 4) == 0)
+	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 		return (builtin_env(data));
-	else if (ft_strncmp(cmd->name, "export", 7) == 0)
+	else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
 		return (builtin_export(cmd, data));
-	else if (ft_strncmp(cmd->name, "unset", 6) == 0)
-		return (builtin_unset(cmd, data));
-	else if (ft_strncmp(cmd->name, "pwd", 4) == 0)
+	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
+		return (builtin_unset(cmd));
+	else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
 		return (builtin_pwd());
 	return (1); // Return 1 if the command is not recognized as a builtin
 }
@@ -80,12 +111,6 @@ void	free_cmd_list(t_command *cmd_list)
 	while (cmd_list)
 	{
 		tmp = cmd_list;
-
-		// Free command name if allocated
-		if (cmd_list->name != NULL) {
-			free(cmd_list->name);
-			cmd_list->name = NULL;
-		}
 
 		// Free each argument in the args array if allocated
 		if (cmd_list->args)
@@ -120,7 +145,6 @@ void	free_cmd_list(t_command *cmd_list)
 
 /**
  * @brief Finds the appropriate path to run executables from the environment variable $PATH (typically in /usr/bin)
- *
  *
  * @param cmd_args The command structure containing arguments.
  * @return char * The path where the cmd (executable) was found
@@ -165,70 +189,64 @@ char	*find_cmd_path(char **cmd_args)
  * @param token_count Total number of tokens.
  * @return int The exit status of the executed command.
  */
-int	execute_single_cmd(t_command *cmd, t_data *data)
+int execute_single_cmd(t_command *cmd, t_data *data)
 {
-	int		fd_in;
-	int		fd_out;
-	pid_t	pid;
-	char	*cmd_path;
+    int     fd_in = -1;
+    int     fd_out = -1;
+    char    *cmd_path;
 
-	// Handle input redirection if specified
-	if (cmd->input != NULL)
-	{
-		fd_in = open(cmd->input, O_RDONLY); // Open input file
-		if (fd_in < 0) // Check for errors
-		{
-			perror("minishell: input redirection");
-			return (1);
-		}
-		dup2(fd_in, STDIN_FILENO); // Redirect standard input
-		close(fd_in); // Close file descriptor
-	}
+    // Handle input redirection if specified
+    if (cmd->input != NULL)
+    {
+        fd_in = open(cmd->input, O_RDONLY); // Open input file
+        if (fd_in < 0) // Check for errors
+        {
+            perror("minishell: input redirection");
+            return (1);
+        }
+        dup2(fd_in, STDIN_FILENO); // Redirect standard input
+        close(fd_in); // Close the original file descriptor after dup2
+    }
 
-	// Handle output redirection if specified
-	if (cmd->output != NULL)
-	{
-		fd_out = open(cmd->output, O_WRONLY | O_CREAT | (cmd->append_output ? O_APPEND : O_TRUNC), 0644); // Open output file
-		if (fd_out < 0) // Check for errors
-		{
-			perror("minishell: output redirection");
-			return (1);
-		}
-		dup2(fd_out, STDOUT_FILENO); // Redirect standard output
-		close(fd_out); // Close file descriptor
-	}
+    // Handle output redirection if specified
+    if (cmd->output != NULL)
+    {
+        fd_out = open(cmd->output, O_WRONLY | O_CREAT | (cmd->append_output ? O_APPEND : O_TRUNC), 0644); // Open output file
+        if (fd_out < 0) // Check for errors
+        {
+            perror("minishell: output redirection");
+            return (1);
+        }
+        dup2(fd_out, STDOUT_FILENO); // Redirect standard output
+        close(fd_out); // Close the original file descriptor after dup2
+    }
 
-	// Check if the command is a builtin and execute it
-	if (is_builtin(cmd->name))
-		return (execute_builtin(cmd, data, false));
+    // Check if the command is a builtin and execute it
+    if (is_builtin(cmd->args[0]))
+        return (execute_builtin(cmd, data, false));
 
-	else
-	{
-		pid = fork(); // Fork the process
-		if (pid == 0) // In child process
-		{
-			cmd_path = find_cmd_path(cmd->args);
-			printf("cmd->args[0]: %s\n", cmd->args[0]);
-			printf("cmd->args[1]: %s\n", cmd->args[1]);
-			printf("cmd_path: %s\n", cmd_path);			
-			execve(cmd_path, cmd->args, data->env_vars); // Execute the command
-			perror("minishell"); // If execve fails, print error
-			exit(EXIT_FAILURE);  // Exit child process
-		}
-		else if (pid > 0) // In parent process
-		{
-			waitpid(pid, &cmd->exit_status, 0); // Wait for the child to finish
-			if (WIFEXITED(cmd->exit_status))
-			{
-				data->last_exit_status = WEXITSTATUS(cmd->exit_status); // Update the last_exit_status
-			}
-			return (data->last_exit_status); // Return the exit status
-		}
-		else if (pid < 0) // If fork fails, print error
-			perror("minishell: fork");
-	}
-	return (1); // Return 1 if something went wrong
+    // Find the command path using environment PATH or check if it's an absolute path
+    cmd_path = find_cmd_path(cmd->args);
+    if (!cmd_path)
+    {
+        // If the command is not found, print an error and exit
+        fprintf(stderr, "%s: command not found\n", cmd->args[0]);
+        free_cmd_list(data->cmd_list); // Free the command list
+        free_env_vars(&data->env_vars); // Free the environment variables
+        exit(127); // Exit with 127 to indicate "command not found"
+    }
+
+    // Try to execute the command
+    execve(cmd_path, cmd->args, data->env_vars);
+
+    // If execve fails, print an error and clean up
+    perror("minishell");
+    free(cmd_path); // Free the command path
+    free_cmd_list(data->cmd_list); // Free the command list
+    free_env_vars(&data->env_vars); // Free the environment variables
+    exit(EXIT_FAILURE); // Exit with a failure status
 }
+
 
 /**
  * @brief Executes a list of commands with optional piping and redirection.
@@ -250,12 +268,14 @@ int execute_cmd_list(t_data *data)
     current = data->cmd_list;
     prev_fd = -1;
 
-	if (current->name != NULL && strcmp(current->name, "exit") == 0 && current->next == NULL)
+	if (strcmp(current->args[0], "exit") == 0 && current->next == NULL)
     {
         data->last_exit_status = execute_builtin(current, data, true); // Execute exit command directly
         free_cmd_list(data->cmd_list);
+		free_env_vars(&data->env_vars); // Free the environment variables
         return (data->last_exit_status); // Return exit status directly
     }
+
 	// Execute built-in functions like export, unset (and cd?) directly in the parent process. 
 	// Otherwise, env vars would only be modified in the child process, which then is terminated, and the env vars in the parent are unchanged
 	if (current->name != NULL && ((strcmp(current->name, "export") == 0 || strcmp(current->name, "unset") == 0
@@ -294,7 +314,7 @@ int execute_cmd_list(t_data *data)
                 {
                     perror("minishell: output redirection");
                     free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
-                    free_tokens(data); // Free tokens in the child before exiting
+					free_env_vars(&data->env_vars); // Free the environment variables
                     exit(EXIT_FAILURE);
                 }
                 dup2(fd_out, STDOUT_FILENO); // Redirect standard output
@@ -302,26 +322,27 @@ int execute_cmd_list(t_data *data)
             }
 
             // Execute the command (built-in or external)
-            if (is_builtin(current->name)) // If built-in, execute it in the child
+            if (is_builtin(current->args[0])) // If built-in, execute it in the child
             {
                 // Check if the builtin is "exit" and there are other commands in the pipeline
-                if (strcmp(current->name, "exit") == 0)
+                if (strcmp(current->args[0], "exit") == 0)
                 {
                     // Free resources but don't terminate the shell
                     free_cmd_list(data->cmd_list);
-                    free_tokens(data);
+					free_env_vars(&data->env_vars); // Free the environment variables
 					data->last_exit_status = 1;
                     exit (data->last_exit_status); // Exit the child normally without terminating the shell
                 }
-				
+
 				if (!(strcmp(current->name, "export") == 0) && !(strcmp(current->name, "unset") == 0)
 					&& !(strcmp(current->name, "cd") == 0))
                 	data->last_exit_status = execute_builtin(current, data, false);
 
+
                 if (data->exit_flag) // If it's exit, terminate the shell if there is no pipe
                 {
                     free_cmd_list(data->cmd_list);
-                    free_tokens(data);
+					free_env_vars(&data->env_vars); // Free the environment variables
                     exit(data->last_exit_status);
                 }
                 exit(data->last_exit_status); // Exit with the status of the built-in
@@ -330,7 +351,7 @@ int execute_cmd_list(t_data *data)
             {
                 data->last_exit_status = execute_single_cmd(current, data);
                 free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
-                free_tokens(data);  // Free tokens in the child before exiting
+				free_env_vars(&data->env_vars); // Free the environment variables
                 exit(data->last_exit_status);
             }
         }
@@ -351,7 +372,7 @@ int execute_cmd_list(t_data *data)
         {
             perror("minishell: fork"); // If fork fails, print error
             free_cmd_list(data->cmd_list);  // Free memory on error
-            free_tokens(data);  // Free tokens on error
+			free_env_vars(&data->env_vars); // Free the environment variables
             return (1);
         }
 
@@ -367,7 +388,7 @@ int execute_cmd_list(t_data *data)
     }
 
     free_cmd_list(data->cmd_list);  // Free memory in the parent after all children have finished
-    free_tokens(data);  // Free tokens in the parent after all children have finished
+	free_env_vars(&data->env_vars); // Free the environment variables
     return (data->last_exit_status); // Return the exit status of the last command executed
 }
 
@@ -384,7 +405,7 @@ int execute_cmd_list(t_data *data)
  * @param token_count The total number of tokens to parse.
  * @return t_command* The head of the linked list of commands.
  */
-static t_command *parse_tokens(t_token *tokens, int token_count)
+static t_command *parse_tokens(t_data *data)
 {
 	t_command *cmd = malloc(sizeof(t_command));  // Allocate memory for the first command structure
 	if (!cmd)
@@ -393,8 +414,7 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 	int i = 0, arg_index = 0;                    // Initialize counters for token and argument indices
 
 	// Initialize the first command's fields to default values
-	current_cmd->name = NULL;                    // The name of the command is set later
-	current_cmd->args = malloc(sizeof(char *) * (token_count + 1));  // Allocate memory for argument list
+	current_cmd->args = malloc(sizeof(char *) * (data->token_count + 1));  // Allocate memory for argument list
 	current_cmd->input = NULL;                   // No input redirection by default
 	current_cmd->output = NULL;                  // No output redirection by default
 	current_cmd->append_output = 0;              // Default to not appending output
@@ -402,35 +422,23 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 	current_cmd->next = NULL;                    // No next command yet
 
 	// Iterate through all tokens
-	while (i < token_count)
+	while (i < data->token_count)
 	{
-		//printf("tokens[%d].type: %d\n", i, tokens[i].type);
-		//printf("tokens[%d].value: %s\n", i, tokens[i].value);
-
 		// Handle command words (non-operator tokens)
-		if (tokens[i].type == TOKEN_WORD)
+		if (data->tokens[i].type == TOKEN_WORD)
 		{
-			/*
-			if (current_cmd->name == NULL)
-				current_cmd->name = strdup(tokens[i].value);  // First word is the command name
-			else
-				current_cmd->args[arg_index++] = strdup(tokens[i].value);  // Subsequent words are arguments
-			*/
-			// corrected the above (as cmd args were constructed incorrectly, e.g. ls -la gave args[0] = "-la" )
-			if (current_cmd->name == NULL)
-				current_cmd->name = strdup(tokens[i].value);  // First word is the command name
-			current_cmd->args[arg_index++] = strdup(tokens[i].value);  // First word and subsequent words are arguments
+			current_cmd->args[arg_index++] = strdup(data->tokens[i].value);  // First word and subsequent words are arguments
 		}
 		// Handle operators (such as pipes and redirection)
-		else if (tokens[i].type == TOKEN_OPERATOR)
+		else if (data->tokens[i].type == TOKEN_OPERATOR)
 		{
 			// Handle pipe operator: create a new command
-			if (strcmp(tokens[i].value, "|") == 0)
+			if (strcmp(data->tokens[i].value, "|") == 0)
 			{
 				current_cmd->next = malloc(sizeof(t_command));  // Allocate memory for the next command
 				current_cmd = current_cmd->next;                // Move to the next command
 				current_cmd->next = NULL;                       // Initialize the new command's next pointer
-				current_cmd->args = malloc(sizeof(char *) * (token_count + 1));  // Allocate memory for arguments
+				current_cmd->args = malloc(sizeof(char *) * (data->token_count + 1));  // Allocate memory for arguments
 				current_cmd->input = NULL;                      // Initialize input redirection to NULL
 				current_cmd->output = NULL;                     // Initialize output redirection to NULL
 				current_cmd->append_output = 0;                 // Default to no append mode
@@ -439,20 +447,20 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 				arg_index = 0;                                  // Reset argument index for the new command
 			}
 			// Handle output redirection (">")
-			else if (strcmp(tokens[i].value, ">") == 0)
+			else if (strcmp(data->tokens[i].value, ">") == 0)
 			{
-				current_cmd->output = strdup(tokens[++i].value);  // Set the output file name from the next token
+				current_cmd->output = strdup(data->tokens[++i].value);  // Set the output file name from the next token
 			}
 			// Handle append output redirection (">>")
-			else if (strcmp(tokens[i].value, ">>") == 0)
+			else if (strcmp(data->tokens[i].value, ">>") == 0)
 			{
-				current_cmd->output = strdup(tokens[++i].value);  // Set the output file name
+				current_cmd->output = strdup(data->tokens[++i].value);  // Set the output file name
 				current_cmd->append_output = 1;                   // Enable append mode
 			}
 			// Handle input redirection ("<")
-			else if (strcmp(tokens[i].value, "<") == 0)
+			else if (strcmp(data->tokens[i].value, "<") == 0)
 			{
-				current_cmd->input = strdup(tokens[++i].value);   // Set the input file name from the next token
+				current_cmd->input = strdup(data->tokens[++i].value);   // Set the input file name from the next token
 			}
 		}
 		i++;  // Move to the next token
@@ -460,7 +468,7 @@ static t_command *parse_tokens(t_token *tokens, int token_count)
 
 	// Null-terminate the argument list for the last command
 	current_cmd->args[arg_index] = NULL;
-
+	free_tokens(data);
 	return cmd;  // Return the head of the command list
 }
 
@@ -504,7 +512,6 @@ int	check_for_unclosed_quotes(char *cursor)
  *
  * @return char **Copy of env_vars on dynamic memory
  */
-// Function to duplicate the env_vars dynamically
 char **duplicate_env_vars(char **env_vars)
 {
     int i = 0;
@@ -539,7 +546,6 @@ char **duplicate_env_vars(char **env_vars)
     new_env_vars[i] = NULL;
     return (new_env_vars);
 }
-
 
 /**
  * @brief Entry point for the minishell program.
@@ -607,34 +613,34 @@ int	main(int argc, char **argv, char **env_vars)
 		// Count the number of tokens in the input string
 		data.token_count = count_tokens(input);
 
-		//printf("TOKEN COUNT is: %d\n", token_count);
-
 		// Tokenize the input string and check for errors during lexing
 		if (lexer(input, &data.tokens, data.token_count, data.last_exit_status) == -1)
 		{
 			printf("Error tokenizing input!\n");
 			free(input); // Free input string on error
-			free_array_of_strs(data.env_vars);
+			free_env_vars(&data.env_vars);  // Free env_vars on error
+			free_tokens(&data);
 			return (1);  // Return 1 to indicate an error occurred
 		}
 
 		if (check_commands_in_tokens(data.tokens) == -1)
 		{
 			free(input); // Free input string on error
-			free_array_of_strs(data.env_vars);
+			free_tokens(&data);
+			free_env_vars(&data.env_vars);
 			continue ;
 		}
 
 		// Parse the tokens into a linked list of commands
-		data.cmd_list = parse_tokens(data.tokens, data.token_count);
+		data.cmd_list = parse_tokens(&data);
 
 		// If parsing fails, print an error message and clean up
 		if (!data.cmd_list)
 		{
 			printf("Error parsing commands!\n");
-			free_tokens(&data);               // Free the token array
 			free(input);                      // Free the input string
-			free_array_of_strs(data.env_vars);
+			free_env_vars(&data.env_vars);
+			free_tokens(&data);
 			return (1);                       // Return 1 to indicate an error occurred
 		}
 
@@ -644,13 +650,16 @@ int	main(int argc, char **argv, char **env_vars)
 		{
 			free_tokens(&data); // Free the token array
 			free(input);                      // Free the input string
-			free_array_of_strs(data.env_vars);
-			return (data.last_exit_status);        // Return 1 to indicate an error occurred
+			free_env_vars(&data.env_vars);
+			return (data.last_exit_status);        // Return exit status
 		}
 
 		// Clean up the token array and free the input string
 		free(input);
 	}
+
+	// Clean up environment variables and any remaining memory at the end of the shell
+	free_env_vars(&data.env_vars);
 
 	return (0); // Return 0 to indicate successful execution of the shell
 }

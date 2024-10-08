@@ -465,6 +465,7 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
 		i++;
 	}
 	tokens[i].type = TOKEN_END; // Mark the end of tokens
+	tokens[i].value = NULL;
 	*tokens_ptr = tokens; // Assign the token array to the pointer
 	return (token_count);
 }
@@ -482,12 +483,19 @@ void	free_tokens(t_data *data)
 {
 	int i;
 
+	if (!data->tokens || !data)
+		return ;
+
 	for (i = 0; i < data->token_count; i++)
 	{
 		if (data->tokens[i].value)
+		{
 			free(data->tokens[i].value); // Free each token's value
+			data->tokens[i].value = NULL;
+		}
 	}
 	free(data->tokens); // Free the token array
+	data->tokens = NULL;
 }
 
 /**

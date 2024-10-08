@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/14 14:12:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/08 10:12:30 by krabitsc         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -30,7 +18,6 @@
 
 typedef struct s_command
 {
-	char				*name;
 	char				**args;
 	char				*input;
 	char				*output;
