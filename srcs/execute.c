@@ -3,29 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 14:31:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/06 19:05:58 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/08 13:08:40 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-/**
- * @brief Handles the `cd` builtin command.
- *
- * This function changes the current working directory.
- *
- * @param cmd The command structure containing arguments.
- * @return int Always returns 0 for success.
- */
-int	builtin_cd(t_command *cmd)
-{
-	(void)cmd; // Ignore unused parameter
-	printf("builtin_cd: Changing Directory...\n"); // Placeholder message
-	return (0);
-}
 
 /**
  * @brief Checks if a command is a recognized builtin.
@@ -65,7 +50,7 @@ int	is_builtin(char *command_name)
 int	execute_builtin(t_command *cmd, t_data *data, bool print_exit)
 {
 	if (ft_strncmp(cmd->name, "cd", 3) == 0)
-		return (builtin_cd(cmd));
+		return (builtin_cd(cmd, data));
 	else if (ft_strncmp(cmd->name, "echo", 5) == 0)
 		return (builtin_echo(cmd));
 	else if (ft_strncmp(cmd->name, "exit", 5) == 0)
@@ -223,6 +208,9 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		if (pid == 0) // In child process
 		{
 			cmd_path = find_cmd_path(cmd->args);
+			printf("cmd->args[0]: %s\n", cmd->args[0]);
+			printf("cmd->args[1]: %s\n", cmd->args[1]);
+			printf("cmd_path: %s\n", cmd_path);			
 			execve(cmd_path, cmd->args, data->env_vars); // Execute the command
 			perror("minishell"); // If execve fails, print error
 			exit(EXIT_FAILURE);  // Exit child process
@@ -270,8 +258,8 @@ int execute_cmd_list(t_data *data)
     }
 	// Execute built-in functions like export, unset (and cd?) directly in the parent process. 
 	// Otherwise, env vars would only be modified in the child process, which then is terminated, and the env vars in the parent are unchanged
-	if (current->name != NULL && ((strcmp(current->name, "export") == 0 || strcmp(current->name, "unset") == 0 )
-			&& current->next == NULL))
+	if (current->name != NULL && ((strcmp(current->name, "export") == 0 || strcmp(current->name, "unset") == 0
+		|| strcmp(current->name, "cd") == 0) && current->next == NULL))
     {
 		data->last_exit_status = execute_builtin(current, data, false);
 	}
@@ -281,6 +269,9 @@ int execute_cmd_list(t_data *data)
 
         if (current->next != NULL)
             pipe(pipe_fd); // Create a pipe if there's a next command
+
+
+
 
         pid = fork(); // Fork the process for the current command
         if (pid == 0) // In child process
@@ -323,7 +314,8 @@ int execute_cmd_list(t_data *data)
                     exit (data->last_exit_status); // Exit the child normally without terminating the shell
                 }
 				
-				if (!((strcmp(current->name, "export") == 0) && !(strcmp(current->name, "unset") == 0 )))
+				if (!(strcmp(current->name, "export") == 0) && !(strcmp(current->name, "unset") == 0)
+					&& !(strcmp(current->name, "cd") == 0))
                 	data->last_exit_status = execute_builtin(current, data, false);
 
                 if (data->exit_flag) // If it's exit, terminate the shell if there is no pipe

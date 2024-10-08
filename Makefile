@@ -6,7 +6,7 @@
 #    By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 11:03:22 by dcsicsak          #+#    #+#              #
-#    Updated: 2024/10/06 17:29:02 by krabitsc         ###   ########.fr        #
+#    Updated: 2024/10/08 10:14:58 by krabitsc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,8 @@ LIBFT = $(LIBFT_DIR)/libft.a
 SRCS = srcs/lexer.c \
 	   srcs/execute.c \
 	   srcs/builtins/echo.c \
+	   srcs/builtins/cd.c \
+	   srcs/builtins/cd_utils.c \
 	   srcs/builtins/pwd.c \
 	   srcs/builtins/export.c \
 	   srcs/builtins/unset.c \
