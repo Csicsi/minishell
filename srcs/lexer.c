@@ -1,3 +1,4 @@
+
 #include "../includes/minishell.h"
 
 /**
@@ -105,10 +106,12 @@ int calculate_expanded_length(char *cursor, int last_exit_status)
  * @param cursor The input string with potential environment variables.
  * @param last_exit_status The last exit status for handling "$?".
  */
-void expand_env_vars_into_buffer(char *result, char *cursor, int last_exit_status)
+void expand_env_vars_into_buffer(char *result, char *cursor, int last_exit_status, t_data *data)
 {
     int i = 0;
     char *start;
+
+	(void)data;
 
     while (*cursor)
     {
@@ -133,8 +136,9 @@ void expand_env_vars_into_buffer(char *result, char *cursor, int last_exit_statu
                 if (len > 0)
                 {
                     char *var_name = strndup(start, len);
-                    char *env_value = getenv(var_name);
-                    free(var_name);
+                    //char *env_value = getenv(var_name);
+					char *env_value = ft_getenv(var_name, data->env_vars);
+                    //free(var_name);
 
                     if (env_value)
                     {
@@ -170,7 +174,7 @@ void expand_env_vars_into_buffer(char *result, char *cursor, int last_exit_statu
  * @param last_exit_status The last exit status to expand "$?".
  * @return char* A new string with expanded environment variables.
  */
-char *expand_env_var(char *cursor, int last_exit_status)
+char *expand_env_var(char *cursor, int last_exit_status, t_data *data)
 {
     // First pass: calculate the total length required for the result
     int final_length = calculate_expanded_length(cursor, last_exit_status);
@@ -181,7 +185,7 @@ char *expand_env_var(char *cursor, int last_exit_status)
         return NULL; // Handle allocation failure
 
     // Second pass: fill the result buffer
-    expand_env_vars_into_buffer(result, cursor, last_exit_status);
+    expand_env_vars_into_buffer(result, cursor, last_exit_status, data);
 
     return result; // Return the expanded result
 }
@@ -196,7 +200,7 @@ char *expand_env_var(char *cursor, int last_exit_status)
  * @param token Pointer to the token where the extracted word will be stored.
  * @return char* The updated position in the input string after processing the quoted word.
  */
-char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_status)
+char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_status, t_data *data)
 {
     char *start = cursor + 1; // Skip the opening double quote
     int len = 0;
@@ -233,9 +237,10 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
     }
     temp[i] = '\0'; // Null-terminate the temporary string
 
-    // Expand any environment variables in the raw content
-    expanded = expand_env_var(temp, last_exit_status);
-    free(temp); // Free the raw string
+
+    // Now expand any environment variables in the raw content
+    expanded = expand_env_var(temp, last_exit_status, data);
+    free(temp); // Free the temporary raw content
 
     // Assign the expanded string to the token value
     token->value = strdup(expanded);
@@ -358,7 +363,7 @@ int	count_tokens(char *cursor)
  * @param cursor The current position in the word that has is temporarily treated as the TOKEN_WORD (before env var expansion).
  * @return char* The token.value of that particular argument/word after env variable expansion
  */
-char *expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status)
+char *expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *data)
 {
     char *cursor = *ptr_to_cursor;
     int final_length = calculate_expanded_length(cursor, last_exit_status);
@@ -367,7 +372,7 @@ char *expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status)
     if (!result)
         return NULL; // Handle allocation failure
 
-    expand_env_vars_into_buffer(result, cursor, last_exit_status);  // Perform the actual expansion
+    expand_env_vars_into_buffer(result, cursor, last_exit_status, data);  // Perform the actual expansion
 
     free(*ptr_to_cursor);  // Free the original unexpanded string
     *ptr_to_cursor = strdup(result);  // Replace with the expanded string
@@ -388,12 +393,15 @@ char *expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status)
  * @param token_count The total number of tokens to expect.
  * @return int The number of tokens successfully created.
  */
-int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status)
+//int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status)
+int	lexer(char *input, t_token **tokens_ptr, t_data *data, int last_exit_status)
 {
 	t_token	*tokens;
 	char	*cursor = input;
 	int		length;
 	int		i = 0;
+
+	int token_count = data->token_count;
 
 	tokens = malloc((token_count + 1) * sizeof(t_token)); // Allocate memory for tokens
 	if (!tokens)
@@ -418,7 +426,7 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
 
 			// Otherwise, process the double-quoted string
 			tokens[i].type = TOKEN_WORD;
-			cursor = extract_double_quoted_word(cursor, &tokens[i], last_exit_status);
+			cursor = extract_double_quoted_word(cursor, &tokens[i], last_exit_status, data);
 			i++;
 			continue;
 		}
@@ -478,7 +486,7 @@ int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_stat
 		char *tmp = strndup(cursor - length, length);
 		if (ft_strchr(tmp, '$'))
 		{
-			tmp = expand_env_var_in_str(&tmp, last_exit_status);
+			tmp = expand_env_var_in_str(&tmp, last_exit_status, data);
 		}
 
 		tokens[i].value = tmp; // Copy the word into the token

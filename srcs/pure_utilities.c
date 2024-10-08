@@ -41,7 +41,7 @@ void	free_array_of_strs(char **tab)
 	}
 	free(tab);
 }
-
+/*
 char	*ft_getenv_path(char **envp)
 {
 	int		i;
@@ -56,4 +56,29 @@ char	*ft_getenv_path(char **envp)
 		i++;
 	}
 	return (ft_putstr_fd("Path not found. Command not valid.\n", 2), NULL);
+}
+*/
+
+char	*ft_getenv(char *env_var_name, char **envp)
+{
+	int	i;
+
+	//printf("env_var_name: %s\n", env_var_name);
+	//printf("check len: %d\n", (int)(strlen(env_var_name)));
+
+	char *look_for_match = ft_strjoin(env_var_name, "=");
+	free(env_var_name);
+
+	//printf("look_for_match: %s\n", look_for_match);
+	//printf("check len: %d\n", (int)(strlen(look_for_match)));
+
+	i = 0;
+	while (envp[i] != NULL)
+	{
+		//printf("envp[%d]: %s\n", i, envp[i]);
+		if (ft_strncmp(envp[i], look_for_match, strlen(look_for_match)) == 0)
+			return (envp[i] + strlen(look_for_match));
+		i++;
+	}
+	return (ft_putstr_fd("Env var not found. Command not valid.\n", 2), NULL);
 }

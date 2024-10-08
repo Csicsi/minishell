@@ -57,10 +57,13 @@ typedef struct s_data
 
 /* functions pertaining to lexer.c */
 void	free_tokens(t_data *data);
-int		lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status);
+//int		lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status);
+int		lexer(char *input, t_token **tokens_ptr, t_data *data, int last_exit_status);
 int		count_tokens(char *cursor);
-char	*expand_env_var(char *cursor, int last_exit_status);
-char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status);
+//char	*expand_env_var(char *cursor, int last_exit_status);
+//char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status);
+char	*expand_env_var(char *cursor, int last_exit_status, t_data *data);
+char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *data);
 /* functions pertaining to lexer.c */
 /* implementing the builtin functions */
 int		builtin_echo(t_command *cmd);
@@ -78,6 +81,7 @@ char	*ft_strjoin_pipex(char *s1, char *s2);
 void	free_array_of_strs(char **tab);
 char	*free_null(char *str);
 int		check_commands_in_tokens(t_token *tokens);
+char	*ft_getenv(char *look_for_match, char **envp);
 
 
 #endif
