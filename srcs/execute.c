@@ -63,42 +63,45 @@ int	execute_builtin(t_command *cmd, t_data *data, bool print_exit)
  */
 void	free_cmd_list(t_command *cmd_list)
 {
-	t_command *tmp;
+    t_command *tmp;
 
-	while (cmd_list)
-	{
-		tmp = cmd_list;
+    while (cmd_list)
+    {
+        tmp = cmd_list;
 
-		// Free each argument in the args array if allocated
-		if (cmd_list->args)
-		{
-			for (int i = 0; cmd_list->args[i]; i++)
-			{
-				free(cmd_list->args[i]);
-				cmd_list->args[i] = NULL;
-			}
-			free(cmd_list->args); // Free the args array itself
-			cmd_list->args = NULL;
-		}
+        // Free each argument in the args array if allocated
+        if (cmd_list->args)
+        {
+            for (int i = 0; cmd_list->args[i]; i++)
+            {
+                free(cmd_list->args[i]);
+                cmd_list->args[i] = NULL;  // Avoid potential double free issues
+            }
+            free(cmd_list->args);  // Free the args array itself
+            cmd_list->args = NULL;
+        }
 
-		// Free input redirection file name if allocated
-		if (cmd_list->input) {
-			free(cmd_list->input);
-			cmd_list->input = NULL;
-		}
+        // Free input redirection file name if allocated
+        if (cmd_list->input)
+        {
+            free(cmd_list->input);
+            cmd_list->input = NULL;
+        }
 
-		// Free output redirection file name if allocated
-		if (cmd_list->output) {
-			free(cmd_list->output);
-			cmd_list->output = NULL;
-		}
+        // Free output redirection file name if allocated
+        if (cmd_list->output)
+        {
+            free(cmd_list->output);
+            cmd_list->output = NULL;
+        }
 
-		// Move to the next command and free the current one
-		cmd_list = cmd_list->next;
-		free(tmp);
-		tmp = NULL;
-	}
+        // Move to the next command and free the current one
+        cmd_list = cmd_list->next;
+        free(tmp);  // Free the current command
+        tmp = NULL;
+    }
 }
+
 
 /**
  * @brief Finds the appropriate path to run executables from the environment variable $PATH (typically in /usr/bin)
@@ -201,6 +204,16 @@ int execute_single_cmd(t_command *cmd, t_data *data)
     exit(EXIT_FAILURE); // Exit with a failure status
 }
 
+int count_commands(t_command *cmd_list)
+{
+    int count = 0;
+    while (cmd_list)
+    {
+        count++;
+        cmd_list = cmd_list->next;
+    }
+    return count;
+}
 
 /**
  * @brief Executes a list of commands with optional piping and redirection.
@@ -216,85 +229,83 @@ int execute_cmd_list(t_data *data)
     int pipe_fd[2];
     int prev_fd;
     pid_t pid;
-    pid_t child_pids[256]; // Array to store PIDs of child processes (adjust size if needed)
     int num_children = 0;  // Counter for the number of child processes
+
+    int num_commands = count_commands(data->cmd_list);  // Count the number of commands
+    pid_t *child_pids = malloc(sizeof(pid_t) * num_commands);  // Dynamically allocate memory for child PIDs
+    if (!child_pids)
+    {
+        perror("minishell: malloc");
+        return (1);  // Exit on memory allocation failure
+    }
 
     current = data->cmd_list;
     prev_fd = -1;
 
-	if (strcmp(current->args[0], "exit") == 0 && current->next == NULL)
+    if (strcmp(current->args[0], "exit") == 0 && current->next == NULL)
     {
-        data->last_exit_status = execute_builtin(current, data, true); // Execute exit command directly
+        data->last_exit_status = execute_builtin(current, data, true);  // Execute exit command directly
         free_cmd_list(data->cmd_list);
-		//free_env_vars(&data->env_vars); // Free the environment variables
-        return (data->last_exit_status); // Return exit status directly
+        free(child_pids);  // Free allocated memory for child_pids
+        return (data->last_exit_status);  // Return exit status directly
     }
 
-	// Execute built-in functions like export, unset (and cd?) directly in the parent process.
-	// Otherwise, env vars would only be modified in the child process, which then is terminated, and the env vars in the parent are unchanged
-	if (current->args[0]!= NULL && ((strcmp(current->args[0], "export") == 0 || strcmp(current->args[0], "unset") == 0
-		|| strcmp(current->args[0], "cd") == 0) && current->next == NULL))
+    // Execute built-in functions like export, unset (and cd?) directly in the parent process
+    if (current->args[0] != NULL && ((strcmp(current->args[0], "export") == 0 || strcmp(current->args[0], "unset") == 0
+        || strcmp(current->args[0], "cd") == 0) && current->next == NULL))
     {
-		data->last_exit_status = execute_builtin(current, data, false);
-	}
+        data->last_exit_status = execute_builtin(current, data, false);
+    }
 
-    while (current != NULL) // Loop through each command in the list
+    while (current != NULL)  // Loop through each command in the list
     {
-
         if (current->next != NULL)
-            pipe(pipe_fd); // Create a pipe if there's a next command
+            pipe(pipe_fd);  // Create a pipe if there's a next command
 
-
-        pid = fork(); // Fork the process for the current command
-        if (pid == 0) // In child process
+        pid = fork();  // Fork the process for the current command
+        if (pid == 0)  // In child process
         {
-            if (prev_fd != -1) // If there's a previous command, set up input redirection
+            if (prev_fd != -1)  // If there's a previous command, set up input redirection
             {
-                dup2(prev_fd, STDIN_FILENO); // Redirect input to previous pipe
+                dup2(prev_fd, STDIN_FILENO);  // Redirect input to previous pipe
                 close(prev_fd);
             }
-            if (current->next != NULL) // If there's a next command, set up output redirection
+            if (current->next != NULL)  // If there's a next command, set up output redirection
             {
-                dup2(pipe_fd[1], STDOUT_FILENO); // Redirect output to next pipe
+                dup2(pipe_fd[1], STDOUT_FILENO);  // Redirect output to next pipe
                 close(pipe_fd[0]);
                 close(pipe_fd[1]);
             }
-            else if (current->output != NULL) // Handle output redirection for the last command
+            else if (current->output != NULL)  // Handle output redirection for the last command
             {
                 int fd_out = open(current->output, O_WRONLY | O_CREAT | (current->append_output ? O_APPEND : O_TRUNC), 0644);
-                if (fd_out < 0) // Check for errors
+                if (fd_out < 0)  // Check for errors
                 {
                     perror("minishell: output redirection");
                     free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
                     exit(EXIT_FAILURE);
                 }
-                dup2(fd_out, STDOUT_FILENO); // Redirect standard output
-                close(fd_out); // Close file descriptor
+                dup2(fd_out, STDOUT_FILENO);  // Redirect standard output
+                close(fd_out);  // Close file descriptor
             }
 
             // Execute the command (built-in or external)
-            if (is_builtin(current->args[0])) // If built-in, execute it in the child
+            if (is_builtin(current->args[0]))  // If built-in, execute it in the child
             {
-                // Check if the builtin is "exit" and there are other commands in the pipeline
                 if (strcmp(current->args[0], "exit") == 0)
                 {
-                    // Free resources but don't terminate the shell
-                    free_cmd_list(data->cmd_list);
-					data->last_exit_status = 1;
-                    exit (data->last_exit_status); // Exit the child normally without terminating the shell
-                }
-
-				if (!(strcmp(current->args[0], "export") == 0) && !(strcmp(current->args[0], "unset") == 0)
-					&& !(strcmp(current->args[0], "cd") == 0))
-                	data->last_exit_status = execute_builtin(current, data, false);
-
-
-                if (data->exit_flag) // If it's exit, terminate the shell if there is no pipe
-                {
-                    free_cmd_list(data->cmd_list);
+                    free_cmd_list(data->cmd_list);  // Free resources but don't terminate the shell
+                    data->last_exit_status = 1;
                     exit(data->last_exit_status);
                 }
-                exit(data->last_exit_status); // Exit with the status of the built-in
+
+                if (!(strcmp(current->args[0], "export") == 0) && !(strcmp(current->args[0], "unset") == 0)
+                    && !(strcmp(current->args[0], "cd") == 0))
+                {
+                    data->last_exit_status = execute_builtin(current, data, false);
+                }
+
+                exit(data->last_exit_status);  // Exit with the status of the built-in
             }
             else
             {
@@ -303,41 +314,42 @@ int execute_cmd_list(t_data *data)
                 exit(data->last_exit_status);
             }
         }
-        else if (pid > 0) // In parent process
+        else if (pid > 0)  // In parent process
         {
-            child_pids[num_children++] = pid; // Store the PID of the child process
+            child_pids[num_children++] = pid;  // Store the PID of the child process
             if (prev_fd != -1)
-                close(prev_fd); // Close previous pipe read end
+                close(prev_fd);  // Close previous pipe read end
             if (current->next != NULL)
             {
-                close(pipe_fd[1]); // Close current pipe write end
-                prev_fd = pipe_fd[0]; // Set up previous pipe read end for next iteration
+                close(pipe_fd[1]);  // Close current pipe write end
+                prev_fd = pipe_fd[0];  // Set up previous pipe read end for next iteration
             }
             else
                 prev_fd = -1;
         }
         else
         {
-            perror("minishell: fork"); // If fork fails, print error
+            perror("minishell: fork");  // If fork fails, print error
             free_cmd_list(data->cmd_list);  // Free memory on error
+            free(child_pids);  // Free dynamically allocated child_pids array
             return (1);
         }
 
-        current = current->next; // Move to the next command in the list
+        current = current->next;  // Move to the next command in the list
     }
 
     // Wait for all child processes to finish
     for (int i = 0; i < num_children; i++)
     {
-        waitpid(child_pids[i], &data->last_exit_status, 0); // Wait for each child
+        waitpid(child_pids[i], &data->last_exit_status, 0);  // Wait for each child
         if (WIFEXITED(data->last_exit_status))
-            data->last_exit_status = WEXITSTATUS(data->last_exit_status); // Get the exit status of the last child process
+            data->last_exit_status = WEXITSTATUS(data->last_exit_status);  // Get the exit status of the last child process
     }
 
     free_cmd_list(data->cmd_list);  // Free memory in the parent after all children have finished
-    return (data->last_exit_status); // Return the exit status of the last command executed
+    free(child_pids);  // Free dynamically allocated memory for child_pids
+    return (data->last_exit_status);  // Return the exit status of the last command executed
 }
-
 
 /**
  * @brief Parses tokens into a linked list of command structures.
@@ -361,6 +373,8 @@ t_command *parse_tokens(t_data *data)
 
     // Initialize the first command's fields to default values
     current_cmd->args = malloc(sizeof(char *) * (count_tokens(data->tokens) + 1));  // Allocate memory for argument list
+	if (!current_cmd->args)
+    	return NULL;
     current_cmd->input = NULL;
     current_cmd->output = NULL;
     current_cmd->append_output = 0;
@@ -394,8 +408,16 @@ t_command *parse_tokens(t_data *data)
             // Handle output redirection (">")
             else if (strcmp(data->tokens->value, ">") == 0)
             {
-                current_cmd->output = strdup(data->tokens->next->value);  // Set the output file name from the next token
-                data->tokens = data->tokens->next;
+				if (data->tokens->next != NULL)
+                {
+					current_cmd->output = strdup(data->tokens->next->value);  // Set the output file name from the next token
+                	data->tokens = data->tokens->next;
+				}
+				else
+				{
+					fprintf(stderr, "minishell: syntax error near unexpected token `newline`\n");
+					return NULL;  // Return NULL or handle the error appropriately
+				}
             }
             // Handle append output redirection (">>")
             else if (strcmp(data->tokens->value, ">>") == 0)
@@ -623,7 +645,7 @@ int	main(int argc, char **argv, char **env_vars)
 			return (1);  // Return 1 to indicate an error occurred
 		}
 
-		print_tokens(data.tokens);
+		//print_tokens(data.tokens);
 
 		if (check_commands_in_tokens(data.tokens) == -1)
 		{

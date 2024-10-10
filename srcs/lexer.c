@@ -411,7 +411,6 @@ int lexer(char *input, t_data *data, int last_exit_status)
     return 0; // Return 0 on success
 }
 
-
 /**
  * @brief Frees the memory allocated for the token array.
  *
