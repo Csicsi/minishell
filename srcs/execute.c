@@ -351,71 +351,71 @@ int execute_cmd_list(t_data *data)
  * @param token_count The total number of tokens to parse.
  * @return t_command* The head of the linked list of commands.
  */
-static t_command *parse_tokens(t_data *data)
+t_command *parse_tokens(t_data *data)
 {
-	t_command *cmd = malloc(sizeof(t_command));  // Allocate memory for the first command structure
-	if (!cmd)
-		return (NULL);
-	t_command *current_cmd = cmd;                // Set current command pointer to the first command
-	int i = 0, arg_index = 0;                    // Initialize counters for token and argument indices
+    t_command *cmd = malloc(sizeof(t_command));  // Allocate memory for the first command structure
+    if (!cmd)
+        return (NULL);
+    t_command *current_cmd = cmd;  // Set current command pointer to the first command
+    int arg_index = 0;
 
-	// Initialize the first command's fields to default values
-	current_cmd->args = malloc(sizeof(char *) * (data->token_count + 1));  // Allocate memory for argument list
-	current_cmd->input = NULL;                   // No input redirection by default
-	current_cmd->output = NULL;                  // No output redirection by default
-	current_cmd->append_output = 0;              // Default to not appending output
-	current_cmd->exit_status = 0;                // Exit status set to 0
-	current_cmd->next = NULL;                    // No next command yet
+    // Initialize the first command's fields to default values
+    current_cmd->args = malloc(sizeof(char *) * (count_tokens(data->tokens) + 1));  // Allocate memory for argument list
+    current_cmd->input = NULL;
+    current_cmd->output = NULL;
+    current_cmd->append_output = 0;
+    current_cmd->exit_status = 0;
+    current_cmd->next = NULL;
 
-	// Iterate through all tokens
-	while (i < data->token_count)
-	{
-		// Handle command words (non-operator tokens)
-		if (data->tokens[i].type == TOKEN_WORD)
-		{
-			current_cmd->args[arg_index++] = strdup(data->tokens[i].value);  // First word and subsequent words are arguments
-		}
-		// Handle operators (such as pipes and redirection)
-		else if (data->tokens[i].type == TOKEN_OPERATOR)
-		{
-			// Handle pipe operator: create a new command
-			if (strcmp(data->tokens[i].value, "|") == 0)
-			{
-				current_cmd->next = malloc(sizeof(t_command));  // Allocate memory for the next command
-				current_cmd = current_cmd->next;                // Move to the next command
-				current_cmd->next = NULL;                       // Initialize the new command's next pointer
-				current_cmd->args = malloc(sizeof(char *) * (data->token_count + 1));  // Allocate memory for arguments
-				current_cmd->input = NULL;                      // Initialize input redirection to NULL
-				current_cmd->output = NULL;                     // Initialize output redirection to NULL
-				current_cmd->append_output = 0;                 // Default to no append mode
-				current_cmd->exit_status = 0;                   // Initialize exit status to 0
+    // Iterate through the token linked list
+    while (data->tokens)
+    {
+        // Handle command words (non-operator tokens)
+        if (data->tokens->type == TOKEN_WORD)
+        {
+            current_cmd->args[arg_index++] = strdup(data->tokens->value);  // First word and subsequent words are arguments
+        }
+        // Handle operators (such as pipes and redirection)
+        else if (data->tokens->type == TOKEN_OPERATOR)
+        {
+            // Handle pipe operator: create a new command
+            if (strcmp(data->tokens->value, "|") == 0)
+            {
+                current_cmd->next = malloc(sizeof(t_command));  // Allocate memory for the next command
+                current_cmd = current_cmd->next;  // Move to the next command
+                current_cmd->args = malloc(sizeof(char *) * (count_tokens(data->tokens) + 1));  // Allocate memory for arguments
+                current_cmd->input = NULL;
+                current_cmd->output = NULL;
+                current_cmd->append_output = 0;
+                current_cmd->exit_status = 0;
+                current_cmd->next = NULL;
+                arg_index = 0;  // Reset argument index for the new command
+            }
+            // Handle output redirection (">")
+            else if (strcmp(data->tokens->value, ">") == 0)
+            {
+                current_cmd->output = strdup(data->tokens->next->value);  // Set the output file name from the next token
+                data->tokens = data->tokens->next;
+            }
+            // Handle append output redirection (">>")
+            else if (strcmp(data->tokens->value, ">>") == 0)
+            {
+                current_cmd->output = strdup(data->tokens->next->value);  // Set the output file name
+                current_cmd->append_output = 1;
+                data->tokens = data->tokens->next;
+            }
+            // Handle input redirection ("<")
+            else if (strcmp(data->tokens->value, "<") == 0)
+            {
+                current_cmd->input = strdup(data->tokens->next->value);   // Set the input file name from the next token
+                data->tokens = data->tokens->next;
+            }
+        }
+        data->tokens = data->tokens->next;  // Move to the next token
+    }
 
-				arg_index = 0;                                  // Reset argument index for the new command
-			}
-			// Handle output redirection (">")
-			else if (strcmp(data->tokens[i].value, ">") == 0)
-			{
-				current_cmd->output = strdup(data->tokens[++i].value);  // Set the output file name from the next token
-			}
-			// Handle append output redirection (">>")
-			else if (strcmp(data->tokens[i].value, ">>") == 0)
-			{
-				current_cmd->output = strdup(data->tokens[++i].value);  // Set the output file name
-				current_cmd->append_output = 1;                   // Enable append mode
-			}
-			// Handle input redirection ("<")
-			else if (strcmp(data->tokens[i].value, "<") == 0)
-			{
-				current_cmd->input = strdup(data->tokens[++i].value);   // Set the input file name from the next token
-			}
-		}
-		i++;  // Move to the next token
-	}
-
-	// Null-terminate the argument list for the last command
-	current_cmd->args[arg_index] = NULL;
-	free_tokens(data);
-	return cmd;  // Return the head of the command list
+    current_cmd->args[arg_index] = NULL;  // Null-terminate the argument list for the last command
+    return cmd;  // Return the head of the command list
 }
 
 /**
@@ -512,15 +512,15 @@ void handle_sigint(int sig)
  *
  * @param tokens The array of tokens.
  */
-/*void print_tokens(t_token *tokens)
+void print_tokens(t_token *tokens)
 {
     int i = 0;
 
     printf("Tokens after lexing:\n");
-    while (tokens[i].type != TOKEN_END)
+    while (tokens)
     {
         printf("Token %d: Type = ", i);
-        switch (tokens[i].type)
+        switch (tokens->type)
         {
             case TOKEN_WORD:
                 printf("WORD, ");
@@ -539,10 +539,13 @@ void handle_sigint(int sig)
                 break;
         }
 
-        printf("Value = '%s'\n", tokens[i].value ? tokens[i].value : "(null)");
+        printf("Value = '%s'\n", tokens->value ? tokens->value : "(null)");
+
+        tokens = tokens->next;  // Move to the next token in the list
         i++;
     }
-}*/
+}
+
 
 /**
  * @brief Entry point for the minishell program.
@@ -610,12 +613,9 @@ int	main(int argc, char **argv, char **env_vars)
 			in_quote = check_for_unclosed_quotes(input);
 		}
 
-		// Count the number of tokens in the input string
-		data.token_count = count_tokens(input);
-
 		// Tokenize the input string and check for errors during lexing
 		//if (lexer(input, &data.tokens, data.token_count, data.last_exit_status) == -1)
-		if (lexer(input, &data.tokens, &data, data.last_exit_status) == -1)
+		if (lexer(input, &data, data.last_exit_status) == -1)
 		{
 			printf("Error tokenizing input!\n");
 			free(input); // Free input string on error
@@ -623,8 +623,7 @@ int	main(int argc, char **argv, char **env_vars)
 			return (1);  // Return 1 to indicate an error occurred
 		}
 
-		//print_tokens(data.tokens);
-
+		print_tokens(data.tokens);
 
 		if (check_commands_in_tokens(data.tokens) == -1)
 		{

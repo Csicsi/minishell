@@ -237,7 +237,6 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
     }
     temp[i] = '\0'; // Null-terminate the temporary string
 
-
     // Now expand any environment variables in the raw content
     expanded = expand_env_var(temp, last_exit_status, data);
     free(temp); // Free the temporary raw content
@@ -290,70 +289,6 @@ char	*check_operator(char *cursor, t_token *token)
 }
 
 /**
- * @brief Counts the number of tokens in the input string.
- *
- * This function scans the input string, identifying and counting tokens such as words,
- * operators, quoted strings, environment variables, and special characters.
- *
- * @param cursor The input string.
- * @return int The total number of tokens found.
- */
-int	count_tokens(char *cursor)
-{
-	int	token_count = 0; // Initialize token count
-
-	while (*cursor)
-	{
-		cursor = skip_spaces(cursor); // Skip any whitespace
-		if (*cursor == '\0')
-			break;
-		// Handle operators like |, &, >, <
-		if (*cursor == '|' || *cursor == '&' || *cursor == '>' || *cursor == '<')
-		{
-			if ((*cursor == '>' && *(cursor + 1) == '>') || (*cursor == '<' && *(cursor + 1) == '<') ||
-				(*cursor == '&' && *(cursor + 1) == '&') || (*cursor == '|' && *(cursor + 1) == '|'))
-				cursor++; // Handle two-character operators
-			cursor++;
-			token_count++; // Increment token count
-			continue;
-		}
-		// Handle dots (.) and double dots (..)
-		if (*cursor == '.' && (*(cursor + 1) == ' ' || *(cursor + 1) == '\0'))
-		{
-			token_count++;
-			cursor++;
-			continue;
-		}
-		else if (*cursor == '.' && *(cursor + 1) == '.' && (*(cursor + 2) == ' ' || *(cursor + 2) == '\0'))
-		{
-			token_count++;
-			cursor += 2;
-			continue;
-		}
-		// Handle quoted strings
-		if (*cursor == '"' || *cursor == '\'')
-		{
-			char quote = *cursor;
-			cursor++;
-			while (*cursor && *cursor != quote) // Skip until the closing quote
-				cursor++;
-			if (*cursor == quote)
-				cursor++;
-			token_count++;
-			continue;
-		}
-
-		// Handle regular words
-		while (*cursor && !isspace(*cursor) && *cursor != '|' && *cursor != '&' &&
-				*cursor != '>' && *cursor != '<')
-			cursor++;
-		token_count++; // Increment token count for each word
-	}
-
-	return (token_count); // Return the total token count
-}
-
-/**
  * @brief Goes through a word token where a $-sign was found and expands environment variables
  *
  * This function handles strings that were characterized as TOKEN_WORD and goes through them supporting environment
@@ -381,6 +316,17 @@ char *expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *
     return *ptr_to_cursor;
 }
 
+int count_tokens(t_token *tokens)
+{
+    int count = 0;
+    while (tokens)
+    {
+        count++;
+        tokens = tokens->next;
+    }
+    return count;
+}
+
 
 /**
  * @brief Tokenizes the input string into an array of tokens.
@@ -393,111 +339,78 @@ char *expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *
  * @param token_count The total number of tokens to expect.
  * @return int The number of tokens successfully created.
  */
-//int	lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status)
-int	lexer(char *input, t_token **tokens_ptr, t_data *data, int last_exit_status)
+int lexer(char *input, t_data *data, int last_exit_status)
 {
-	t_token	*tokens;
-	char	*cursor = input;
-	int		length;
-	int		i = 0;
+    char *cursor = input;
+    t_token *current = NULL;
+    t_token *new_token;
 
-	int token_count = data->token_count;
+    data->tokens = NULL; // Initialize token list to NULL
 
-	tokens = malloc((token_count + 1) * sizeof(t_token)); // Allocate memory for tokens
-	if (!tokens)
-		return (-1); // Return error if memory allocation fails
+    while (*cursor != '\0')
+    {
+        cursor = skip_spaces(cursor); // Skip spaces
 
-	while (*cursor != '\0')
-	{
-		cursor = skip_spaces(cursor); // Skip any leading spaces
+        // Allocate a new token
+        new_token = malloc(sizeof(t_token));
+        if (!new_token)
+            return -1; // Return -1 on memory allocation failure
 
-		if (i >= token_count)
-			break;
+        new_token->next = NULL; // Ensure the next pointer is NULL
 
-		// Handle double-quoted strings
-		if (*cursor == '"')
-		{
-			// Check if the next character is also a double quote (i.e., empty quotes "")
-			if (*(cursor + 1) == '"')
-			{
-				cursor += 2; // Skip both the opening and closing quotes
-				continue;    // Do not create a token for empty quotes
-			}
+        // Handle double-quoted strings
+        if (*cursor == '"')
+        {
+            new_token->type = TOKEN_WORD;
+            cursor = extract_double_quoted_word(cursor, new_token, last_exit_status, data);
+        }
+        // Handle single-quoted strings
+        else if (*cursor == '\'')
+        {
+            new_token->type = TOKEN_WORD;
+            cursor = extract_single_quoted_word(cursor, new_token);
+        }
+        // Handle operators
+        else if (*cursor == '>' || *cursor == '<' || *cursor == '|' || *cursor == '&')
+        {
+            new_token->type = TOKEN_OPERATOR;
+            cursor = check_operator(cursor, new_token);
+        }
+        // Handle regular words and expand environment variables
+        else
+        {
+            int length = 0;
+            while (!isspace(*cursor) && *cursor != '|' && *cursor != '&' &&
+                   *cursor != '>' && *cursor != '<' && *cursor != '\0')
+            {
+                length++;
+                cursor++;
+            }
+            new_token->value = strndup(cursor - length, length);
+            if (ft_strchr(new_token->value, '$'))
+                new_token->value = expand_env_var_in_str(&new_token->value, last_exit_status, data);
 
-			// Otherwise, process the double-quoted string
-			tokens[i].type = TOKEN_WORD;
-			cursor = extract_double_quoted_word(cursor, &tokens[i], last_exit_status, data);
-			i++;
-			continue;
-		}
+            new_token->type = TOKEN_WORD;
+        }
 
-		// Handle single-quoted strings
-		if (*cursor == '\'')
-		{
-			// Check if the next character is also a single quote (i.e., empty quotes '')
-			if (*(cursor + 1) == '\'')
-			{
-				cursor += 2; // Skip both the opening and closing quotes
-				continue;    // Do not create a token for empty quotes
-			}
+        // Append the new token to the linked list
+        if (!data->tokens)
+        {
+            data->tokens = new_token; // Set the first token
+        }
+        else
+        {
+            current->next = new_token; // Append to the end of the list
+        }
+        current = new_token; // Move the current pointer
 
-			// Otherwise, process the single-quoted string
-			tokens[i].type = TOKEN_WORD;
-			cursor = extract_single_quoted_word(cursor, &tokens[i]);
-			i++;
-			continue;
-		}
+        // Increment the token count
+        data->token_count++;
+    }
 
-		// Handle operators
-		if (*cursor == '>' || *cursor == '<' || *cursor == '|' || *cursor == '&')
-		{
-			tokens[i].type = TOKEN_OPERATOR;
-			cursor = check_operator(cursor, &tokens[i]);
-			i++;
-			continue;
-		}
-
-		// Handle single and double dots (., ..)
-		if (*cursor == '.' && (*(cursor + 1) == ' ' || *(cursor + 1) == '\0'))
-		{
-			tokens[i].type = TOKEN_DOT;
-			tokens[i].value = strdup(".");
-			cursor++;
-			i++;
-			continue;
-		}
-		if (*cursor == '.' && *(cursor + 1) == '.' && (*(cursor + 2) == ' ' || *(cursor + 2) == '\0'))
-		{
-			tokens[i].type = TOKEN_DOTDOT;
-			tokens[i].value = strdup("..");
-			cursor += 2;
-			i++;
-			continue;
-		}
-
-		// Handle regular words
-		length = 0;
-		while (!isspace(*cursor) && *cursor != '|' && *cursor != '&'
-			&& *cursor != '>' && *cursor != '<' && *cursor != '.' && *cursor != '\0' && *cursor != '\'' && *cursor != '\"')
-		{
-			length++;
-			cursor++;
-		}
-		char *tmp = strndup(cursor - length, length);
-		if (ft_strchr(tmp, '$'))
-		{
-			tmp = expand_env_var_in_str(&tmp, last_exit_status, data);
-		}
-
-		tokens[i].value = tmp; // Copy the word into the token
-		tokens[i].type = TOKEN_WORD;
-		i++;
-	}
-	tokens[i].type = TOKEN_END; // Mark the end of tokens
-	tokens[i].value = NULL;
-	*tokens_ptr = tokens; // Assign the token array to the pointer
-	return (token_count);
+    return 0; // Return 0 on success
 }
+
 
 /**
  * @brief Frees the memory allocated for the token array.
@@ -508,23 +421,17 @@ int	lexer(char *input, t_token **tokens_ptr, t_data *data, int last_exit_status)
  * @param tokens The array of tokens.
  * @param token_count The number of tokens in the array.
  */
-void	free_tokens(t_data *data)
+void free_tokens(t_data *data)
 {
-	int i;
+    t_token *temp;
 
-	if (!data->tokens || !data)
-		return ;
-
-	for (i = 0; i < data->token_count; i++)
-	{
-		if (data->tokens[i].value)
-		{
-			free(data->tokens[i].value); // Free each token's value
-			data->tokens[i].value = NULL;
-		}
-	}
-	free(data->tokens); // Free the token array
-	data->tokens = NULL;
+    while (data->tokens)
+    {
+        temp = data->tokens;
+        data->tokens = data->tokens->next;
+        free(temp->value);
+        free(temp);
+    }
 }
 
 /**
@@ -539,30 +446,31 @@ void	free_tokens(t_data *data)
  */
 int check_commands_in_tokens(t_token *tokens)
 {
-    int i = 0;
+    t_token *current = tokens;  // Start with the head of the list
 
     // Ensure the first token is a valid command
-    if (tokens[i].type != TOKEN_WORD)
+    if (!current || current->type != TOKEN_WORD)
     {
         fprintf(stderr, "Error: Expected command at the start\n");
         return (-1);
     }
 
     // Loop through the rest of the tokens
-    while (tokens[i].type != TOKEN_END)
+    while (current)
     {
         // If a pipe is found, the next token must be a command
-        if (tokens[i].type == TOKEN_OPERATOR && strcmp(tokens[i].value, "|") == 0)
+        if (current->type == TOKEN_OPERATOR && strcmp(current->value, "|") == 0)
         {
-            i++; // Move to the next token after the pipe
-            if (tokens[i].type != TOKEN_WORD)
+            current = current->next; // Move to the next token after the pipe
+            if (!current || current->type != TOKEN_WORD)
             {
                 fprintf(stderr, "Error: Expected command after pipe\n");
                 return (-1);
             }
         }
-        i++; // Move to the next token
+        current = current->next; // Move to the next token
     }
 
     return 0; // All checks passed
 }
+

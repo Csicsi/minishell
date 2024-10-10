@@ -43,6 +43,7 @@ typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;
+	struct s_token	*next;
 }	t_token;
 
 typedef struct s_data
@@ -56,10 +57,10 @@ typedef struct s_data
 }	t_data;
 
 /* functions pertaining to lexer.c */
+int		lexer(char *input, t_data *data, int last_exit_status);
 void	free_tokens(t_data *data);
-//int		lexer(char *input, t_token **tokens_ptr, int token_count, int last_exit_status);
-int		lexer(char *input, t_token **tokens_ptr, t_data *data, int last_exit_status);
-int		count_tokens(char *cursor);
+t_command *parse_tokens(t_data *data);
+int count_tokens(t_token *tokens);
 //char	*expand_env_var(char *cursor, int last_exit_status);
 //char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status);
 char	*expand_env_var(char *cursor, int last_exit_status, t_data *data);
