@@ -327,6 +327,73 @@ int count_tokens(t_token *tokens)
     return count;
 }
 
+void join_tokens_in_same_word(t_data *data)
+{
+    t_token *current = data->tokens;
+    t_token *next_token;
+    char *new_value;
+
+    while (current && current->next)
+    {
+        // Check if the current token and the next one belong to the same word
+        if (current->word == current->next->word)
+        {
+            next_token = current->next;
+
+            // Concatenate current->value and next_token->value
+            new_value = ft_strjoin(current->value, next_token->value);
+            free(current->value); // Free old value of current token
+            current->value = new_value; // Assign new concatenated value
+
+            // Link the current token to the token after next_token
+            current->next = next_token->next;
+
+            // Free next_token
+            free(next_token->value);
+            free(next_token);
+        }
+        else
+        {
+            current = current->next; // Move to the next token
+        }
+    }
+}
+
+void remove_null_word_tokens(t_data *data)
+{
+    t_token *current = data->tokens;
+    t_token *previous = NULL;
+    t_token *temp;
+
+    while (current != NULL)
+    {
+        // Check if the token is of type WORD and has a NULL value
+        if (current->type == TOKEN_WORD && current->value[0] == '\0')
+        {
+            if (previous == NULL)
+            {
+                // If we are at the head of the list, move the head forward
+                data->tokens = current->next;
+            }
+            else
+            {
+                // Skip over the current token in the list
+                previous->next = current->next;
+            }
+
+            // Free the current token
+            temp = current;
+            current = current->next;
+            free(temp); // Free the token itself
+        }
+        else
+        {
+            // Move to the next token, keeping track of the previous one
+            previous = current;
+            current = current->next;
+        }
+    }
+}
 
 /**
  * @brief Tokenizes the input string into an array of tokens.
@@ -344,70 +411,102 @@ int lexer(char *input, t_data *data, int last_exit_status)
     char *cursor = input;
     t_token *current = NULL;
     t_token *new_token;
+    int word_index = 0; // Initialize word index
 
     data->tokens = NULL; // Initialize token list to NULL
 
     while (*cursor != '\0')
     {
-        cursor = skip_spaces(cursor); // Skip spaces
+        cursor = skip_spaces(cursor); // Skip initial spaces
+        if (*cursor == '\0')
+            break; // Handle end of input
 
         // Allocate a new token
         new_token = malloc(sizeof(t_token));
         if (!new_token)
+        {
+            free_tokens(data);
             return -1; // Return -1 on memory allocation failure
+        }
+        new_token->next = NULL;
 
-        new_token->next = NULL; // Ensure the next pointer is NULL
+        // Set the word index for this token
+        new_token->word = word_index;
 
         // Handle double-quoted strings
         if (*cursor == '"')
         {
-            new_token->type = TOKEN_WORD;
             cursor = extract_double_quoted_word(cursor, new_token, last_exit_status, data);
+            new_token->type = TOKEN_WORD;
         }
         // Handle single-quoted strings
         else if (*cursor == '\'')
         {
-            new_token->type = TOKEN_WORD;
             cursor = extract_single_quoted_word(cursor, new_token);
+            new_token->type = TOKEN_WORD;
         }
         // Handle operators
         else if (*cursor == '>' || *cursor == '<' || *cursor == '|' || *cursor == '&')
         {
             new_token->type = TOKEN_OPERATOR;
             cursor = check_operator(cursor, new_token);
+            word_index++; // Operators create a new word context
         }
-        // Handle regular words and expand environment variables
+        // Handle regular words
         else
         {
+            char *start = cursor;
             int length = 0;
             while (!isspace(*cursor) && *cursor != '|' && *cursor != '&' &&
-                   *cursor != '>' && *cursor != '<' && *cursor != '\0')
+                   *cursor != '>' && *cursor != '<' && *cursor != '\0' &&
+                   *cursor != '"' && *cursor != '\'') // Stop at any quote
             {
                 length++;
                 cursor++;
             }
-            new_token->value = strndup(cursor - length, length);
+            new_token->value = strndup(start, length);
+            if (!new_token->value)
+            {
+                free(new_token);
+                free_tokens(data);
+                return -1;
+            }
+
+            // Check if there is a $ for environment variable expansion
             if (ft_strchr(new_token->value, '$'))
-                new_token->value = expand_env_var_in_str(&new_token->value, last_exit_status, data);
+            {
+                char *expanded = expand_env_var_in_str(&new_token->value, last_exit_status, data);
+                if (!expanded)
+                {
+                    free(new_token->value);
+                    free(new_token);
+                    free_tokens(data);
+                    return -1;
+                }
+                new_token->value = expanded;
+            }
 
             new_token->type = TOKEN_WORD;
         }
 
         // Append the new token to the linked list
         if (!data->tokens)
-        {
-            data->tokens = new_token; // Set the first token
-        }
+            data->tokens = new_token;
         else
-        {
-            current->next = new_token; // Append to the end of the list
-        }
-        current = new_token; // Move the current pointer
+            current->next = new_token;
+        current = new_token;
 
-        // Increment the token count
-        data->token_count++;
+        // Increment word index only if followed by a space or operator
+        if (isspace(*cursor) || *cursor == '|' || *cursor == '&' || *cursor == '>' || *cursor == '<')
+        {
+            word_index++; // New word context after a space or operator
+        }
+
+        cursor = skip_spaces(cursor); // Skip any spaces after the token
     }
 
+    //remove_null_word_tokens(data);
+	join_tokens_in_same_word(data);
     return 0; // Return 0 on success
 }
 

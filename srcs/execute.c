@@ -561,7 +561,7 @@ void print_tokens(t_token *tokens)
                 break;
         }
 
-        printf("Value = '%s'\n", tokens->value ? tokens->value : "(null)");
+        printf("Value = '%s', Word = %d\n", tokens->value ? tokens->value : "(null)", tokens->word);
 
         tokens = tokens->next;  // Move to the next token in the list
         i++;
