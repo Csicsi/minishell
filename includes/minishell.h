@@ -25,7 +25,8 @@ typedef struct s_command
 	int					append_output;
 	int					exit_status;
 	struct s_command	*next;
-	//char				**env_vars;
+	char				*heredoc_delim;
+	bool				is_heredoc;
 }	t_command;
 
 typedef enum e_token_type
