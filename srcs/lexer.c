@@ -45,7 +45,7 @@ char *extract_single_quoted_word(char *cursor, t_token *token)
  * @param last_exit_status The value of the last exit status for handling "$?".
  * @return int The total length required for the result string.
  */
-int calculate_expanded_length(char *cursor, int last_exit_status)
+int calculate_expanded_length(char *cursor, int last_exit_status, t_data *data)
 {
     int total_length = 0;
     char *start;
@@ -72,8 +72,7 @@ int calculate_expanded_length(char *cursor, int last_exit_status)
                 if (len > 0)
                 {
                     char *var_name = strndup(start, len);
-                    char *env_value = getenv(var_name);
-                    free(var_name);
+					char *env_value = ft_getenv(var_name, data->env_vars);
 
                     if (env_value)
                         total_length += strlen(env_value);
@@ -136,10 +135,7 @@ void expand_env_vars_into_buffer(char *result, char *cursor, int last_exit_statu
                 if (len > 0)
                 {
                     char *var_name = strndup(start, len);
-                    //char *env_value = getenv(var_name);
 					char *env_value = ft_getenv(var_name, data->env_vars);
-                    //free(var_name);
-
                     if (env_value)
                     {
                         strcpy(&result[i], env_value);
@@ -177,7 +173,8 @@ void expand_env_vars_into_buffer(char *result, char *cursor, int last_exit_statu
 char *expand_env_var(char *cursor, int last_exit_status, t_data *data)
 {
     // First pass: calculate the total length required for the result
-    int final_length = calculate_expanded_length(cursor, last_exit_status);
+    int final_length = calculate_expanded_length(cursor, last_exit_status, data);
+	printf("final_length: %d\n", final_length);
 
     // Allocate memory for the result string
     char *result = malloc(final_length + 1); // +1 for the null terminator
@@ -187,6 +184,7 @@ char *expand_env_var(char *cursor, int last_exit_status, t_data *data)
     // Second pass: fill the result buffer
     expand_env_vars_into_buffer(result, cursor, last_exit_status, data);
 
+	printf("len result:   %d\n", (int)strlen(result));
     return result; // Return the expanded result
 }
 
@@ -301,7 +299,7 @@ char	*check_operator(char *cursor, t_token *token)
 char *expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *data)
 {
     char *cursor = *ptr_to_cursor;
-    int final_length = calculate_expanded_length(cursor, last_exit_status);
+    int final_length = calculate_expanded_length(cursor, last_exit_status, data);
 
     char *result = malloc(final_length + 1);  // Allocate enough memory for the expanded string
     if (!result)

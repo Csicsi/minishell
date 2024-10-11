@@ -109,7 +109,7 @@ void	free_cmd_list(t_command *cmd_list)
  * @param cmd_args The command structure containing arguments.
  * @return char * The path where the cmd (executable) was found
  */
-char	*find_cmd_path(char **cmd_args)
+char	*find_cmd_path(char **cmd_args, t_data *data)
 {
 	int		i;
 	char	**allpath;
@@ -121,7 +121,8 @@ char	*find_cmd_path(char **cmd_args)
 		return (ft_strdup(cmd_args[0]));  // Return a duplicate of the command path
 
 	// If not an absolute path, look for the command in the PATH environment variable
-	path_env = getenv("PATH");
+	path_env = ft_getenv(strdup("PATH"), data->env_vars);
+	
 	if (!path_env)
 		return (NULL);  // In case PATH is not found, return NULL
 
@@ -230,7 +231,7 @@ int execute_single_cmd(t_command *cmd, t_data *data)
         return (execute_builtin(cmd, data, false));
 
     // Find the command path using environment PATH or check if it's an absolute path
-    cmd_path = find_cmd_path(cmd->args);
+    cmd_path = find_cmd_path(cmd->args, data);
     if (!cmd_path)
     {
         // If the command is not found, print an error and return

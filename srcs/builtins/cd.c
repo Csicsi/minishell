@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 12:09:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/08 11:55:20 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/11 13:08:32 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,28 +25,24 @@ static int	resolve_special_paths(t_command *cmd, t_data *data, char **target_pat
 
 	(void)data;
 
-
-	printf("Here in builtin_cd\n");
 	curpath = NULL;
 	// Check if the argument is `-`, which refers to the previous working directory (OLDPWD).
 	if (cmd->args[1] && ft_strncmp(cmd->args[1], "-", 2) == 0)
 	{
-		curpath = getenv("OLDPWD");
+		curpath = ft_getenv(strdup("OLDPWD"), data->env_vars);
 		// If OLDPWD is not set, display an error message.
 		if (curpath == NULL)
 			return (ft_putstr_fd("minishell: cd: OLDPWD not set\n",
 					STDERR_FILENO), 1);
-		printf("%s\n", curpath); // Print the old path when using `cd -`.
 	}
 	// Check if no arguments (or a ~) are passed, which means the user wants to go to HOME.
 	else if (cmd->args[1] == NULL || (cmd->args[1] && ft_strncmp(cmd->args[1], "~", 2) == 0))
 	{
-		curpath = getenv("HOME");
+		curpath = ft_getenv(strdup("HOME"), data->env_vars);
 		// If HOME is not set, display an error message.
 		if (curpath == NULL || *curpath == '\0')
 			return (ft_putstr_fd("minishell: cd: HOME not set\n",
 					STDERR_FILENO), 1);
-		printf("%s\n", curpath); // Print the path
 	}
 	else
 		// No special path detected, returning 0 to indicate normal path resolution.
@@ -74,7 +70,7 @@ static int	resolve_target_path(t_command *cmd, t_data *data, char **target_path)
 	char	*resolved_path;
 	
 	// If there are more than two arguments, display an error message for too many arguments.
-	if (cmd->args[2] != NULL)
+	if (cmd->args[1] != NULL && cmd->args[2] != NULL)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
 		return (1);
@@ -90,7 +86,7 @@ static int	resolve_target_path(t_command *cmd, t_data *data, char **target_path)
 	// If the path does not exist and it's a relative path, try to resolve using CDPATH.
 	if (curpath && access(curpath, F_OK) != 0 && curpath[0] != '/')
 	{
-		resolved_path = resolve_cdpath_if_needed(curpath);
+		resolved_path = resolve_cdpath_if_needed(curpath, data);
 		if (resolved_path != NULL)
 		{
 			*target_path = resolved_path;
@@ -126,6 +122,7 @@ static int	change_directory(const char *curpath, t_data *data)
 	// Get the current working directory before changing it.
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (perror("minishell: cd: getcwd"),free(normalized_path), 1);
+	printf("cwd: %s\n", cwd);
 
 	// Update OLDPWD with the current working directory.
 	if (setenv("OLDPWD", cwd, 1) != 0)

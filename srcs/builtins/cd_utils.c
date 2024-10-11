@@ -6,11 +6,44 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 15:43:02 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/08 10:15:32 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/11 13:11:23 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+
+/**
+ * @brief Checks if an environment variable exists and updates or creates it.
+ *
+ * @param varname The name of the environment variable.
+ * @param value The value to set for the environment variable.
+ * @param data Pointer to the data structure containing environment variables.
+ * @return int Returns 0 on success, or 1 if an error occurs.
+ */
+/*
+int	ft_setenv(const char *varname, const char *value, t_data *data)
+{
+	int		i;
+	char	*varname_value;
+	char	*equal_sign_pos;
+
+	int len_varname = ft_strlen(varname);
+	int len_value = ft_strlen(value);
+	// Create the full "varname=value" string
+	varname_value = malloc(len_varname + len_value + 2); // +2 for '=' and '\0'
+	if (!varname_value)
+		return (1);  // Handle memory allocation failure
+	// copy the varname and value into the result
+	ft_strlcpy(varname_value, varname, len_varname + 1);  // Copy the variable name
+	varname_value[len_varname] = '=';  // Add the '=' sign
+	ft_strlcpy(varname_value + len_varname + 1, value, len_value + 1);  // Copy the value
+
+	//tbc
+}
+*/
+
+
 
 /**
  * @brief Concatenates a directory path and an argument to form a complete path.
@@ -105,11 +138,11 @@ char	*normalize_path(const char *path)
  * @param path The target directory path provided to `cd`.
  * @return char* The resolved path using CDPATH, or NULL if no resolution is needed.
  */
-char	*resolve_cdpath_if_needed(const char *path)
+char	*resolve_cdpath_if_needed(const char *path, t_data *data)
 {
 	char	*cdpath;
 
-	cdpath = getenv("CDPATH");
+	cdpath = ft_getenv(strdup("CDPATH"), data->env_vars);
 	if (cdpath != NULL)
 		return (resolve_cdpath(cdpath, path)); // Attempt to resolve using CDPATH.
 	return (NULL); // Return NULL if CDPATH is not set or no resolution is possible.
