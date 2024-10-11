@@ -171,7 +171,7 @@ int	builtin_export(t_command *cmd, t_data *data)
 		// Check if the variable name is valid
 		if (!is_valid_env_var_name(varname))
 		{
-			fprintf(stderr, "export: `%s`: not a valid identifier\n", varname);
+			fprintf(stderr, "minishell: export: `%s`: not a valid identifier\n", varname);
 			free(varname);
 			encountered_invalid_varname = 1; // set flag to 1 and return exit code 1 at the end of the function
 			arg++;

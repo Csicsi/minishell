@@ -75,7 +75,7 @@ int		builtin_export(t_command *cmd, t_data *data);
 int		builtin_unset(t_command *cmd, t_data *data);
 int		builtin_env(t_data *data);
 int		builtin_exit(t_command *cmd, t_data *data, bool print_exit);
-char	*resolve_cdpath_if_needed(const char *path);
+char	*resolve_cdpath_if_needed(const char *path, t_data *data);
 int		update_directory_env(const char *cwd, t_data *data);
 char	*normalize_path(const char *path);
 /* pure utilities/ helper functions */
