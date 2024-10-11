@@ -412,6 +412,7 @@ int lexer(char *input, t_data *data, int last_exit_status)
     t_token *current = NULL;
     t_token *new_token;
     int word_index = 0; // Initialize word index
+    int in_heredoc = 0; // Flag to track heredoc context
 
     data->tokens = NULL; // Initialize token list to NULL
 
@@ -433,8 +434,16 @@ int lexer(char *input, t_data *data, int last_exit_status)
         // Set the word index for this token
         new_token->word = word_index;
 
+        // Handle heredoc operator (<<)
+        if (*cursor == '<' && *(cursor + 1) == '<')
+        {
+            new_token->type = TOKEN_OPERATOR;
+            cursor = check_operator(cursor, new_token);
+            in_heredoc = 1; // Enter heredoc context for the next token
+            word_index++;    // Operators create a new word context
+        }
         // Handle double-quoted strings
-        if (*cursor == '"')
+        else if (*cursor == '"')
         {
             cursor = extract_double_quoted_word(cursor, new_token, last_exit_status, data);
             new_token->type = TOKEN_WORD;
@@ -445,12 +454,12 @@ int lexer(char *input, t_data *data, int last_exit_status)
             cursor = extract_single_quoted_word(cursor, new_token);
             new_token->type = TOKEN_WORD;
         }
-        // Handle operators
+        // Handle other operators
         else if (*cursor == '>' || *cursor == '<' || *cursor == '|' || *cursor == '&')
         {
             new_token->type = TOKEN_OPERATOR;
             cursor = check_operator(cursor, new_token);
-            word_index++; // Operators create a new word context
+            word_index++;    // Operators create a new word context
         }
         // Handle regular words
         else
@@ -473,7 +482,7 @@ int lexer(char *input, t_data *data, int last_exit_status)
             }
 
             // Check if there is a $ for environment variable expansion
-            if (ft_strchr(new_token->value, '$'))
+            if (!in_heredoc && ft_strchr(new_token->value, '$')) // Disable expansion only for the first word after heredoc
             {
                 char *expanded = expand_env_var_in_str(&new_token->value, last_exit_status, data);
                 if (!expanded)
@@ -487,6 +496,12 @@ int lexer(char *input, t_data *data, int last_exit_status)
             }
 
             new_token->type = TOKEN_WORD;
+
+            // Reset the heredoc flag after the first word is processed
+            if (in_heredoc)
+            {
+                in_heredoc = 0;
+            }
         }
 
         // Append the new token to the linked list
@@ -506,7 +521,7 @@ int lexer(char *input, t_data *data, int last_exit_status)
     }
 
     //remove_null_word_tokens(data);
-	join_tokens_in_same_word(data);
+    join_tokens_in_same_word(data);
     return 0; // Return 0 on success
 }
 
@@ -549,7 +564,6 @@ int check_commands_in_tokens(t_token *tokens)
     // Ensure the first token is a valid command
     if (!current || current->type != TOKEN_WORD)
     {
-        fprintf(stderr, "Error: Expected command at the start\n");
         return (-1);
     }
 

@@ -138,6 +138,37 @@ char	*find_cmd_path(char **cmd_args)
 	return (free_array_of_strs(allpath), NULL);
 }
 
+int handle_heredoc(t_command *cmd)
+{
+    int pipe_fd[2];
+    char *line;
+
+    if (pipe(pipe_fd) == -1)
+    {
+        perror("pipe");
+        return (-1);
+    }
+
+    // Keep reading input until the heredoc delimiter is encountered
+    while (true)
+    {
+        line = readline("> ");  // Prompt the user for input
+        if (!line || strcmp(line, cmd->heredoc_delim) == 0)
+        {
+            free(line);
+            break;  // Stop when the delimiter is found or input is NULL (Ctrl+D)
+        }
+
+        // Write the input line to the pipe
+        write(pipe_fd[1], line, ft_strlen(line));
+        write(pipe_fd[1], "\n", 1);  // Add a newline after each input line
+        free(line);
+    }
+
+    close(pipe_fd[1]);  // Close the write end of the pipe
+    return pipe_fd[0];  // Return the read end of the pipe, which will be used as input
+}
+
 /**
  * @brief Executes a single command, handling input/output redirection and builtins.
  *
@@ -150,34 +181,48 @@ char	*find_cmd_path(char **cmd_args)
  */
 int execute_single_cmd(t_command *cmd, t_data *data)
 {
-    int     fd_in = -1;
-    int     fd_out = -1;
-    char    *cmd_path;
+    int fd_in = -1;
+    int fd_out = -1;
+    char *cmd_path;
 
     // Handle input redirection if specified
     if (cmd->input != NULL)
     {
-        fd_in = open(cmd->input, O_RDONLY); // Open input file
-        if (fd_in < 0) // Check for errors
+        fd_in = open(cmd->input, O_RDONLY);  // Open input file
+        if (fd_in < 0)  // Error check
         {
-            perror("minishell: input redirection");
+            fprintf(stderr, ": %s: ", cmd->input);
+            perror("");
             return (1);
         }
-        dup2(fd_in, STDIN_FILENO); // Redirect standard input
-        close(fd_in); // Close the original file descriptor after dup2
+        dup2(fd_in, STDIN_FILENO);  // Redirect standard input
+        close(fd_in);  // Close the original file descriptor
+    }
+
+    // Handle heredoc input redirection
+    if (cmd->is_heredoc)
+    {
+        fd_in = handle_heredoc(cmd);  // Process the heredoc input
+        if (fd_in == -1)
+        {
+            return (1);  // Error handling
+        }
+        dup2(fd_in, STDIN_FILENO);  // Redirect heredoc input to stdin
+        close(fd_in);  // Close the file descriptor after dup2
     }
 
     // Handle output redirection if specified
     if (cmd->output != NULL)
     {
-        fd_out = open(cmd->output, O_WRONLY | O_CREAT | (cmd->append_output ? O_APPEND : O_TRUNC), 0644); // Open output file
-        if (fd_out < 0) // Check for errors
+        fd_out = open(cmd->output, O_WRONLY | O_CREAT | (cmd->append_output ? O_APPEND : O_TRUNC), 0644);  // Open output file
+        if (fd_out < 0)  // Error check
         {
-            perror("minishell: output redirection");
+            fprintf(stderr, ": %s: ", cmd->output);
+            perror("");
             return (1);
         }
-        dup2(fd_out, STDOUT_FILENO); // Redirect standard output
-        close(fd_out); // Close the original file descriptor after dup2
+        dup2(fd_out, STDOUT_FILENO);  // Redirect standard output
+        close(fd_out);  // Close the original file descriptor
     }
 
     // Check if the command is a builtin and execute it
@@ -188,10 +233,10 @@ int execute_single_cmd(t_command *cmd, t_data *data)
     cmd_path = find_cmd_path(cmd->args);
     if (!cmd_path)
     {
-        // If the command is not found, print an error and exit
+        // If the command is not found, print an error and return
         fprintf(stderr, "%s: command not found\n", cmd->args[0]);
-        free_cmd_list(data->cmd_list); // Free the command list
-        exit(127); // Exit with 127 to indicate "command not found"
+        free_cmd_list(data->cmd_list);  // Free the command list
+        exit(127);  // Exit with 127 to indicate "command not found"
     }
 
     // Try to execute the command
@@ -199,9 +244,9 @@ int execute_single_cmd(t_command *cmd, t_data *data)
 
     // If execve fails, print an error and clean up
     perror("minishell");
-    free(cmd_path); // Free the command path
-    free_cmd_list(data->cmd_list); // Free the command list
-    exit(EXIT_FAILURE); // Exit with a failure status
+    free(cmd_path);  // Free the command path
+    free_cmd_list(data->cmd_list);  // Free the command list
+    exit(EXIT_FAILURE);  // Exit with a failure status
 }
 
 int count_commands(t_command *cmd_list)
@@ -281,7 +326,8 @@ int execute_cmd_list(t_data *data)
                 int fd_out = open(current->output, O_WRONLY | O_CREAT | (current->append_output ? O_APPEND : O_TRUNC), 0644);
                 if (fd_out < 0)  // Check for errors
                 {
-                    perror("minishell: output redirection");
+                    fprintf(stderr, ": %s: ", current->output);
+        			perror("");
                     free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
                     exit(EXIT_FAILURE);
                 }
@@ -351,6 +397,24 @@ int execute_cmd_list(t_data *data)
     return (data->last_exit_status);  // Return the exit status of the last command executed
 }
 
+int count_words(t_token *tokens)
+{
+    int word_count = 0;
+
+    while (tokens)
+    {
+        if (tokens->type == TOKEN_WORD)
+            word_count++;
+        else if (tokens->type == TOKEN_OPERATOR)
+        {
+            if (strcmp(tokens->value, "|") == 0)
+                break;  // Stop counting at the pipe operator
+        }
+        tokens = tokens->next;  // Move to the next token
+    }
+    return word_count;
+}
+
 /**
  * @brief Parses tokens into a linked list of command structures.
  *
@@ -368,17 +432,21 @@ t_command *parse_tokens(t_data *data)
     t_command *cmd = malloc(sizeof(t_command));  // Allocate memory for the first command structure
     if (!cmd)
         return (NULL);
-    t_command *current_cmd = cmd;  // Set current command pointer to the first command
+
+    t_command *current_cmd = cmd;  // Set the current command pointer to the first command
     int arg_index = 0;
 
     // Initialize the first command's fields to default values
-    current_cmd->args = malloc(sizeof(char *) * (count_tokens(data->tokens) + 1));  // Allocate memory for argument list
-	if (!current_cmd->args)
-    	return NULL;
+    current_cmd->args = malloc(sizeof(char *) * (count_words(data->tokens) + 1));  // Allocate memory for argument list
+    if (!current_cmd->args)
+        return NULL;
+
     current_cmd->input = NULL;
     current_cmd->output = NULL;
     current_cmd->append_output = 0;
     current_cmd->exit_status = 0;
+    current_cmd->heredoc_delim = NULL;
+    current_cmd->is_heredoc = false;
     current_cmd->next = NULL;
 
     // Iterate through the token linked list
@@ -392,45 +460,89 @@ t_command *parse_tokens(t_data *data)
         // Handle operators (such as pipes and redirection)
         else if (data->tokens->type == TOKEN_OPERATOR)
         {
-            // Handle pipe operator: create a new command
-            if (strcmp(data->tokens->value, "|") == 0)
+            // Handle heredoc operator: "<<"
+            if (strcmp(data->tokens->value, "<<") == 0)
             {
-                current_cmd->next = malloc(sizeof(t_command));  // Allocate memory for the next command
-                current_cmd = current_cmd->next;  // Move to the next command
-                current_cmd->args = malloc(sizeof(char *) * (count_tokens(data->tokens) + 1));  // Allocate memory for arguments
-                current_cmd->input = NULL;
-                current_cmd->output = NULL;
-                current_cmd->append_output = 0;
-                current_cmd->exit_status = 0;
-                current_cmd->next = NULL;
-                arg_index = 0;  // Reset argument index for the new command
+                current_cmd->is_heredoc = true;  // Set heredoc flag to true
+                if (data->tokens->next != NULL)
+                {
+                    current_cmd->heredoc_delim = strdup(data->tokens->next->value);  // Store heredoc delimiter
+                    data->tokens = data->tokens->next;  // Move to the next token
+                }
+                else
+                {
+                    fprintf(stderr, "minishell: syntax error near unexpected token `newline`\n");
+                    return NULL;  // Return NULL or handle the error appropriately
+                }
             }
             // Handle output redirection (">")
             else if (strcmp(data->tokens->value, ">") == 0)
             {
-				if (data->tokens->next != NULL)
+                if (data->tokens->next != NULL)
                 {
-					current_cmd->output = strdup(data->tokens->next->value);  // Set the output file name from the next token
-                	data->tokens = data->tokens->next;
-				}
-				else
-				{
-					fprintf(stderr, "minishell: syntax error near unexpected token `newline`\n");
-					return NULL;  // Return NULL or handle the error appropriately
-				}
+                    current_cmd->output = strdup(data->tokens->next->value);  // Set the output file name from the next token
+                    data->tokens = data->tokens->next;
+                }
+                else
+                {
+                    fprintf(stderr, "minishell: syntax error near unexpected token `newline`\n");
+                    return NULL;  // Return NULL or handle the error appropriately
+                }
             }
             // Handle append output redirection (">>")
             else if (strcmp(data->tokens->value, ">>") == 0)
             {
-                current_cmd->output = strdup(data->tokens->next->value);  // Set the output file name
-                current_cmd->append_output = 1;
-                data->tokens = data->tokens->next;
+                if (data->tokens->next != NULL)
+                {
+                    current_cmd->output = strdup(data->tokens->next->value);  // Set the output file name
+                    current_cmd->append_output = 1;  // Set append flag
+                    data->tokens = data->tokens->next;
+                }
+                else
+                {
+                    fprintf(stderr, "minishell: syntax error near unexpected token `newline`\n");
+                    return NULL;  // Return NULL or handle the error appropriately
+                }
             }
             // Handle input redirection ("<")
             else if (strcmp(data->tokens->value, "<") == 0)
             {
-                current_cmd->input = strdup(data->tokens->next->value);   // Set the input file name from the next token
-                data->tokens = data->tokens->next;
+                if (data->tokens->next != NULL)
+                {
+                    current_cmd->input = strdup(data->tokens->next->value);   // Set the input file name from the next token
+                    data->tokens = data->tokens->next;
+                }
+                else
+                {
+                    fprintf(stderr, "minishell: syntax error near unexpected token `newline`\n");
+                    return NULL;  // Return NULL or handle the error appropriately
+                }
+            }
+            // Handle pipe operator: create a new command
+            else if (strcmp(data->tokens->value, "|") == 0)
+            {
+                current_cmd->args[arg_index] = NULL;  // Null-terminate the current command's arguments
+
+                // Allocate memory for the next command in the pipeline
+                current_cmd->next = malloc(sizeof(t_command));
+                if (!current_cmd->next)
+                    return NULL;  // Handle memory allocation failure
+
+                current_cmd = current_cmd->next;  // Move to the next command
+
+                // Initialize the new command's fields
+                current_cmd->args = malloc(sizeof(char *) * (count_words(data->tokens) + 1));
+                if (!current_cmd->args)
+                    return NULL;
+
+                current_cmd->input = NULL;
+                current_cmd->output = NULL;
+                current_cmd->append_output = 0;
+                current_cmd->exit_status = 0;
+                current_cmd->heredoc_delim = NULL;
+                current_cmd->is_heredoc = false;
+                current_cmd->next = NULL;
+                arg_index = 0;  // Reset argument index for the new command
             }
         }
         data->tokens = data->tokens->next;  // Move to the next token
@@ -439,6 +551,7 @@ t_command *parse_tokens(t_data *data)
     current_cmd->args[arg_index] = NULL;  // Null-terminate the argument list for the last command
     return cmd;  // Return the head of the command list
 }
+
 
 /**
  * @brief Checks if (single or double) quotes in input string remain open
@@ -606,7 +719,7 @@ int	main(int argc, char **argv, char **env_vars)
 	while (1)
 	{
 		// Prompt the user and read input using readline
-		input = readline("minishell> ");
+		input = readline("Don'tPanickShell> ");
 
 		// If the user inputs Ctrl-D (EOF), exit the shell
 		if (input == NULL)
