@@ -1,0 +1,165 @@
+\doxysection{srcs/builtins/cd.c File Reference}
+\hypertarget{cd_8c}{}\label{cd_8c}\index{srcs/builtins/cd.c@{srcs/builtins/cd.c}}
+{\ttfamily \#include "{}../includes/minishell.\+h"{}}\newline
+Include dependency graph for cd.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{cd_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static int \mbox{\hyperlink{cd_8c_a64d31ae178044267245f129945e994c1}{resolve\+\_\+special\+\_\+paths}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}target\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Resolves special paths for the {\ttfamily cd} command, such as {\ttfamily -\/} (OLDPWD) and no argument (HOME). \end{DoxyCompactList}\item 
+static int \mbox{\hyperlink{cd_8c_a0753053fa154820fcdb75ff64f055638}{resolve\+\_\+target\+\_\+path}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}target\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Resolves the target path for the {\ttfamily cd} command considering both special and normal paths. \end{DoxyCompactList}\item 
+static int \mbox{\hyperlink{cd_8c_af2eac20461cf408ce2d5211d842bd0a9}{change\+\_\+directory}} (const char \texorpdfstring{$\ast$}{*}curpath, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Changes the current directory to the specified path, updating environment variables. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{cd_8c_aa70cbe55dcaedfbc1984faa41966ccb1}{builtin\+\_\+cd}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em The built-\/in {\ttfamily cd} command function, handling directory changes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{cd_8c_aa70cbe55dcaedfbc1984faa41966ccb1}\label{cd_8c_aa70cbe55dcaedfbc1984faa41966ccb1} 
+\index{cd.c@{cd.c}!builtin\_cd@{builtin\_cd}}
+\index{builtin\_cd@{builtin\_cd}!cd.c@{cd.c}}
+\doxysubsubsection{\texorpdfstring{builtin\_cd()}{builtin\_cd()}}
+{\footnotesize\ttfamily int builtin\+\_\+cd (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+The built-\/in {\ttfamily cd} command function, handling directory changes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & The command structure containing arguments. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 0 if successful, 1 if an error occurred. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cd_8c_aa70cbe55dcaedfbc1984faa41966ccb1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cd_8c_aa70cbe55dcaedfbc1984faa41966ccb1_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{cd_8c_af2eac20461cf408ce2d5211d842bd0a9}\label{cd_8c_af2eac20461cf408ce2d5211d842bd0a9} 
+\index{cd.c@{cd.c}!change\_directory@{change\_directory}}
+\index{change\_directory@{change\_directory}!cd.c@{cd.c}}
+\doxysubsubsection{\texorpdfstring{change\_directory()}{change\_directory()}}
+{\footnotesize\ttfamily static int change\+\_\+directory (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{curpath,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Changes the current directory to the specified path, updating environment variables. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em curpath} & The path to change the directory to. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 0 if successful, 1 if an error occurred. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cd_8c_af2eac20461cf408ce2d5211d842bd0a9_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cd_8c_af2eac20461cf408ce2d5211d842bd0a9_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{cd_8c_a64d31ae178044267245f129945e994c1}\label{cd_8c_a64d31ae178044267245f129945e994c1} 
+\index{cd.c@{cd.c}!resolve\_special\_paths@{resolve\_special\_paths}}
+\index{resolve\_special\_paths@{resolve\_special\_paths}!cd.c@{cd.c}}
+\doxysubsubsection{\texorpdfstring{resolve\_special\_paths()}{resolve\_special\_paths()}}
+{\footnotesize\ttfamily static int resolve\+\_\+special\+\_\+paths (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data,  }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{target\+\_\+path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Resolves special paths for the {\ttfamily cd} command, such as {\ttfamily -\/} (OLDPWD) and no argument (HOME). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & The command structure containing arguments. \\
+\hline
+{\em target\+\_\+path} & Pointer to hold the resolved path if applicable. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 0 if a special path is resolved, 1 if an error occurred, 0 if no special path was resolved. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cd_8c_a64d31ae178044267245f129945e994c1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cd_8c_a64d31ae178044267245f129945e994c1_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{cd_8c_a0753053fa154820fcdb75ff64f055638}\label{cd_8c_a0753053fa154820fcdb75ff64f055638} 
+\index{cd.c@{cd.c}!resolve\_target\_path@{resolve\_target\_path}}
+\index{resolve\_target\_path@{resolve\_target\_path}!cd.c@{cd.c}}
+\doxysubsubsection{\texorpdfstring{resolve\_target\_path()}{resolve\_target\_path()}}
+{\footnotesize\ttfamily static int resolve\+\_\+target\+\_\+path (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data,  }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{target\+\_\+path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Resolves the target path for the {\ttfamily cd} command considering both special and normal paths. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & The command structure containing arguments. \\
+\hline
+{\em target\+\_\+path} & Pointer to hold the resolved target path. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 0 if the target path is successfully resolved, 1 if an error occurred. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cd_8c_a0753053fa154820fcdb75ff64f055638_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cd_8c_a0753053fa154820fcdb75ff64f055638_icgraph}
+\end{center}
+\end{figure}

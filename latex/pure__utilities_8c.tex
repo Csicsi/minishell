@@ -1,0 +1,97 @@
+\doxysection{srcs/pure\+\_\+utilities.c File Reference}
+\hypertarget{pure__utilities_8c}{}\label{pure__utilities_8c}\index{srcs/pure\_utilities.c@{srcs/pure\_utilities.c}}
+{\ttfamily \#include "{}../includes/minishell.\+h"{}}\newline
+Include dependency graph for pure\+\_\+utilities.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pure__utilities_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{pure__utilities_8c_a80485099dcca81832195841e7948a0c6}{ft\+\_\+strjoin\+\_\+pipex}} (char \texorpdfstring{$\ast$}{*}s1, char \texorpdfstring{$\ast$}{*}s2)
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{pure__utilities_8c_a122245403dd6e2313144780839946659}{free\+\_\+null}} (char \texorpdfstring{$\ast$}{*}str)
+\item 
+void \mbox{\hyperlink{pure__utilities_8c_a7d8c676bf4c73f17af14803131d97e30}{free\+\_\+array\+\_\+of\+\_\+strs}} (char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}tab)
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{pure__utilities_8c_a39890f3daa20ec3d713c14ea01a8ee58}{ft\+\_\+getenv}} (char \texorpdfstring{$\ast$}{*}env\+\_\+var\+\_\+name, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}envp)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{pure__utilities_8c_a7d8c676bf4c73f17af14803131d97e30}\label{pure__utilities_8c_a7d8c676bf4c73f17af14803131d97e30} 
+\index{pure\_utilities.c@{pure\_utilities.c}!free\_array\_of\_strs@{free\_array\_of\_strs}}
+\index{free\_array\_of\_strs@{free\_array\_of\_strs}!pure\_utilities.c@{pure\_utilities.c}}
+\doxysubsubsection{\texorpdfstring{free\_array\_of\_strs()}{free\_array\_of\_strs()}}
+{\footnotesize\ttfamily void free\+\_\+array\+\_\+of\+\_\+strs (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{tab }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pure__utilities_8c_a7d8c676bf4c73f17af14803131d97e30_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{pure__utilities_8c_a122245403dd6e2313144780839946659}\label{pure__utilities_8c_a122245403dd6e2313144780839946659} 
+\index{pure\_utilities.c@{pure\_utilities.c}!free\_null@{free\_null}}
+\index{free\_null@{free\_null}!pure\_utilities.c@{pure\_utilities.c}}
+\doxysubsubsection{\texorpdfstring{free\_null()}{free\_null()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} free\+\_\+null (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{str }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pure__utilities_8c_a122245403dd6e2313144780839946659_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{pure__utilities_8c_a39890f3daa20ec3d713c14ea01a8ee58}\label{pure__utilities_8c_a39890f3daa20ec3d713c14ea01a8ee58} 
+\index{pure\_utilities.c@{pure\_utilities.c}!ft\_getenv@{ft\_getenv}}
+\index{ft\_getenv@{ft\_getenv}!pure\_utilities.c@{pure\_utilities.c}}
+\doxysubsubsection{\texorpdfstring{ft\_getenv()}{ft\_getenv()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} ft\+\_\+getenv (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{env\+\_\+var\+\_\+name,  }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{envp }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=344pt]{pure__utilities_8c_a39890f3daa20ec3d713c14ea01a8ee58_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pure__utilities_8c_a39890f3daa20ec3d713c14ea01a8ee58_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{pure__utilities_8c_a80485099dcca81832195841e7948a0c6}\label{pure__utilities_8c_a80485099dcca81832195841e7948a0c6} 
+\index{pure\_utilities.c@{pure\_utilities.c}!ft\_strjoin\_pipex@{ft\_strjoin\_pipex}}
+\index{ft\_strjoin\_pipex@{ft\_strjoin\_pipex}!pure\_utilities.c@{pure\_utilities.c}}
+\doxysubsubsection{\texorpdfstring{ft\_strjoin\_pipex()}{ft\_strjoin\_pipex()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} ft\+\_\+strjoin\+\_\+pipex (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{s1,  }\item[{char \texorpdfstring{$\ast$}{*}}]{s2 }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=279pt]{pure__utilities_8c_a80485099dcca81832195841e7948a0c6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{pure__utilities_8c_a80485099dcca81832195841e7948a0c6_icgraph}
+\end{center}
+\end{figure}

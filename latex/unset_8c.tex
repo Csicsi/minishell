@@ -1,0 +1,57 @@
+\doxysection{srcs/builtins/unset.c File Reference}
+\hypertarget{unset_8c}{}\label{unset_8c}\index{srcs/builtins/unset.c@{srcs/builtins/unset.c}}
+{\ttfamily \#include "{}../includes/minishell.\+h"{}}\newline
+Include dependency graph for unset.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{unset_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{unset_8c_ac9abed9f13601fc9bcb5dfda9d943180}{builtin\+\_\+unset}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Handles the {\ttfamily unset} builtin command. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{unset_8c_ac9abed9f13601fc9bcb5dfda9d943180}\label{unset_8c_ac9abed9f13601fc9bcb5dfda9d943180} 
+\index{unset.c@{unset.c}!builtin\_unset@{builtin\_unset}}
+\index{builtin\_unset@{builtin\_unset}!unset.c@{unset.c}}
+\doxysubsubsection{\texorpdfstring{builtin\_unset()}{builtin\_unset()}}
+{\footnotesize\ttfamily int builtin\+\_\+unset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Handles the {\ttfamily unset} builtin command. 
+
+This function unsets (i.\+e. removes) an environment variable.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+{\em data-\/$>$env\+\_\+vars} & The environment variables array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 0 on success, or 1 if an error occurs. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=264pt]{unset_8c_ac9abed9f13601fc9bcb5dfda9d943180_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{unset_8c_ac9abed9f13601fc9bcb5dfda9d943180_icgraph}
+\end{center}
+\end{figure}

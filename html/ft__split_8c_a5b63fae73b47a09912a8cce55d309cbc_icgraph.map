@@ -1,0 +1,15 @@
+<map id="free_split" name="free_split">
+<area shape="rect" id="Node000001" title=" " alt="" coords="917,5,1000,31"/>
+<area shape="rect" id="Node000002" href="$ft__split_8c.html#a4fb8e0d3b866428b72f36cdbf972078f" title=" " alt="" coords="773,5,869,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="904,21,869,21,869,15,904,15"/>
+<area shape="rect" id="Node000003" href="$ft__split_8c.html#a5d916a9f3996959873b85e7f335d9954" title=" " alt="" coords="659,5,725,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="759,21,725,21,725,15,759,15"/>
+<area shape="rect" id="Node000004" href="$execute_8c.html#a5aef876cb61172789d9665f980ddf814" title="Finds the appropriate path to run executables from the environment variable $PATH (typically in /usr/..." alt="" coords="493,5,611,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="645,21,611,21,611,15,645,15"/>
+<area shape="rect" id="Node000005" href="$execute_8c.html#a88d14cb2ca3a7dc6ecbbea77cf9f9751" title="Executes a single command, handling input/output redirection and builtins." alt="" coords="291,5,445,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="480,21,446,21,446,15,480,15"/>
+<area shape="rect" id="Node000006" href="$execute_8c.html#ac3dc362e7352a660ce3a50b31b2e3dcb" title="Executes a list of commands with optional piping and redirection." alt="" coords="108,5,243,31"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="277,21,243,21,243,15,277,15"/>
+<area shape="rect" id="Node000007" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,5,60,31"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="94,21,60,21,60,15,94,15"/>
+</map>

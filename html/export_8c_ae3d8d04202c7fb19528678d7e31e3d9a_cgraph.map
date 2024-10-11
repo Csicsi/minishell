@@ -1,0 +1,5 @@
+<map id="sort_env_vars" name="sort_env_vars">
+<area shape="rect" id="Node000001" title="Helper function that sorts env variables alphabetically This function sorts the char** of environment..." alt="" coords="5,5,119,31"/>
+<area shape="rect" id="Node000002" href="$ft__strcmp_8c.html#a1f2ff2312e5994560c9537cd9173be94" title=" " alt="" coords="167,5,249,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,15,153,15,153,21,119,21"/>
+</map>

@@ -1,0 +1,25 @@
+<map id="expand_env_var_in_str" name="expand_env_var_in_str">
+<area shape="rect" id="Node000001" title="Goes through a word token where a $&#45;sign was found and expands environment variables." alt="" coords="5,80,177,105"/>
+<area shape="rect" id="Node000002" href="$lexer_8c.html#a715c85535d446ba811faf5ec6ce6ea5f" title="Calculates the final length of the string after expanding environment variables." alt="" coords="233,41,385,81"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="177,77,220,71,220,76,178,83"/>
+<area shape="rect" id="Node000011" href="$lexer_8c.html#acee4344443155661326e68479c55c588" title="Expands environment variables in the input string without reallocating." alt="" coords="225,105,393,145"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="178,103,212,108,212,113,177,108"/>
+<area shape="rect" id="Node000003" href="$pure__utilities_8c.html#a39890f3daa20ec3d713c14ea01a8ee58" title=" " alt="" coords="441,52,524,77"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="386,60,428,61,428,66,385,65"/>
+<area shape="rect" id="Node000009" href="$ft__itoa_8c.html#a8a6ea3765dfd826eabfc00d36e28ea38" title=" " alt="" coords="451,105,514,131"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="371,78,439,101,437,106,370,83"/>
+<area shape="rect" id="Node000004" href="$ft__strjoin_8c.html#a91e6e3e428bcc9f2291b700e1829b82b" title=" " alt="" coords="578,55,657,80"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="524,63,564,64,564,69,524,68"/>
+<area shape="rect" id="Node000008" href="$ft__strncmp_8c.html#a9d2fe792187aa4ed08e5864fb2c4d6dc" title=" " alt="" coords="572,5,663,31"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="519,49,566,33,568,38,521,54"/>
+<area shape="rect" id="Node000005" href="$ft__strlcat_8c.html#a5ec5cb64412b189edcc4c4bd56183f54" title=" " alt="" coords="713,5,791,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="652,52,702,33,704,38,654,57"/>
+<area shape="rect" id="Node000006" href="$ft__strlcpy_8c.html#aa053827b3a2ea3d0118783d6fb59d178" title=" " alt="" coords="711,55,793,80"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="657,65,697,65,697,70,657,70"/>
+<area shape="rect" id="Node000007" href="$ft__strlen_8c.html#abbb8c6c4ed85d892e7f1509f65f5768a" title=" " alt="" coords="715,104,789,129"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="654,78,704,96,702,101,652,83"/>
+<area shape="rect" id="Node000010" href="$ft__itoa_8c.html#a06d9faba4cff026eaf6b0a12611afba4" title=" " alt="" coords="582,105,653,131"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="515,115,568,115,568,121,515,121"/>
+<area shape="poly" id="edge11_Node000011_Node000003" title=" " alt="" coords="367,102,432,79,433,84,369,107"/>
+<area shape="poly" id="edge12_Node000011_Node000009" title=" " alt="" coords="393,119,438,117,438,122,394,124"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="lexer" name="lexer">
+<area shape="rect" id="Node000001" title="Tokenizes the input string into an array of tokens." alt="" coords="108,5,163,31"/>
+<area shape="rect" id="Node000002" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,5,60,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="94,21,60,21,60,15,94,15"/>
+</map>

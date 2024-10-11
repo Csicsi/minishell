@@ -1,0 +1,7 @@
+<map id="count_words" name="count_words">
+<area shape="rect" id="Node000001" title=" " alt="" coords="264,5,368,31"/>
+<area shape="rect" id="Node000002" href="$execute_8c.html#a782b929c82bae1bd0ac94cf76aa118ba" title="Parses tokens into a linked list of command structures." alt="" coords="108,5,216,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="250,21,216,21,216,15,250,15"/>
+<area shape="rect" id="Node000003" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,5,60,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="94,21,60,21,60,15,94,15"/>
+</map>

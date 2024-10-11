@@ -1,0 +1,113 @@
+\doxysection{libft/ft\+\_\+split.c File Reference}
+\hypertarget{ft__split_8c}{}\label{ft__split_8c}\index{libft/ft\_split.c@{libft/ft\_split.c}}
+{\ttfamily \#include "{}libft.\+h"{}}\newline
+Include dependency graph for ft\+\_\+split.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ft__split_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static int \mbox{\hyperlink{ft__split_8c_ae52cca036311e29e808e9164f36af78d}{count\+\_\+words}} (char \texorpdfstring{$\ast$}{*}str, char c)
+\item 
+static void \mbox{\hyperlink{ft__split_8c_a5b63fae73b47a09912a8cce55d309cbc}{free\+\_\+split}} (char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}split)
+\item 
+static int \mbox{\hyperlink{ft__split_8c_af9ad410845273a4b571347a151990551}{find\+\_\+next\+\_\+word}} (char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}start, int \texorpdfstring{$\ast$}{*}length, char \texorpdfstring{$\ast$}{*}str, char c)
+\item 
+static int \mbox{\hyperlink{ft__split_8c_a4fb8e0d3b866428b72f36cdbf972078f}{split\+\_\+words}} (char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}split, char \texorpdfstring{$\ast$}{*}str, char c)
+\item 
+char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{ft__split_8c_a5d916a9f3996959873b85e7f335d9954}{ft\+\_\+split}} (char \texorpdfstring{$\ast$}{*}str, char c)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{ft__split_8c_ae52cca036311e29e808e9164f36af78d}\label{ft__split_8c_ae52cca036311e29e808e9164f36af78d} 
+\index{ft\_split.c@{ft\_split.c}!count\_words@{count\_words}}
+\index{count\_words@{count\_words}!ft\_split.c@{ft\_split.c}}
+\doxysubsubsection{\texorpdfstring{count\_words()}{count\_words()}}
+{\footnotesize\ttfamily static int count\+\_\+words (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{str,  }\item[{char}]{c }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ft__split_8c_ae52cca036311e29e808e9164f36af78d_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{ft__split_8c_af9ad410845273a4b571347a151990551}\label{ft__split_8c_af9ad410845273a4b571347a151990551} 
+\index{ft\_split.c@{ft\_split.c}!find\_next\_word@{find\_next\_word}}
+\index{find\_next\_word@{find\_next\_word}!ft\_split.c@{ft\_split.c}}
+\doxysubsubsection{\texorpdfstring{find\_next\_word()}{find\_next\_word()}}
+{\footnotesize\ttfamily static int find\+\_\+next\+\_\+word (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{start,  }\item[{int \texorpdfstring{$\ast$}{*}}]{length,  }\item[{char \texorpdfstring{$\ast$}{*}}]{str,  }\item[{char}]{c }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ft__split_8c_af9ad410845273a4b571347a151990551_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{ft__split_8c_a5b63fae73b47a09912a8cce55d309cbc}\label{ft__split_8c_a5b63fae73b47a09912a8cce55d309cbc} 
+\index{ft\_split.c@{ft\_split.c}!free\_split@{free\_split}}
+\index{free\_split@{free\_split}!ft\_split.c@{ft\_split.c}}
+\doxysubsubsection{\texorpdfstring{free\_split()}{free\_split()}}
+{\footnotesize\ttfamily static void free\+\_\+split (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{split }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ft__split_8c_a5b63fae73b47a09912a8cce55d309cbc_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{ft__split_8c_a5d916a9f3996959873b85e7f335d9954}\label{ft__split_8c_a5d916a9f3996959873b85e7f335d9954} 
+\index{ft\_split.c@{ft\_split.c}!ft\_split@{ft\_split}}
+\index{ft\_split@{ft\_split}!ft\_split.c@{ft\_split.c}}
+\doxysubsubsection{\texorpdfstring{ft\_split()}{ft\_split()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} ft\+\_\+split (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{str,  }\item[{char}]{c }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ft__split_8c_a5d916a9f3996959873b85e7f335d9954_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ft__split_8c_a5d916a9f3996959873b85e7f335d9954_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{ft__split_8c_a4fb8e0d3b866428b72f36cdbf972078f}\label{ft__split_8c_a4fb8e0d3b866428b72f36cdbf972078f} 
+\index{ft\_split.c@{ft\_split.c}!split\_words@{split\_words}}
+\index{split\_words@{split\_words}!ft\_split.c@{ft\_split.c}}
+\doxysubsubsection{\texorpdfstring{split\_words()}{split\_words()}}
+{\footnotesize\ttfamily static int split\+\_\+words (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{split,  }\item[{char \texorpdfstring{$\ast$}{*}}]{str,  }\item[{char}]{c }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=279pt]{ft__split_8c_a4fb8e0d3b866428b72f36cdbf972078f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ft__split_8c_a4fb8e0d3b866428b72f36cdbf972078f_icgraph}
+\end{center}
+\end{figure}

@@ -1,0 +1,798 @@
+\doxysection{includes/minishell.h File Reference}
+\hypertarget{minishell_8h}{}\label{minishell_8h}\index{includes/minishell.h@{includes/minishell.h}}
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$sys/stat.\+h$>$}\newline
+{\ttfamily \#include $<$linux/limits.\+h$>$}\newline
+{\ttfamily \#include $<$fcntl.\+h$>$}\newline
+{\ttfamily \#include $<$sys/wait.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$readline/readline.\+h$>$}\newline
+{\ttfamily \#include $<$readline/history.\+h$>$}\newline
+{\ttfamily \#include "{}../libft/libft.\+h"{}}\newline
+Include dependency graph for minishell.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structs__command}{s\+\_\+command}}
+\item 
+struct \mbox{\hyperlink{structs__token}{s\+\_\+token}}
+\item 
+struct \mbox{\hyperlink{structs__data}{s\+\_\+data}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structs__command}{s\+\_\+command}} \mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}}
+\item 
+typedef enum \mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222de}{e\+\_\+token\+\_\+type}} \mbox{\hyperlink{minishell_8h_aaa12264c004e358b28290c09bb20969a}{t\+\_\+token\+\_\+type}}
+\item 
+typedef struct \mbox{\hyperlink{structs__token}{s\+\_\+token}} \mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}}
+\item 
+typedef struct \mbox{\hyperlink{structs__data}{s\+\_\+data}} \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222de}{e\+\_\+token\+\_\+type}} \{ \newline
+\mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222dea28b529bc6cf86659d134593d58a27be5}{TOKEN\+\_\+\+WORD}}
+, \mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222dead61fd32884b0d8d9e8dc15fb0d1d954e}{TOKEN\+\_\+\+OPERATOR}}
+, \mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222dea9a9bc6f4d4351c059bbdc52541d3aaa2}{TOKEN\+\_\+\+ENV\+\_\+\+VAR}}
+, \mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222deab565ebfaaa53dcee6ddda201e270733e}{TOKEN\+\_\+\+DOT}}
+, \newline
+\mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222deafe0f79003a508c29b6f1312a28102a4c}{TOKEN\+\_\+\+DOTDOT}}
+, \mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222dea2dee186c009d8a91a8ebd2caa81ceef3}{TOKEN\+\_\+\+UNKNOWN}}
+, \mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222deadf0956fb77ec0b61a7fb35113fe5d805}{TOKEN\+\_\+\+END}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{minishell_8h_a42a0f9e915117bf1220e2b9e8822a44a}{lexer}} (char \texorpdfstring{$\ast$}{*}input, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data, int last\+\_\+exit\+\_\+status)
+\begin{DoxyCompactList}\small\item\em Tokenizes the input string into an array of tokens. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{minishell_8h_a6d29f1d9465b511398af6585a5007546}{free\+\_\+tokens}} (\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Frees the memory allocated for the token array. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{minishell_8h_a782b929c82bae1bd0ac94cf76aa118ba}{parse\+\_\+tokens}} (\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Parses tokens into a linked list of command structures. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{minishell_8h_a4f4b50c68a3ad0e2365ea1f20626a2b4}{count\+\_\+tokens}} (\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}tokens)
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{minishell_8h_abdae338e31fdbdb0de60d60acdde2dd8}{expand\+\_\+env\+\_\+var}} (char \texorpdfstring{$\ast$}{*}cursor, int last\+\_\+exit\+\_\+status, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Expands environment variables in a string without using realloc. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{minishell_8h_acbbf4b8066d0c02fd0e7193925eb3122}{expand\+\_\+env\+\_\+var\+\_\+in\+\_\+str}} (char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}ptr\+\_\+to\+\_\+cursor, int last\+\_\+exit\+\_\+status, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Goes through a word token where a \$-\/sign was found and expands environment variables. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{minishell_8h_a08bbe50ae7201f9d8cd6191a6315eff2}{builtin\+\_\+echo}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd)
+\begin{DoxyCompactList}\small\item\em Handles the {\ttfamily echo} builtin command with support for the {\ttfamily -\/n} option. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{minishell_8h_aa70cbe55dcaedfbc1984faa41966ccb1}{builtin\+\_\+cd}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em The built-\/in {\ttfamily cd} command function, handling directory changes. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{minishell_8h_a80bdc55685c98be70a879012570330f9}{builtin\+\_\+pwd}} (void)
+\begin{DoxyCompactList}\small\item\em Handles the {\ttfamily pwd} builtin command. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{minishell_8h_ac372c3f0fe95e61886f5322d6629d6f3}{builtin\+\_\+export}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Handles the {\ttfamily export} builtin command. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{minishell_8h_ac9abed9f13601fc9bcb5dfda9d943180}{builtin\+\_\+unset}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Handles the {\ttfamily unset} builtin command. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{minishell_8h_a0b345c5f6b2a9d5fa6c94c7e75d522b3}{builtin\+\_\+env}} (\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Handles the {\ttfamily env} builtin command. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{minishell_8h_a450f4befe99efd8d58693101b396e2ef}{builtin\+\_\+exit}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data, bool print\+\_\+exit)
+\begin{DoxyCompactList}\small\item\em Handles the {\ttfamily exit} builtin command. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{minishell_8h_a7e09b28621765a51ca74a8017b13a146}{resolve\+\_\+cdpath\+\_\+if\+\_\+needed}} (const char \texorpdfstring{$\ast$}{*}path, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Resolves the path using CDPATH if needed. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{minishell_8h_ad9668c33b7af5acb61cf24f2bbfe1b37}{update\+\_\+directory\+\_\+env}} (const char \texorpdfstring{$\ast$}{*}cwd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Updates the environment variables after changing the directory. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{minishell_8h_a94607008b7a336b74a35ba26e0f058c1}{normalize\+\_\+path}} (const char \texorpdfstring{$\ast$}{*}path)
+\begin{DoxyCompactList}\small\item\em Normalizes a given path by resolving symbolic links, {\ttfamily .} and {\ttfamily ..}. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{minishell_8h_a80485099dcca81832195841e7948a0c6}{ft\+\_\+strjoin\+\_\+pipex}} (char \texorpdfstring{$\ast$}{*}s1, char \texorpdfstring{$\ast$}{*}s2)
+\item 
+void \mbox{\hyperlink{minishell_8h_a7d8c676bf4c73f17af14803131d97e30}{free\+\_\+array\+\_\+of\+\_\+strs}} (char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}tab)
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{minishell_8h_a122245403dd6e2313144780839946659}{free\+\_\+null}} (char \texorpdfstring{$\ast$}{*}str)
+\item 
+int \mbox{\hyperlink{minishell_8h_ac782f8810e92f00157974fb78d73df40}{check\+\_\+commands\+\_\+in\+\_\+tokens}} (\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}tokens)
+\begin{DoxyCompactList}\small\item\em Checks if the first token and the token after a pipe are valid commands. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{minishell_8h_a9d159a845073a413ce9358f6111dd0b2}{ft\+\_\+getenv}} (char \texorpdfstring{$\ast$}{*}look\+\_\+for\+\_\+match, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}envp)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}\label{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3} 
+\index{minishell.h@{minishell.h}!t\_command@{t\_command}}
+\index{t\_command@{t\_command}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{t\_command}{t\_command}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structs__command}{s\+\_\+command}} \mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}}}
+
+\Hypertarget{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}\label{minishell_8h_a24e28e95867f9681b9d87781b1caa65b} 
+\index{minishell.h@{minishell.h}!t\_data@{t\_data}}
+\index{t\_data@{t\_data}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{t\_data}{t\_data}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structs__data}{s\+\_\+data}} \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}}}
+
+\Hypertarget{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}\label{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4} 
+\index{minishell.h@{minishell.h}!t\_token@{t\_token}}
+\index{t\_token@{t\_token}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{t\_token}{t\_token}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structs__token}{s\+\_\+token}} \mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}}}
+
+\Hypertarget{minishell_8h_aaa12264c004e358b28290c09bb20969a}\label{minishell_8h_aaa12264c004e358b28290c09bb20969a} 
+\index{minishell.h@{minishell.h}!t\_token\_type@{t\_token\_type}}
+\index{t\_token\_type@{t\_token\_type}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{t\_token\_type}{t\_token\_type}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222de}{e\+\_\+token\+\_\+type}} \mbox{\hyperlink{minishell_8h_aaa12264c004e358b28290c09bb20969a}{t\+\_\+token\+\_\+type}}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{minishell_8h_a76a354e93d720f05344590ec8aa222de}\label{minishell_8h_a76a354e93d720f05344590ec8aa222de} 
+\index{minishell.h@{minishell.h}!e\_token\_type@{e\_token\_type}}
+\index{e\_token\_type@{e\_token\_type}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{e\_token\_type}{e\_token\_type}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{minishell_8h_a76a354e93d720f05344590ec8aa222de}{e\+\_\+token\+\_\+type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TOKEN\_WORD@{TOKEN\_WORD}!minishell.h@{minishell.h}}\index{minishell.h@{minishell.h}!TOKEN\_WORD@{TOKEN\_WORD}}}\Hypertarget{minishell_8h_a76a354e93d720f05344590ec8aa222dea28b529bc6cf86659d134593d58a27be5}\label{minishell_8h_a76a354e93d720f05344590ec8aa222dea28b529bc6cf86659d134593d58a27be5} 
+TOKEN\+\_\+\+WORD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TOKEN\_OPERATOR@{TOKEN\_OPERATOR}!minishell.h@{minishell.h}}\index{minishell.h@{minishell.h}!TOKEN\_OPERATOR@{TOKEN\_OPERATOR}}}\Hypertarget{minishell_8h_a76a354e93d720f05344590ec8aa222dead61fd32884b0d8d9e8dc15fb0d1d954e}\label{minishell_8h_a76a354e93d720f05344590ec8aa222dead61fd32884b0d8d9e8dc15fb0d1d954e} 
+TOKEN\+\_\+\+OPERATOR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TOKEN\_ENV\_VAR@{TOKEN\_ENV\_VAR}!minishell.h@{minishell.h}}\index{minishell.h@{minishell.h}!TOKEN\_ENV\_VAR@{TOKEN\_ENV\_VAR}}}\Hypertarget{minishell_8h_a76a354e93d720f05344590ec8aa222dea9a9bc6f4d4351c059bbdc52541d3aaa2}\label{minishell_8h_a76a354e93d720f05344590ec8aa222dea9a9bc6f4d4351c059bbdc52541d3aaa2} 
+TOKEN\+\_\+\+ENV\+\_\+\+VAR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TOKEN\_DOT@{TOKEN\_DOT}!minishell.h@{minishell.h}}\index{minishell.h@{minishell.h}!TOKEN\_DOT@{TOKEN\_DOT}}}\Hypertarget{minishell_8h_a76a354e93d720f05344590ec8aa222deab565ebfaaa53dcee6ddda201e270733e}\label{minishell_8h_a76a354e93d720f05344590ec8aa222deab565ebfaaa53dcee6ddda201e270733e} 
+TOKEN\+\_\+\+DOT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TOKEN\_DOTDOT@{TOKEN\_DOTDOT}!minishell.h@{minishell.h}}\index{minishell.h@{minishell.h}!TOKEN\_DOTDOT@{TOKEN\_DOTDOT}}}\Hypertarget{minishell_8h_a76a354e93d720f05344590ec8aa222deafe0f79003a508c29b6f1312a28102a4c}\label{minishell_8h_a76a354e93d720f05344590ec8aa222deafe0f79003a508c29b6f1312a28102a4c} 
+TOKEN\+\_\+\+DOTDOT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TOKEN\_UNKNOWN@{TOKEN\_UNKNOWN}!minishell.h@{minishell.h}}\index{minishell.h@{minishell.h}!TOKEN\_UNKNOWN@{TOKEN\_UNKNOWN}}}\Hypertarget{minishell_8h_a76a354e93d720f05344590ec8aa222dea2dee186c009d8a91a8ebd2caa81ceef3}\label{minishell_8h_a76a354e93d720f05344590ec8aa222dea2dee186c009d8a91a8ebd2caa81ceef3} 
+TOKEN\+\_\+\+UNKNOWN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TOKEN\_END@{TOKEN\_END}!minishell.h@{minishell.h}}\index{minishell.h@{minishell.h}!TOKEN\_END@{TOKEN\_END}}}\Hypertarget{minishell_8h_a76a354e93d720f05344590ec8aa222deadf0956fb77ec0b61a7fb35113fe5d805}\label{minishell_8h_a76a354e93d720f05344590ec8aa222deadf0956fb77ec0b61a7fb35113fe5d805} 
+TOKEN\+\_\+\+END&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{minishell_8h_aa70cbe55dcaedfbc1984faa41966ccb1}\label{minishell_8h_aa70cbe55dcaedfbc1984faa41966ccb1} 
+\index{minishell.h@{minishell.h}!builtin\_cd@{builtin\_cd}}
+\index{builtin\_cd@{builtin\_cd}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{builtin\_cd()}{builtin\_cd()}}
+{\footnotesize\ttfamily int builtin\+\_\+cd (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+The built-\/in {\ttfamily cd} command function, handling directory changes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & The command structure containing arguments. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 0 if successful, 1 if an error occurred. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_aa70cbe55dcaedfbc1984faa41966ccb1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_aa70cbe55dcaedfbc1984faa41966ccb1_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a08bbe50ae7201f9d8cd6191a6315eff2}\label{minishell_8h_a08bbe50ae7201f9d8cd6191a6315eff2} 
+\index{minishell.h@{minishell.h}!builtin\_echo@{builtin\_echo}}
+\index{builtin\_echo@{builtin\_echo}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{builtin\_echo()}{builtin\_echo()}}
+{\footnotesize\ttfamily int builtin\+\_\+echo (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd }\end{DoxyParamCaption})}
+
+
+
+Handles the {\ttfamily echo} builtin command with support for the {\ttfamily -\/n} option. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & The command structure containing arguments. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Always returns 0 for success. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a08bbe50ae7201f9d8cd6191a6315eff2_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a0b345c5f6b2a9d5fa6c94c7e75d522b3}\label{minishell_8h_a0b345c5f6b2a9d5fa6c94c7e75d522b3} 
+\index{minishell.h@{minishell.h}!builtin\_env@{builtin\_env}}
+\index{builtin\_env@{builtin\_env}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{builtin\_env()}{builtin\_env()}}
+{\footnotesize\ttfamily int builtin\+\_\+env (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Handles the {\ttfamily env} builtin command. 
+
+This function prints all the environment variables currently set in the shell to the terminal. (apart for ones that have been added with export but not been assigned a value\+: e.\+g., "{}export VAR\+\_\+\+WO\+\_\+\+ASSIGN"{}, creates this particular environment var, but cmd "{}env"{} does not print it to the terminal (whereas "{}export"{} does))
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+data} & \texorpdfstring{$\ast$}{*}data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 0 on success, or 1 if an error occurs. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=243pt]{minishell_8h_a0b345c5f6b2a9d5fa6c94c7e75d522b3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a0b345c5f6b2a9d5fa6c94c7e75d522b3_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a450f4befe99efd8d58693101b396e2ef}\label{minishell_8h_a450f4befe99efd8d58693101b396e2ef} 
+\index{minishell.h@{minishell.h}!builtin\_exit@{builtin\_exit}}
+\index{builtin\_exit@{builtin\_exit}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{builtin\_exit()}{builtin\_exit()}}
+{\footnotesize\ttfamily int builtin\+\_\+exit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data,  }\item[{bool}]{print\+\_\+exit }\end{DoxyParamCaption})}
+
+
+
+Handles the {\ttfamily exit} builtin command. 
+
+This function exits the shell, optionally taking an exit status from the command arguments. If too many arguments are provided, it returns an error. If the argument is not numeric, it returns a 255 error code. If no argument is provided, it defaults to an exit status of 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & The command structure containing arguments. \\
+\hline
+{\em exit\+\_\+flag} & A flag to signal the main process to exit. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int The exit status (0-\/255). 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=258pt]{minishell_8h_a450f4befe99efd8d58693101b396e2ef_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a450f4befe99efd8d58693101b396e2ef_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_ac372c3f0fe95e61886f5322d6629d6f3}\label{minishell_8h_ac372c3f0fe95e61886f5322d6629d6f3} 
+\index{minishell.h@{minishell.h}!builtin\_export@{builtin\_export}}
+\index{builtin\_export@{builtin\_export}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{builtin\_export()}{builtin\_export()}}
+{\footnotesize\ttfamily int builtin\+\_\+export (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Handles the {\ttfamily export} builtin command. 
+
+This function exports a variable, i.\+e. adds or updates a variable in the environment variables.
+
+
+\begin{DoxyParams}{Parameters}
+{\em varname\+\_\+value} & The string in the format "{}varname=value"{}. \\
+\hline
+{\em data-\/$>$env\+\_\+vars} & The environment variables array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 0 on success, or 1 if an error occurs. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_ac372c3f0fe95e61886f5322d6629d6f3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_ac372c3f0fe95e61886f5322d6629d6f3_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a80bdc55685c98be70a879012570330f9}\label{minishell_8h_a80bdc55685c98be70a879012570330f9} 
+\index{minishell.h@{minishell.h}!builtin\_pwd@{builtin\_pwd}}
+\index{builtin\_pwd@{builtin\_pwd}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{builtin\_pwd()}{builtin\_pwd()}}
+{\footnotesize\ttfamily int builtin\+\_\+pwd (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Handles the {\ttfamily pwd} builtin command. 
+
+This function retrieves and prints the current working directory. If there are too many arguments or the directory cannot be retrieved, it outputs an appropriate error message.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & The command structure containing arguments. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 0 on success, or 1 if an error occurs. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a80bdc55685c98be70a879012570330f9_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_ac9abed9f13601fc9bcb5dfda9d943180}\label{minishell_8h_ac9abed9f13601fc9bcb5dfda9d943180} 
+\index{minishell.h@{minishell.h}!builtin\_unset@{builtin\_unset}}
+\index{builtin\_unset@{builtin\_unset}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{builtin\_unset()}{builtin\_unset()}}
+{\footnotesize\ttfamily int builtin\+\_\+unset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Handles the {\ttfamily unset} builtin command. 
+
+This function unsets (i.\+e. removes) an environment variable.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+{\em data-\/$>$env\+\_\+vars} & The environment variables array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 0 on success, or 1 if an error occurs. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=264pt]{minishell_8h_ac9abed9f13601fc9bcb5dfda9d943180_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_ac9abed9f13601fc9bcb5dfda9d943180_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_ac782f8810e92f00157974fb78d73df40}\label{minishell_8h_ac782f8810e92f00157974fb78d73df40} 
+\index{minishell.h@{minishell.h}!check\_commands\_in\_tokens@{check\_commands\_in\_tokens}}
+\index{check\_commands\_in\_tokens@{check\_commands\_in\_tokens}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{check\_commands\_in\_tokens()}{check\_commands\_in\_tokens()}}
+{\footnotesize\ttfamily int check\+\_\+commands\+\_\+in\+\_\+tokens (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}}]{tokens }\end{DoxyParamCaption})}
+
+
+
+Checks if the first token and the token after a pipe are valid commands. 
+
+This function loops through the tokens and ensures that the first token and any token immediately following a pipe (\textquotesingle{}\texorpdfstring{$\vert$}{|}\textquotesingle{}) is a word (command). If any of these tokens is not a command, it returns an error.
+
+
+\begin{DoxyParams}{Parameters}
+{\em tokens} & The array of tokens to check. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 0 if all checks pass, otherwise -\/1 for an error. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=313pt]{minishell_8h_ac782f8810e92f00157974fb78d73df40_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a4f4b50c68a3ad0e2365ea1f20626a2b4}\label{minishell_8h_a4f4b50c68a3ad0e2365ea1f20626a2b4} 
+\index{minishell.h@{minishell.h}!count\_tokens@{count\_tokens}}
+\index{count\_tokens@{count\_tokens}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{count\_tokens()}{count\_tokens()}}
+{\footnotesize\ttfamily int count\+\_\+tokens (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}}]{tokens }\end{DoxyParamCaption})}
+
+\Hypertarget{minishell_8h_abdae338e31fdbdb0de60d60acdde2dd8}\label{minishell_8h_abdae338e31fdbdb0de60d60acdde2dd8} 
+\index{minishell.h@{minishell.h}!expand\_env\_var@{expand\_env\_var}}
+\index{expand\_env\_var@{expand\_env\_var}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{expand\_env\_var()}{expand\_env\_var()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} expand\+\_\+env\+\_\+var (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{cursor,  }\item[{int}]{last\+\_\+exit\+\_\+status,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Expands environment variables in a string without using realloc. 
+
+This function first calculates the total length required for the result string, then allocates the necessary memory and expands environment variables into it.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cursor} & The input string with potential environment variables. \\
+\hline
+{\em last\+\_\+exit\+\_\+status} & The last exit status to expand "{}\$?"{}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} A new string with expanded environment variables. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_abdae338e31fdbdb0de60d60acdde2dd8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_abdae338e31fdbdb0de60d60acdde2dd8_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_acbbf4b8066d0c02fd0e7193925eb3122}\label{minishell_8h_acbbf4b8066d0c02fd0e7193925eb3122} 
+\index{minishell.h@{minishell.h}!expand\_env\_var\_in\_str@{expand\_env\_var\_in\_str}}
+\index{expand\_env\_var\_in\_str@{expand\_env\_var\_in\_str}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{expand\_env\_var\_in\_str()}{expand\_env\_var\_in\_str()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} expand\+\_\+env\+\_\+var\+\_\+in\+\_\+str (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{ptr\+\_\+to\+\_\+cursor,  }\item[{int}]{last\+\_\+exit\+\_\+status,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Goes through a word token where a \$-\/sign was found and expands environment variables. 
+
+This function handles strings that were characterized as TOKEN\+\_\+\+WORD and goes through them supporting environment variable expansion (e.\+g., \$\+VAR) and escape sequences (e.\+g., "{}). Uses a similar structure to do this as extract\+\_\+double\+\_\+quoted\+\_\+word
+
+
+\begin{DoxyParams}{Parameters}
+{\em cursor} & The current position in the word that has is temporarily treated as the TOKEN\+\_\+\+WORD (before env var expansion). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} The token.\+value of that particular argument/word after env variable expansion 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_acbbf4b8066d0c02fd0e7193925eb3122_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_acbbf4b8066d0c02fd0e7193925eb3122_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a7d8c676bf4c73f17af14803131d97e30}\label{minishell_8h_a7d8c676bf4c73f17af14803131d97e30} 
+\index{minishell.h@{minishell.h}!free\_array\_of\_strs@{free\_array\_of\_strs}}
+\index{free\_array\_of\_strs@{free\_array\_of\_strs}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{free\_array\_of\_strs()}{free\_array\_of\_strs()}}
+{\footnotesize\ttfamily void free\+\_\+array\+\_\+of\+\_\+strs (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{tab }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a7d8c676bf4c73f17af14803131d97e30_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a122245403dd6e2313144780839946659}\label{minishell_8h_a122245403dd6e2313144780839946659} 
+\index{minishell.h@{minishell.h}!free\_null@{free\_null}}
+\index{free\_null@{free\_null}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{free\_null()}{free\_null()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} free\+\_\+null (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{str }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a122245403dd6e2313144780839946659_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a6d29f1d9465b511398af6585a5007546}\label{minishell_8h_a6d29f1d9465b511398af6585a5007546} 
+\index{minishell.h@{minishell.h}!free\_tokens@{free\_tokens}}
+\index{free\_tokens@{free\_tokens}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{free\_tokens()}{free\_tokens()}}
+{\footnotesize\ttfamily void free\+\_\+tokens (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Frees the memory allocated for the token array. 
+
+This function frees the dynamically allocated memory used by each token\textquotesingle{}s value and the token array itself.
+
+
+\begin{DoxyParams}{Parameters}
+{\em tokens} & The array of tokens. \\
+\hline
+{\em token\+\_\+count} & The number of tokens in the array. \\
+\hline
+\end{DoxyParams}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=308pt]{minishell_8h_a6d29f1d9465b511398af6585a5007546_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a9d159a845073a413ce9358f6111dd0b2}\label{minishell_8h_a9d159a845073a413ce9358f6111dd0b2} 
+\index{minishell.h@{minishell.h}!ft\_getenv@{ft\_getenv}}
+\index{ft\_getenv@{ft\_getenv}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{ft\_getenv()}{ft\_getenv()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} ft\+\_\+getenv (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{look\+\_\+for\+\_\+match,  }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{envp }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=344pt]{minishell_8h_a9d159a845073a413ce9358f6111dd0b2_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a9d159a845073a413ce9358f6111dd0b2_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a80485099dcca81832195841e7948a0c6}\label{minishell_8h_a80485099dcca81832195841e7948a0c6} 
+\index{minishell.h@{minishell.h}!ft\_strjoin\_pipex@{ft\_strjoin\_pipex}}
+\index{ft\_strjoin\_pipex@{ft\_strjoin\_pipex}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{ft\_strjoin\_pipex()}{ft\_strjoin\_pipex()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} ft\+\_\+strjoin\+\_\+pipex (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{s1,  }\item[{char \texorpdfstring{$\ast$}{*}}]{s2 }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=279pt]{minishell_8h_a80485099dcca81832195841e7948a0c6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a80485099dcca81832195841e7948a0c6_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a42a0f9e915117bf1220e2b9e8822a44a}\label{minishell_8h_a42a0f9e915117bf1220e2b9e8822a44a} 
+\index{minishell.h@{minishell.h}!lexer@{lexer}}
+\index{lexer@{lexer}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{lexer()}{lexer()}}
+{\footnotesize\ttfamily int lexer (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{input,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data,  }\item[{int}]{last\+\_\+exit\+\_\+status }\end{DoxyParamCaption})}
+
+
+
+Tokenizes the input string into an array of tokens. 
+
+This function processes the input string, breaking it into words, operators, environment variables, and other token types.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input string to tokenize. \\
+\hline
+{\em tokens\+\_\+ptr} & A pointer to the array of tokens. \\
+\hline
+{\em token\+\_\+count} & The total number of tokens to expect. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int The number of tokens successfully created. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a42a0f9e915117bf1220e2b9e8822a44a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=198pt]{minishell_8h_a42a0f9e915117bf1220e2b9e8822a44a_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a94607008b7a336b74a35ba26e0f058c1}\label{minishell_8h_a94607008b7a336b74a35ba26e0f058c1} 
+\index{minishell.h@{minishell.h}!normalize\_path@{normalize\_path}}
+\index{normalize\_path@{normalize\_path}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{normalize\_path()}{normalize\_path()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} normalize\+\_\+path (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{path }\end{DoxyParamCaption})}
+
+
+
+Normalizes a given path by resolving symbolic links, {\ttfamily .} and {\ttfamily ..}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & The path to be normalized. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} The normalized absolute path, or NULL if normalization fails. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a94607008b7a336b74a35ba26e0f058c1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a94607008b7a336b74a35ba26e0f058c1_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a782b929c82bae1bd0ac94cf76aa118ba}\label{minishell_8h_a782b929c82bae1bd0ac94cf76aa118ba} 
+\index{minishell.h@{minishell.h}!parse\_tokens@{parse\_tokens}}
+\index{parse\_tokens@{parse\_tokens}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{parse\_tokens()}{parse\_tokens()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*} parse\+\_\+tokens (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Parses tokens into a linked list of command structures. 
+
+This function processes an array of tokens generated by the lexer and organizes them into a linked list of {\ttfamily t\+\_\+command} structures. Each command includes its name, arguments, input/output redirection, and other necessary execution parameters.
+
+
+\begin{DoxyParams}{Parameters}
+{\em tokens} & Array of tokens to be parsed. \\
+\hline
+{\em token\+\_\+count} & The total number of tokens to parse. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+t\+\_\+command\texorpdfstring{$\ast$}{*} The head of the linked list of commands. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=275pt]{minishell_8h_a782b929c82bae1bd0ac94cf76aa118ba_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=238pt]{minishell_8h_a782b929c82bae1bd0ac94cf76aa118ba_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_a7e09b28621765a51ca74a8017b13a146}\label{minishell_8h_a7e09b28621765a51ca74a8017b13a146} 
+\index{minishell.h@{minishell.h}!resolve\_cdpath\_if\_needed@{resolve\_cdpath\_if\_needed}}
+\index{resolve\_cdpath\_if\_needed@{resolve\_cdpath\_if\_needed}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{resolve\_cdpath\_if\_needed()}{resolve\_cdpath\_if\_needed()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} resolve\+\_\+cdpath\+\_\+if\+\_\+needed (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{path,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Resolves the path using CDPATH if needed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & The target directory path provided to {\ttfamily cd}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} The resolved path using CDPATH, or NULL if no resolution is needed. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a7e09b28621765a51ca74a8017b13a146_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_a7e09b28621765a51ca74a8017b13a146_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{minishell_8h_ad9668c33b7af5acb61cf24f2bbfe1b37}\label{minishell_8h_ad9668c33b7af5acb61cf24f2bbfe1b37} 
+\index{minishell.h@{minishell.h}!update\_directory\_env@{update\_directory\_env}}
+\index{update\_directory\_env@{update\_directory\_env}!minishell.h@{minishell.h}}
+\doxysubsubsection{\texorpdfstring{update\_directory\_env()}{update\_directory\_env()}}
+{\footnotesize\ttfamily int update\+\_\+directory\+\_\+env (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{cwd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Updates the environment variables after changing the directory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cwd} & The new current working directory. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 0 if successful, 1 if an error occurred. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{minishell_8h_ad9668c33b7af5acb61cf24f2bbfe1b37_icgraph}
+\end{center}
+\end{figure}

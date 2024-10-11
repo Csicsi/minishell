@@ -1,0 +1,19 @@
+<map id="expand_env_vars_into_buffer" name="expand_env_vars_into_buffer">
+<area shape="rect" id="Node000001" title="Expands environment variables in the input string without reallocating." alt="" coords="5,122,173,162"/>
+<area shape="rect" id="Node000002" href="$pure__utilities_8c.html#a39890f3daa20ec3d713c14ea01a8ee58" title=" " alt="" coords="221,104,304,129"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="173,127,208,122,208,127,174,132"/>
+<area shape="rect" id="Node000008" href="$ft__itoa_8c.html#a8a6ea3765dfd826eabfc00d36e28ea38" title=" " alt="" coords="231,153,294,179"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="174,151,218,157,217,162,173,156"/>
+<area shape="rect" id="Node000003" href="$ft__strjoin_8c.html#a91e6e3e428bcc9f2291b700e1829b82b" title=" " alt="" coords="358,55,437,80"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="297,101,348,83,350,88,299,106"/>
+<area shape="rect" id="Node000007" href="$ft__strncmp_8c.html#a9d2fe792187aa4ed08e5864fb2c4d6dc" title=" " alt="" coords="352,104,443,129"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="304,114,338,114,338,119,304,119"/>
+<area shape="rect" id="Node000004" href="$ft__strlcat_8c.html#a5ec5cb64412b189edcc4c4bd56183f54" title=" " alt="" coords="493,5,571,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="432,52,482,33,484,38,434,57"/>
+<area shape="rect" id="Node000005" href="$ft__strlcpy_8c.html#aa053827b3a2ea3d0118783d6fb59d178" title=" " alt="" coords="491,55,573,80"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="437,65,477,65,477,70,437,70"/>
+<area shape="rect" id="Node000006" href="$ft__strlen_8c.html#abbb8c6c4ed85d892e7f1509f65f5768a" title=" " alt="" coords="495,104,569,129"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="434,78,484,96,482,101,432,83"/>
+<area shape="rect" id="Node000009" href="$ft__itoa_8c.html#a06d9faba4cff026eaf6b0a12611afba4" title=" " alt="" coords="362,153,433,179"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="295,163,348,163,348,169,295,169"/>
+</map>

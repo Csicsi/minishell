@@ -1,0 +1,28 @@
+<map id="ft_putstr_fd" name="ft_putstr_fd">
+<area shape="rect" id="Node000001" title=" " alt="" coords="1211,80,1307,105"/>
+<area shape="rect" id="Node000002" href="$ft__printf__p_8c.html#a8e0fc7618e3243249dcacd8ba380c337" title=" " alt="" coords="1035,5,1123,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1224,76,1162,44,1123,31,1124,26,1164,40,1226,71"/>
+<area shape="rect" id="Node000005" href="$ft__printf__s_8c.html#af5710a2518824759ad5ffe0d99c02002" title=" " alt="" coords="1036,55,1123,80"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1197,87,1123,76,1123,71,1197,81"/>
+<area shape="rect" id="Node000006" href="$cd_8c.html#a64d31ae178044267245f129945e994c1" title="Resolves special paths for the cd command, such as &#45; (OLDPWD) and no argument (HOME)." alt="" coords="996,104,1163,129"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="1197,104,1163,108,1163,103,1197,98"/>
+<area shape="rect" id="Node000007" href="$cd_8c.html#a0753053fa154820fcdb75ff64f055638" title="Resolves the target path for the cd command considering both special and normal paths." alt="" coords="796,117,948,143"/>
+<area shape="poly" id="edge14_Node000001_Node000007" title=" " alt="" coords="1229,115,1198,132,1163,145,1104,154,1044,156,986,152,937,145,937,140,987,147,1044,150,1103,149,1162,139,1196,127,1227,110"/>
+<area shape="rect" id="Node000003" href="$handle__format_8c.html#a6faabd4aad8adb9efc72866865aeb6a6" title=" " alt="" coords="813,43,931,68"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1022,31,931,47,930,42,1021,26"/>
+<area shape="rect" id="Node000004" href="$ft__printf_8c.html#a406d92a51310a0f38edd6205f037ad32" title=" " alt="" coords="669,43,742,68"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="800,58,742,58,742,53,800,53"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="1022,67,931,61,931,56,1022,61"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="983,126,948,128,948,122,982,120"/>
+<area shape="rect" id="Node000008" href="$cd_8c.html#aa70cbe55dcaedfbc1984faa41966ccb1" title="The built&#45;in cd command function, handling directory changes." alt="" coords="663,117,748,143"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="782,133,748,133,748,127,782,127"/>
+<area shape="rect" id="Node000009" href="$execute_8c.html#a22994fc13b601bd760f4926b4d9fa9e5" title="Executes the appropriate builtin command based on the command name." alt="" coords="493,117,615,143"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="649,133,615,133,615,127,649,127"/>
+<area shape="rect" id="Node000010" href="$execute_8c.html#ac3dc362e7352a660ce3a50b31b2e3dcb" title="Executes a list of commands with optional piping and redirection." alt="" coords="108,117,243,143"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="479,133,243,133,243,127,479,127"/>
+<area shape="rect" id="Node000012" href="$execute_8c.html#a88d14cb2ca3a7dc6ecbbea77cf9f9751" title="Executes a single command, handling input/output redirection and builtins." alt="" coords="291,143,445,168"/>
+<area shape="poly" id="edge12_Node000009_Node000012" title=" " alt="" coords="480,143,446,147,446,142,479,137"/>
+<area shape="rect" id="Node000011" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,117,60,143"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="94,133,60,133,60,127,94,127"/>
+<area shape="poly" id="edge13_Node000012_Node000010" title=" " alt="" coords="277,146,243,141,243,136,277,141"/>
+</map>

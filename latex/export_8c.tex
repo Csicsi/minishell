@@ -1,0 +1,192 @@
+\doxysection{srcs/builtins/export.c File Reference}
+\hypertarget{export_8c}{}\label{export_8c}\index{srcs/builtins/export.c@{srcs/builtins/export.c}}
+{\ttfamily \#include "{}../includes/minishell.\+h"{}}\newline
+Include dependency graph for export.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{export_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static int \mbox{\hyperlink{export_8c_ae6697b6e29db8a3fe38320e5897be84c}{is\+\_\+valid\+\_\+env\+\_\+var\+\_\+name}} (const char \texorpdfstring{$\ast$}{*}name)
+\begin{DoxyCompactList}\small\item\em Checks validity of environment variable name. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{export_8c_ae3d8d04202c7fb19528678d7e31e3d9a}{sort\+\_\+env\+\_\+vars}} (char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}env\+\_\+vars, int count)
+\begin{DoxyCompactList}\small\item\em Helper function that sorts env variables alphabetically This function sorts the char\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} of environment variables alphabetically. Adopted from Piscine C06 ft\+\_\+sort\+\_\+params.\+c. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{export_8c_a8c0ec66bd1898ed7cd0db690d2acee77}{print\+\_\+sorted\+\_\+env\+\_\+vars}} (char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}env\+\_\+vars)
+\begin{DoxyCompactList}\small\item\em Helper function for \textquotesingle{}handle\+\_\+export\+\_\+wo\+\_\+args\textquotesingle{} to print env variables. \end{DoxyCompactList}\item 
+static int \mbox{\hyperlink{export_8c_ac803cb25d4518bf07f5e7a47df854206}{handle\+\_\+export\+\_\+wo\+\_\+args}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Handles the case where {\ttfamily export} command is called without any further arguments. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{export_8c_ac372c3f0fe95e61886f5322d6629d6f3}{builtin\+\_\+export}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Handles the {\ttfamily export} builtin command. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{export_8c_ac372c3f0fe95e61886f5322d6629d6f3}\label{export_8c_ac372c3f0fe95e61886f5322d6629d6f3} 
+\index{export.c@{export.c}!builtin\_export@{builtin\_export}}
+\index{builtin\_export@{builtin\_export}!export.c@{export.c}}
+\doxysubsubsection{\texorpdfstring{builtin\_export()}{builtin\_export()}}
+{\footnotesize\ttfamily int builtin\+\_\+export (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Handles the {\ttfamily export} builtin command. 
+
+This function exports a variable, i.\+e. adds or updates a variable in the environment variables.
+
+
+\begin{DoxyParams}{Parameters}
+{\em varname\+\_\+value} & The string in the format "{}varname=value"{}. \\
+\hline
+{\em data-\/$>$env\+\_\+vars} & The environment variables array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 0 on success, or 1 if an error occurs. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{export_8c_ac372c3f0fe95e61886f5322d6629d6f3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{export_8c_ac372c3f0fe95e61886f5322d6629d6f3_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{export_8c_ac803cb25d4518bf07f5e7a47df854206}\label{export_8c_ac803cb25d4518bf07f5e7a47df854206} 
+\index{export.c@{export.c}!handle\_export\_wo\_args@{handle\_export\_wo\_args}}
+\index{handle\_export\_wo\_args@{handle\_export\_wo\_args}!export.c@{export.c}}
+\doxysubsubsection{\texorpdfstring{handle\_export\_wo\_args()}{handle\_export\_wo\_args()}}
+{\footnotesize\ttfamily static int handle\+\_\+export\+\_\+wo\+\_\+args (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Handles the case where {\ttfamily export} command is called without any further arguments. 
+
+In this case, all env variables (even unassigned ones) are printed in alphabetical order, with prefix \textquotesingle{}declare -\/x\textquotesingle{}
+
+\begin{DoxyReturn}{Returns}
+int Returns 0 on success, or 1 if an error occurs. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{export_8c_ac803cb25d4518bf07f5e7a47df854206_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{export_8c_ac803cb25d4518bf07f5e7a47df854206_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{export_8c_ae6697b6e29db8a3fe38320e5897be84c}\label{export_8c_ae6697b6e29db8a3fe38320e5897be84c} 
+\index{export.c@{export.c}!is\_valid\_env\_var\_name@{is\_valid\_env\_var\_name}}
+\index{is\_valid\_env\_var\_name@{is\_valid\_env\_var\_name}!export.c@{export.c}}
+\doxysubsubsection{\texorpdfstring{is\_valid\_env\_var\_name()}{is\_valid\_env\_var\_name()}}
+{\footnotesize\ttfamily static int is\+\_\+valid\+\_\+env\+\_\+var\+\_\+name (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Checks validity of environment variable name. 
+
+Checks if the environment variable has a valid name according to POSIX standard
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & \\
+\hline
+{\em data-\/$>$env\+\_\+vars} & The environment variables array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 0 on success, or 1 if an error occurs. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{export_8c_ae6697b6e29db8a3fe38320e5897be84c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{export_8c_ae6697b6e29db8a3fe38320e5897be84c_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{export_8c_a8c0ec66bd1898ed7cd0db690d2acee77}\label{export_8c_a8c0ec66bd1898ed7cd0db690d2acee77} 
+\index{export.c@{export.c}!print\_sorted\_env\_vars@{print\_sorted\_env\_vars}}
+\index{print\_sorted\_env\_vars@{print\_sorted\_env\_vars}!export.c@{export.c}}
+\doxysubsubsection{\texorpdfstring{print\_sorted\_env\_vars()}{print\_sorted\_env\_vars()}}
+{\footnotesize\ttfamily void print\+\_\+sorted\+\_\+env\+\_\+vars (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{env\+\_\+vars }\end{DoxyParamCaption})}
+
+
+
+Helper function for \textquotesingle{}handle\+\_\+export\+\_\+wo\+\_\+args\textquotesingle{} to print env variables. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=297pt]{export_8c_a8c0ec66bd1898ed7cd0db690d2acee77_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{export_8c_a8c0ec66bd1898ed7cd0db690d2acee77_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{export_8c_ae3d8d04202c7fb19528678d7e31e3d9a}\label{export_8c_ae3d8d04202c7fb19528678d7e31e3d9a} 
+\index{export.c@{export.c}!sort\_env\_vars@{sort\_env\_vars}}
+\index{sort\_env\_vars@{sort\_env\_vars}!export.c@{export.c}}
+\doxysubsubsection{\texorpdfstring{sort\_env\_vars()}{sort\_env\_vars()}}
+{\footnotesize\ttfamily void sort\+\_\+env\+\_\+vars (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{env\+\_\+vars,  }\item[{int}]{count }\end{DoxyParamCaption})}
+
+
+
+Helper function that sorts env variables alphabetically This function sorts the char\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} of environment variables alphabetically. Adopted from Piscine C06 ft\+\_\+sort\+\_\+params.\+c. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=263pt]{export_8c_ae3d8d04202c7fb19528678d7e31e3d9a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{export_8c_ae3d8d04202c7fb19528678d7e31e3d9a_icgraph}
+\end{center}
+\end{figure}

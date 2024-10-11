@@ -1,0 +1,99 @@
+\doxysection{libft.\+h}
+\hypertarget{libft_8h_source}{}\label{libft_8h_source}\index{libft/libft.h@{libft/libft.h}}
+\mbox{\hyperlink{libft_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ **************************************************************************\ */}}
+\DoxyCodeLine{00002\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00003\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :::\ \ \ \ \ \ ::::::::\ \ \ */}}
+\DoxyCodeLine{00004\ \textcolor{comment}{/*\ \ \ libft.h\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :+:\ \ \ \ \ \ :+:\ \ \ \ :+:\ \ \ */}}
+\DoxyCodeLine{00005\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +:+\ +:+\ \ \ \ \ \ \ \ \ +:+\ \ \ \ \ */}}
+\DoxyCodeLine{00006\ \textcolor{comment}{/*\ \ \ By:\ dcsicsak\ <dcsicsak@student.42.fr>\ \ \ \ \ \ \ \ \ \ +\#+\ \ +:+\ \ \ \ \ \ \ +\#+\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00007\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\#+\#+\#+\#+\#+\ \ \ +\#+\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00008\ \textcolor{comment}{/*\ \ \ Created:\ 2024/04/05\ 15:27:57\ by\ dcsicsak\ \ \ \ \ \ \ \ \ \ \#+\#\ \ \ \ \#+\#\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00009\ \textcolor{comment}{/*\ \ \ Updated:\ 2024/08/11\ 10:52:14\ by\ dcsicsak\ \ \ \ \ \ \ \ \ \#\#\#\ \ \ \#\#\#\#\#\#\#\#.fr\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00011\ \textcolor{comment}{/*\ **************************************************************************\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ LIBFT\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ LIBFT\_H}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <unistd.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <stdio.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ <stdlib.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ <string.h>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ include\ <stdarg.h>}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structs__list}{s\_list}}}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structs__list_a887c5bef2e49ae67ac16e27166bb789a}{content}};}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structs__list}{s\_list}}\ *\mbox{\hyperlink{structs__list_a4586dc4198372dd0c0621981ef05d196}{next}};}
+\DoxyCodeLine{00026\ \}\ \ \ \mbox{\hyperlink{libft_8h_aefde00352c5326bb1c28ebd4404c4795}{t\_list}};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_ac283963beaa3b8c7d09b78851cda297e}{ft\_isalpha}}(\textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a2cf15b8a1a277d1e2ce3654101a2003d}{ft\_isdigit}}(\textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a9c2c3821ea43ebdf97de07b123503f8b}{ft\_isalnum}}(\textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_abf60ddbec6479540e81f3648cf71f1f4}{ft\_isascii}}(\textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_abcdba69692f21146aeea5b3d59b7d0ca}{ft\_isprint}}(\textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{libft_8h_abbb8c6c4ed85d892e7f1509f65f5768a}{ft\_strlen}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ \ \ \ *\mbox{\hyperlink{libft_8h_a557de65a3f3e16f953f5dae59cdb6106}{ft\_memset}}(\textcolor{keywordtype}{void}\ *s,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ \ \ \ \mbox{\hyperlink{libft_8h_a5937ab0d08e31d0e3e4a16ec71e293a1}{ft\_bzero}}(\textcolor{keywordtype}{void}\ *s,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ \ \ \ *\mbox{\hyperlink{libft_8h_a41a6f05af30cf85ff63a08e383826322}{ft\_memcpy}}(\textcolor{keywordtype}{void}\ *dest,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ \ \ \ *\mbox{\hyperlink{libft_8h_a69673d42c601e17a8e682b592167c775}{ft\_memmove}}(\textcolor{keywordtype}{void}\ *dest,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{libft_8h_aa053827b3a2ea3d0118783d6fb59d178}{ft\_strlcpy}}(\textcolor{keywordtype}{char}\ *dst,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *src,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{libft_8h_a5ec5cb64412b189edcc4c4bd56183f54}{ft\_strlcat}}(\textcolor{keywordtype}{char}\ *dst,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *src,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_aef116be7b5bceafff4b59f20a4433d12}{ft\_toupper}}(\textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_ab86e5297914753b6c82d7e3c3020ce17}{ft\_tolower}}(\textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_aa6d0c2d180f32ee585485e1a1ce3d55d}{ft\_strchr}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s,\ \textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a49c260cf80f9997975d6f3ec74ead582}{ft\_strrchr}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s,\ \textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a9d2fe792187aa4ed08e5864fb2c4d6dc}{ft\_strncmp}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s2,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ \ \ \ *\mbox{\hyperlink{libft_8h_abf633e8e48a8afbe61947f61de5ac695}{ft\_memchr}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *s,\ \textcolor{keywordtype}{int}\ c,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a08f665a1828c402f2ffe2e2187f135fc}{ft\_memcmp}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *s2,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a14b236fa10c117b080df2de058d2078d}{ft\_strnstr}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *big,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *little,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_add42b4526258474611c3a359785f84eb}{ft\_atoi}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *nptr);}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}\ \ \ \ *\mbox{\hyperlink{libft_8h_a55cb9602200ccf92a7f43e58c6ee2679}{ft\_calloc}}(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_aebe73f27c70c56ac5053f860ef5436c9}{ft\_strdup}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s);}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a78c402cbf3d55b1374693c3b7d34f71d}{ft\_substr}}(\textcolor{keywordtype}{char}\ \textcolor{keyword}{const}\ *s,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ start,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a91e6e3e428bcc9f2291b700e1829b82b}{ft\_strjoin}}(\textcolor{keywordtype}{char}\ \textcolor{keyword}{const}\ *s1,\ \textcolor{keywordtype}{char}\ \textcolor{keyword}{const}\ *s2);}
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a60352c5b39fab08469b3e28131a79e25}{ft\_strtrim}}(\textcolor{keywordtype}{char}\ \textcolor{keyword}{const}\ *s1,\ \textcolor{keywordtype}{char}\ \textcolor{keyword}{const}\ *set);}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{char}\ \ \ \ **\mbox{\hyperlink{libft_8h_a157ff05957b4f90213d710a902f38b12}{ft\_split}}(\textcolor{keywordtype}{char}\ *s,\ \textcolor{keywordtype}{char}\ c);}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a8a6ea3765dfd826eabfc00d36e28ea38}{ft\_itoa}}(\textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a668b60557bfc9d60c2d3ccda8afadf49}{ft\_strmapi}}(\textcolor{keywordtype}{char}\ \textcolor{keyword}{const}\ *s,\ \textcolor{keywordtype}{char}\ (*f)(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{char}));}
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{void}\ \ \ \ \mbox{\hyperlink{libft_8h_ada722cffd2c6c8169ae339afd0f9763c}{ft\_striteri}}(\textcolor{keywordtype}{char}\ *s,\ \textcolor{keywordtype}{void}\ (*f)(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{char}*));}
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{void}\ \ \ \ \mbox{\hyperlink{libft_8h_a8ee15a511946c1397bd2bdea4aed6aee}{ft\_putchar\_fd}}(\textcolor{keywordtype}{char}\ c,\ \textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{void}\ \ \ \ \mbox{\hyperlink{libft_8h_acefce9ac519f8f8b7d3fde33dbafe469}{ft\_putstr\_fd}}(\textcolor{keywordtype}{char}\ *s,\ \textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{void}\ \ \ \ \mbox{\hyperlink{libft_8h_aeb112152acfc553d58d61a5df38afcde}{ft\_putendl\_fd}}(\textcolor{keywordtype}{char}\ *s,\ \textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ \ \ \ \mbox{\hyperlink{libft_8h_a63cc0aec12256d125d3f85e472280972}{ft\_putnbr\_fd}}(\textcolor{keywordtype}{int}\ n,\ \textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00062\ \mbox{\hyperlink{structs__list}{t\_list}}\ \ \ \ *\mbox{\hyperlink{libft_8h_aed5f9b5ecc45235a7b7cf9d4b24e43dc}{ft\_lstlast}}(\mbox{\hyperlink{structs__list}{t\_list}}\ *lst);}
+\DoxyCodeLine{00063\ \mbox{\hyperlink{structs__list}{t\_list}}\ \ \ \ *\mbox{\hyperlink{libft_8h_a8fe4ea6f56f5a2a75ee13d97416b60ed}{ft\_lstnew}}(\textcolor{keywordtype}{void}\ *\mbox{\hyperlink{structs__list_a887c5bef2e49ae67ac16e27166bb789a}{content}});}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ \ \ \ \mbox{\hyperlink{libft_8h_a6e900cfaea2857bbf490f3105e38da93}{ft\_lstclear}}(\mbox{\hyperlink{structs__list}{t\_list}}\ **lst,\ \textcolor{keywordtype}{void}\ (*del)(\textcolor{keywordtype}{void}\ *));}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ \ \ \ \mbox{\hyperlink{libft_8h_a0195e4eb88fad15717ed90524ac15771}{ft\_lstadd\_front}}(\mbox{\hyperlink{structs__list}{t\_list}}\ **lst,\ \mbox{\hyperlink{structs__list}{t\_list}}\ *\textcolor{keyword}{new});}
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a0127d3db5f4a6600c83ee99b68c7c766}{ft\_atoi\_base}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *str,\ \textcolor{keywordtype}{int}\ base);}
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a76cd21d0fd288012f02809cba504f650}{ft\_isspace}}(\textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a1f2ff2312e5994560c9537cd9173be94}{ft\_strcmp}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s2);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{double}\ \ \mbox{\hyperlink{libft_8h_afca08c39a126e18b2cec12b916ff212f}{ft\_atof}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *str);}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a78d68a5f50a6eec0380ce25b4a1bd5b7}{get\_next\_line}}(\textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{libft_8h_a41389ef90cf0c7b7231302b5b2786ef1}{gnl\_strlen}}(\textcolor{keywordtype}{char}\ *s);}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a8ff8268ea19f3e66d964ea642be4fe1d}{gnl\_strjoin}}(\textcolor{keywordtype}{char}\ *s1,\ \textcolor{keywordtype}{char}\ *s2);}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{char}\ \ \ \ *\mbox{\hyperlink{libft_8h_a3aa5f53da65860e73e6973912451aac8}{gnl\_strchr}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s,\ \textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ \ \ \ *\mbox{\hyperlink{libft_8h_ac562aaba0fc06d4cc2c371c9f1acaaf2}{gnl\_memcpy}}(\textcolor{keywordtype}{void}\ *dest,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ \ \ \ \mbox{\hyperlink{libft_8h_a37c8dc40eb8cd4f7bd6208d9e1423661}{safe\_free}}(\textcolor{keywordtype}{char}\ **ptr);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a435958138b9b76399c5b5736af082226}{ft\_printf\_per}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_af2dbd14d526015325ba3b83f57f2b5e4}{ft\_printf\_di}}(\textcolor{keywordtype}{int}\ nbr);}
+\DoxyCodeLine{00078\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a1a1ea1a2f302e4ced86283acae6084b6}{ft\_printf\_c}}(\textcolor{keywordtype}{int}\ c);}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_af5710a2518824759ad5ffe0d99c02002}{ft\_printf\_s}}(\textcolor{keywordtype}{char}\ *str);}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a6faabd4aad8adb9efc72866865aeb6a6}{handle\_format}}(\textcolor{keywordtype}{char}\ format,\ va\_list\ args);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a8e0fc7618e3243249dcacd8ba380c337}{ft\_printf\_p}}(\textcolor{keywordtype}{void}\ *ptr);}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a288c1fc37ef89df50ef591ec55af8639}{ft\_printf\_u}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ nbr);}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_af7f2924a8e173d20abe9feb2f1e7315c}{ft\_printf\_xl}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ nbr);}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_abb7dbf2aad2bd28f92fafdb442905efe}{ft\_printf\_xc}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ nbr);}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a70cd89014d2dd5936cf47f09f76df09d}{in\_set}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *set,\ \textcolor{keywordtype}{char}\ c);}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{int}\ \ \ \ \ \mbox{\hyperlink{libft_8h_a406d92a51310a0f38edd6205f037ad32}{ft\_printf}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *placeholders,\ ...);}
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{void}\ \ \ \ *\mbox{\hyperlink{libft_8h_aff1c7bbfe3c7352d519c48bae12188fe}{ft\_realloc}}(\textcolor{keywordtype}{void}\ *ptr,\ \textcolor{keywordtype}{size\_t}\ old\_size,\ \textcolor{keywordtype}{size\_t}\ new\_size);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#\ ifndef\ BUFFER\_SIZE}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#\ \ define\ BUFFER\_SIZE\ 42}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

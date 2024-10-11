@@ -1,0 +1,14 @@
+<map id="expand_env_vars_into_buffer" name="expand_env_vars_into_buffer">
+<area shape="rect" id="Node000001" title="Expands environment variables in the input string without reallocating." alt="" coords="647,23,815,63"/>
+<area shape="rect" id="Node000002" href="$lexer_8c.html#abdae338e31fdbdb0de60d60acdde2dd8" title="Expands environment variables in a string without using realloc." alt="" coords="469,5,599,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="633,33,599,29,599,24,633,28"/>
+<area shape="rect" id="Node000006" href="$lexer_8c.html#acbbf4b8066d0c02fd0e7193925eb3122" title="Goes through a word token where a $&#45;sign was found and expands environment variables." alt="" coords="230,56,402,81"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="633,52,402,66,402,61,633,47"/>
+<area shape="rect" id="Node000003" href="$lexer_8c.html#a920f8cc6d7c4b72790f2f663e7e16461" title="Extracts a word enclosed in double quotes from the input." alt="" coords="211,7,421,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="456,21,422,21,422,16,456,16"/>
+<area shape="rect" id="Node000004" href="$lexer_8c.html#a42a0f9e915117bf1220e2b9e8822a44a" title="Tokenizes the input string into an array of tokens." alt="" coords="108,32,163,57"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="212,37,163,44,162,38,211,31"/>
+<area shape="rect" id="Node000005" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,32,60,57"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="94,47,60,47,60,42,94,42"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="216,58,162,51,163,46,216,53"/>
+</map>

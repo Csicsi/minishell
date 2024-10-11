@@ -1,0 +1,25 @@
+<map id="ft_strchr" name="ft_strchr">
+<area shape="rect" id="Node000001" title=" " alt="" coords="1261,70,1336,95"/>
+<area shape="rect" id="Node000002" href="$env_8c.html#a0b345c5f6b2a9d5fa6c94c7e75d522b3" title="Handles the env builtin command." alt="" coords="863,95,958,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1248,88,959,107,958,102,1247,83"/>
+<area shape="rect" id="Node000007" href="$export_8c.html#ac372c3f0fe95e61886f5322d6629d6f3" title="Handles the export builtin command." alt="" coords="663,44,775,70"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="1269,64,1243,47,1212,34,1155,20,1106,12,1062,8,1020,9,933,19,823,34,762,47,761,42,822,29,933,14,1020,4,1062,3,1106,6,1156,15,1214,29,1245,42,1272,59"/>
+<area shape="rect" id="Node000008" href="$lexer_8c.html#a42a0f9e915117bf1220e2b9e8822a44a" title="Tokenizes the input string into an array of tokens." alt="" coords="691,146,746,171"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="1249,98,1214,106,1077,129,942,144,747,160,746,154,941,139,1076,123,1213,101,1248,93"/>
+<area shape="rect" id="Node000009" href="$export_8c.html#a8c0ec66bd1898ed7cd0db690d2acee77" title="Helper function for &#39;handle_export_wo_args&#39; to print env variables." alt="" coords="1047,44,1213,70"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="1248,78,1213,72,1214,67,1249,72"/>
+<area shape="rect" id="Node000003" href="$execute_8c.html#a22994fc13b601bd760f4926b4d9fa9e5" title="Executes the appropriate builtin command based on the command name." alt="" coords="493,70,615,95"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="850,106,615,89,615,84,850,101"/>
+<area shape="rect" id="Node000004" href="$execute_8c.html#ac3dc362e7352a660ce3a50b31b2e3dcb" title="Executes a list of commands with optional piping and redirection." alt="" coords="108,95,243,120"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="480,81,389,81,291,86,227,98,226,92,290,81,389,75,480,76"/>
+<area shape="rect" id="Node000006" href="$execute_8c.html#a88d14cb2ca3a7dc6ecbbea77cf9f9751" title="Executes a single command, handling input/output redirection and builtins." alt="" coords="291,95,445,120"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="480,95,446,100,446,94,479,90"/>
+<area shape="rect" id="Node000005" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,120,60,146"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="95,125,61,131,60,126,94,120"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="277,110,243,110,243,105,277,105"/>
+<area shape="poly" id="edge8_Node000007_Node000003" title=" " alt="" coords="649,70,616,76,615,70,649,65"/>
+<area shape="poly" id="edge10_Node000008_Node000005" title=" " alt="" coords="678,160,60,137,60,131,678,154"/>
+<area shape="rect" id="Node000010" href="$export_8c.html#ac803cb25d4518bf07f5e7a47df854206" title="Handles the case where export command is called without any further arguments." alt="" coords="823,44,999,70"/>
+<area shape="poly" id="edge12_Node000009_Node000010" title=" " alt="" coords="1033,60,999,60,999,54,1033,54"/>
+<area shape="poly" id="edge13_Node000010_Node000007" title=" " alt="" coords="809,60,775,60,775,54,809,54"/>
+</map>

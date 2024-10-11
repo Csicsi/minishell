@@ -1,0 +1,14 @@
+<map id="ft_printhex" name="ft_printhex">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,79,97,104"/>
+<area shape="rect" id="Node000002" href="$ft__printf__p_8c.html#a3d2d73ee76fbe49b44285b90d6e80405" title=" " alt="" coords="145,79,264,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,89,132,89,132,94,97,94"/>
+<area shape="rect" id="Node000003" href="$ft__printf__p_8c.html#a1814406757d2f7fcae609a4277aeacc2" title=" " alt="" coords="321,29,401,55"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="245,76,307,56,309,61,246,81"/>
+<area shape="rect" id="Node000005" href="$ft__printf__p_8c.html#a209597ce04c175ebc7d03cef6512b216" title=" " alt="" coords="312,79,411,104"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="264,89,298,89,298,94,264,94"/>
+<area shape="rect" id="Node000006" href="$ft__strlen_8c.html#abbb8c6c4ed85d892e7f1509f65f5768a" title=" " alt="" coords="324,128,399,153"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="246,101,311,122,310,127,245,107"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="336,31,331,21,334,11,344,5,361,3,382,6,391,15,387,19,379,11,361,8,346,10,338,15,336,20,341,28"/>
+<area shape="rect" id="Node000004" href="$ft__putchar__fd_8c.html#a8ee15a511946c1397bd2bdea4aed6aee" title=" " alt="" coords="459,29,565,55"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="402,39,445,39,445,45,402,45"/>
+</map>

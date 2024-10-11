@@ -1,0 +1,121 @@
+\doxysection{libft/ft\+\_\+atof.c File Reference}
+\hypertarget{ft__atof_8c}{}\label{ft__atof_8c}\index{libft/ft\_atof.c@{libft/ft\_atof.c}}
+{\ttfamily \#include "{}libft.\+h"{}}\newline
+Include dependency graph for ft\+\_\+atof.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ft__atof_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{ft__atof_8c_ab52cf4ad6c90d92c9c66dbcbe7ef2afb}{skip\+\_\+whitespace}} (const char \texorpdfstring{$\ast$}{*}str, int \texorpdfstring{$\ast$}{*}index)
+\item 
+static int \mbox{\hyperlink{ft__atof_8c_a563a1aad3e2a7099255a75ed1e9670c4}{handle\+\_\+sign}} (const char \texorpdfstring{$\ast$}{*}str, int \texorpdfstring{$\ast$}{*}index)
+\item 
+static double \mbox{\hyperlink{ft__atof_8c_afb4a39e993ed781c7dd326fc38cb6895}{parse\+\_\+integer\+\_\+part}} (const char \texorpdfstring{$\ast$}{*}str, int \texorpdfstring{$\ast$}{*}index)
+\item 
+static double \mbox{\hyperlink{ft__atof_8c_a5e654a76854527bcb0060b4e954b507f}{parse\+\_\+fraction\+\_\+part}} (const char \texorpdfstring{$\ast$}{*}str, int \texorpdfstring{$\ast$}{*}index)
+\item 
+double \mbox{\hyperlink{ft__atof_8c_afca08c39a126e18b2cec12b916ff212f}{ft\+\_\+atof}} (const char \texorpdfstring{$\ast$}{*}str)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{ft__atof_8c_afca08c39a126e18b2cec12b916ff212f}\label{ft__atof_8c_afca08c39a126e18b2cec12b916ff212f} 
+\index{ft\_atof.c@{ft\_atof.c}!ft\_atof@{ft\_atof}}
+\index{ft\_atof@{ft\_atof}!ft\_atof.c@{ft\_atof.c}}
+\doxysubsubsection{\texorpdfstring{ft\_atof()}{ft\_atof()}}
+{\footnotesize\ttfamily double ft\+\_\+atof (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{str }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ft__atof_8c_afca08c39a126e18b2cec12b916ff212f_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{ft__atof_8c_a563a1aad3e2a7099255a75ed1e9670c4}\label{ft__atof_8c_a563a1aad3e2a7099255a75ed1e9670c4} 
+\index{ft\_atof.c@{ft\_atof.c}!handle\_sign@{handle\_sign}}
+\index{handle\_sign@{handle\_sign}!ft\_atof.c@{ft\_atof.c}}
+\doxysubsubsection{\texorpdfstring{handle\_sign()}{handle\_sign()}}
+{\footnotesize\ttfamily static int handle\+\_\+sign (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{str,  }\item[{int \texorpdfstring{$\ast$}{*}}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=239pt]{ft__atof_8c_a563a1aad3e2a7099255a75ed1e9670c4_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{ft__atof_8c_a5e654a76854527bcb0060b4e954b507f}\label{ft__atof_8c_a5e654a76854527bcb0060b4e954b507f} 
+\index{ft\_atof.c@{ft\_atof.c}!parse\_fraction\_part@{parse\_fraction\_part}}
+\index{parse\_fraction\_part@{parse\_fraction\_part}!ft\_atof.c@{ft\_atof.c}}
+\doxysubsubsection{\texorpdfstring{parse\_fraction\_part()}{parse\_fraction\_part()}}
+{\footnotesize\ttfamily static double parse\+\_\+fraction\+\_\+part (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{str,  }\item[{int \texorpdfstring{$\ast$}{*}}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=286pt]{ft__atof_8c_a5e654a76854527bcb0060b4e954b507f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=275pt]{ft__atof_8c_a5e654a76854527bcb0060b4e954b507f_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{ft__atof_8c_afb4a39e993ed781c7dd326fc38cb6895}\label{ft__atof_8c_afb4a39e993ed781c7dd326fc38cb6895} 
+\index{ft\_atof.c@{ft\_atof.c}!parse\_integer\_part@{parse\_integer\_part}}
+\index{parse\_integer\_part@{parse\_integer\_part}!ft\_atof.c@{ft\_atof.c}}
+\doxysubsubsection{\texorpdfstring{parse\_integer\_part()}{parse\_integer\_part()}}
+{\footnotesize\ttfamily static double parse\+\_\+integer\+\_\+part (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{str,  }\item[{int \texorpdfstring{$\ast$}{*}}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=283pt]{ft__atof_8c_afb4a39e993ed781c7dd326fc38cb6895_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=272pt]{ft__atof_8c_afb4a39e993ed781c7dd326fc38cb6895_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{ft__atof_8c_ab52cf4ad6c90d92c9c66dbcbe7ef2afb}\label{ft__atof_8c_ab52cf4ad6c90d92c9c66dbcbe7ef2afb} 
+\index{ft\_atof.c@{ft\_atof.c}!skip\_whitespace@{skip\_whitespace}}
+\index{skip\_whitespace@{skip\_whitespace}!ft\_atof.c@{ft\_atof.c}}
+\doxysubsubsection{\texorpdfstring{skip\_whitespace()}{skip\_whitespace()}}
+{\footnotesize\ttfamily static void skip\+\_\+whitespace (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{str,  }\item[{int \texorpdfstring{$\ast$}{*}}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=279pt]{ft__atof_8c_ab52cf4ad6c90d92c9c66dbcbe7ef2afb_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=262pt]{ft__atof_8c_ab52cf4ad6c90d92c9c66dbcbe7ef2afb_icgraph}
+\end{center}
+\end{figure}

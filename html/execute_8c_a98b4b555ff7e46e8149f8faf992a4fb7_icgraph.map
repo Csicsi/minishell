@@ -1,0 +1,5 @@
+<map id="duplicate_env_vars" name="duplicate_env_vars">
+<area shape="rect" id="Node000001" title="Creates a copy of the env_vars (entered as 3rd argument in main) on dynamic memory." alt="" coords="108,5,256,31"/>
+<area shape="rect" id="Node000002" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,5,60,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="94,21,60,21,60,15,94,15"/>
+</map>

@@ -1,0 +1,87 @@
+\doxysection{srcs/builtins/exit.c File Reference}
+\hypertarget{exit_8c}{}\label{exit_8c}\index{srcs/builtins/exit.c@{srcs/builtins/exit.c}}
+{\ttfamily \#include "{}../includes/minishell.\+h"{}}\newline
+Include dependency graph for exit.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{exit_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{exit_8c_ae2a797f8ddc080bb6004cf521e5ad034}{ft\+\_\+strisnum}} (const char \texorpdfstring{$\ast$}{*}str)
+\begin{DoxyCompactList}\small\item\em Checks if a string represents a valid numeric value. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{exit_8c_a450f4befe99efd8d58693101b396e2ef}{builtin\+\_\+exit}} (\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}cmd, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data, bool print\+\_\+exit)
+\begin{DoxyCompactList}\small\item\em Handles the {\ttfamily exit} builtin command. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{exit_8c_a450f4befe99efd8d58693101b396e2ef}\label{exit_8c_a450f4befe99efd8d58693101b396e2ef} 
+\index{exit.c@{exit.c}!builtin\_exit@{builtin\_exit}}
+\index{builtin\_exit@{builtin\_exit}!exit.c@{exit.c}}
+\doxysubsubsection{\texorpdfstring{builtin\_exit()}{builtin\_exit()}}
+{\footnotesize\ttfamily int builtin\+\_\+exit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a343be1e180affa75a4a3b4bb5b2225e3}{t\+\_\+command}} \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data,  }\item[{bool}]{print\+\_\+exit }\end{DoxyParamCaption})}
+
+
+
+Handles the {\ttfamily exit} builtin command. 
+
+This function exits the shell, optionally taking an exit status from the command arguments. If too many arguments are provided, it returns an error. If the argument is not numeric, it returns a 255 error code. If no argument is provided, it defaults to an exit status of 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & The command structure containing arguments. \\
+\hline
+{\em exit\+\_\+flag} & A flag to signal the main process to exit. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int The exit status (0-\/255). 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=258pt]{exit_8c_a450f4befe99efd8d58693101b396e2ef_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{exit_8c_a450f4befe99efd8d58693101b396e2ef_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{exit_8c_ae2a797f8ddc080bb6004cf521e5ad034}\label{exit_8c_ae2a797f8ddc080bb6004cf521e5ad034} 
+\index{exit.c@{exit.c}!ft\_strisnum@{ft\_strisnum}}
+\index{ft\_strisnum@{ft\_strisnum}!exit.c@{exit.c}}
+\doxysubsubsection{\texorpdfstring{ft\_strisnum()}{ft\_strisnum()}}
+{\footnotesize\ttfamily int ft\+\_\+strisnum (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{str }\end{DoxyParamCaption})}
+
+
+
+Checks if a string represents a valid numeric value. 
+
+This function checks if the provided string is a valid numeric value. It allows an optional leading \textquotesingle{}+\textquotesingle{} or \textquotesingle{}-\/\textquotesingle{} sign followed by digits.
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & The string to check. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 1 if the string is numeric, 0 otherwise. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{exit_8c_ae2a797f8ddc080bb6004cf521e5ad034_icgraph}
+\end{center}
+\end{figure}

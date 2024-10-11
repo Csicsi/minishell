@@ -1,0 +1,15 @@
+<map id="ft_memcpy" name="ft_memcpy">
+<area shape="rect" id="Node000001" title=" " alt="" coords="829,31,924,56"/>
+<area shape="rect" id="Node000002" href="$ft__realloc_8c.html#aff1c7bbfe3c7352d519c48bae12188fe" title=" " alt="" coords="679,5,761,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="815,36,761,27,762,22,816,31"/>
+<area shape="rect" id="Node000003" href="$pure__utilities_8c.html#a80485099dcca81832195841e7948a0c6" title=" " alt="" coords="659,55,781,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="816,55,782,61,781,55,815,50"/>
+<area shape="rect" id="Node000004" href="$execute_8c.html#a5aef876cb61172789d9665f980ddf814" title="Finds the appropriate path to run executables from the environment variable $PATH (typically in /usr/..." alt="" coords="493,55,611,80"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="645,70,611,70,611,65,645,65"/>
+<area shape="rect" id="Node000005" href="$execute_8c.html#a88d14cb2ca3a7dc6ecbbea77cf9f9751" title="Executes a single command, handling input/output redirection and builtins." alt="" coords="291,55,445,80"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="480,70,446,70,446,65,480,65"/>
+<area shape="rect" id="Node000006" href="$execute_8c.html#ac3dc362e7352a660ce3a50b31b2e3dcb" title="Executes a list of commands with optional piping and redirection." alt="" coords="108,55,243,80"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="277,70,243,70,243,65,277,65"/>
+<area shape="rect" id="Node000007" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,55,60,80"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="94,70,60,70,60,65,94,65"/>
+</map>

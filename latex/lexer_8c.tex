@@ -1,0 +1,449 @@
+\doxysection{srcs/lexer.c File Reference}
+\hypertarget{lexer_8c}{}\label{lexer_8c}\index{srcs/lexer.c@{srcs/lexer.c}}
+{\ttfamily \#include "{}../includes/minishell.\+h"{}}\newline
+Include dependency graph for lexer.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{lexer_8c_a9b8fee24677c2dfcc34296bae3c113d6}{skip\+\_\+spaces}} (char \texorpdfstring{$\ast$}{*}cursor)
+\begin{DoxyCompactList}\small\item\em Skips whitespace characters in the input string. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{lexer_8c_a5062792229fce73ca5eba1928800156a}{extract\+\_\+single\+\_\+quoted\+\_\+word}} (char \texorpdfstring{$\ast$}{*}cursor, \mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}token)
+\begin{DoxyCompactList}\small\item\em Extracts a word enclosed in single quotes from the input. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{lexer_8c_a715c85535d446ba811faf5ec6ce6ea5f}{calculate\+\_\+expanded\+\_\+length}} (char \texorpdfstring{$\ast$}{*}cursor, int last\+\_\+exit\+\_\+status, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Calculates the final length of the string after expanding environment variables. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{lexer_8c_acee4344443155661326e68479c55c588}{expand\+\_\+env\+\_\+vars\+\_\+into\+\_\+buffer}} (char \texorpdfstring{$\ast$}{*}result, char \texorpdfstring{$\ast$}{*}cursor, int last\+\_\+exit\+\_\+status, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Expands environment variables in the input string without reallocating. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{lexer_8c_abdae338e31fdbdb0de60d60acdde2dd8}{expand\+\_\+env\+\_\+var}} (char \texorpdfstring{$\ast$}{*}cursor, int last\+\_\+exit\+\_\+status, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Expands environment variables in a string without using realloc. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{lexer_8c_a920f8cc6d7c4b72790f2f663e7e16461}{extract\+\_\+double\+\_\+quoted\+\_\+word}} (char \texorpdfstring{$\ast$}{*}cursor, \mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}token, int last\+\_\+exit\+\_\+status, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Extracts a word enclosed in double quotes from the input. \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{lexer_8c_ab98eb91aee70afb5918d67bb00d08348}{check\+\_\+operator}} (char \texorpdfstring{$\ast$}{*}cursor, \mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}token)
+\begin{DoxyCompactList}\small\item\em Checks for and handles operator tokens (e.\+g., \texorpdfstring{$\vert$}{|}, \&\&, \texorpdfstring{$>$}{>}\texorpdfstring{$>$}{>}). \end{DoxyCompactList}\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{lexer_8c_acbbf4b8066d0c02fd0e7193925eb3122}{expand\+\_\+env\+\_\+var\+\_\+in\+\_\+str}} (char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}ptr\+\_\+to\+\_\+cursor, int last\+\_\+exit\+\_\+status, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Goes through a word token where a \$-\/sign was found and expands environment variables. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{lexer_8c_a4f4b50c68a3ad0e2365ea1f20626a2b4}{count\+\_\+tokens}} (\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}tokens)
+\item 
+void \mbox{\hyperlink{lexer_8c_a74ecccea4d691beb454679b012625c69}{join\+\_\+tokens\+\_\+in\+\_\+same\+\_\+word}} (\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\item 
+void \mbox{\hyperlink{lexer_8c_a331f540b3451b1a5917bacbfa05dd934}{remove\+\_\+null\+\_\+word\+\_\+tokens}} (\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\item 
+int \mbox{\hyperlink{lexer_8c_a42a0f9e915117bf1220e2b9e8822a44a}{lexer}} (char \texorpdfstring{$\ast$}{*}input, \mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data, int last\+\_\+exit\+\_\+status)
+\begin{DoxyCompactList}\small\item\em Tokenizes the input string into an array of tokens. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{lexer_8c_a6d29f1d9465b511398af6585a5007546}{free\+\_\+tokens}} (\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Frees the memory allocated for the token array. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{lexer_8c_ac782f8810e92f00157974fb78d73df40}{check\+\_\+commands\+\_\+in\+\_\+tokens}} (\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}tokens)
+\begin{DoxyCompactList}\small\item\em Checks if the first token and the token after a pipe are valid commands. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{lexer_8c_a715c85535d446ba811faf5ec6ce6ea5f}\label{lexer_8c_a715c85535d446ba811faf5ec6ce6ea5f} 
+\index{lexer.c@{lexer.c}!calculate\_expanded\_length@{calculate\_expanded\_length}}
+\index{calculate\_expanded\_length@{calculate\_expanded\_length}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{calculate\_expanded\_length()}{calculate\_expanded\_length()}}
+{\footnotesize\ttfamily int calculate\+\_\+expanded\+\_\+length (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{cursor,  }\item[{int}]{last\+\_\+exit\+\_\+status,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Calculates the final length of the string after expanding environment variables. 
+
+This function goes through the input string and calculates how long the result string will be after expanding all the environment variables.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cursor} & The current position in the input string. \\
+\hline
+{\em last\+\_\+exit\+\_\+status} & The value of the last exit status for handling "{}\$?"{}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int The total length required for the result string. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_a715c85535d446ba811faf5ec6ce6ea5f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_a715c85535d446ba811faf5ec6ce6ea5f_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_ac782f8810e92f00157974fb78d73df40}\label{lexer_8c_ac782f8810e92f00157974fb78d73df40} 
+\index{lexer.c@{lexer.c}!check\_commands\_in\_tokens@{check\_commands\_in\_tokens}}
+\index{check\_commands\_in\_tokens@{check\_commands\_in\_tokens}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{check\_commands\_in\_tokens()}{check\_commands\_in\_tokens()}}
+{\footnotesize\ttfamily int check\+\_\+commands\+\_\+in\+\_\+tokens (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}}]{tokens }\end{DoxyParamCaption})}
+
+
+
+Checks if the first token and the token after a pipe are valid commands. 
+
+This function loops through the tokens and ensures that the first token and any token immediately following a pipe (\textquotesingle{}\texorpdfstring{$\vert$}{|}\textquotesingle{}) is a word (command). If any of these tokens is not a command, it returns an error.
+
+
+\begin{DoxyParams}{Parameters}
+{\em tokens} & The array of tokens to check. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Returns 0 if all checks pass, otherwise -\/1 for an error. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=313pt]{lexer_8c_ac782f8810e92f00157974fb78d73df40_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_ab98eb91aee70afb5918d67bb00d08348}\label{lexer_8c_ab98eb91aee70afb5918d67bb00d08348} 
+\index{lexer.c@{lexer.c}!check\_operator@{check\_operator}}
+\index{check\_operator@{check\_operator}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{check\_operator()}{check\_operator()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} check\+\_\+operator (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{cursor,  }\item[{\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}}]{token }\end{DoxyParamCaption})}
+
+
+
+Checks for and handles operator tokens (e.\+g., \texorpdfstring{$\vert$}{|}, \&\&, \texorpdfstring{$>$}{>}\texorpdfstring{$>$}{>}). 
+
+This function identifies different operators and assigns the corresponding operator value to the token.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cursor} & The current position in the input string. \\
+\hline
+{\em token} & Pointer to the token where the operator will be stored. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} The updated position in the input string after processing the operator. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=326pt]{lexer_8c_ab98eb91aee70afb5918d67bb00d08348_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_a4f4b50c68a3ad0e2365ea1f20626a2b4}\label{lexer_8c_a4f4b50c68a3ad0e2365ea1f20626a2b4} 
+\index{lexer.c@{lexer.c}!count\_tokens@{count\_tokens}}
+\index{count\_tokens@{count\_tokens}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{count\_tokens()}{count\_tokens()}}
+{\footnotesize\ttfamily int count\+\_\+tokens (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}}]{tokens }\end{DoxyParamCaption})}
+
+\Hypertarget{lexer_8c_abdae338e31fdbdb0de60d60acdde2dd8}\label{lexer_8c_abdae338e31fdbdb0de60d60acdde2dd8} 
+\index{lexer.c@{lexer.c}!expand\_env\_var@{expand\_env\_var}}
+\index{expand\_env\_var@{expand\_env\_var}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{expand\_env\_var()}{expand\_env\_var()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} expand\+\_\+env\+\_\+var (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{cursor,  }\item[{int}]{last\+\_\+exit\+\_\+status,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Expands environment variables in a string without using realloc. 
+
+This function first calculates the total length required for the result string, then allocates the necessary memory and expands environment variables into it.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cursor} & The input string with potential environment variables. \\
+\hline
+{\em last\+\_\+exit\+\_\+status} & The last exit status to expand "{}\$?"{}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} A new string with expanded environment variables. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_abdae338e31fdbdb0de60d60acdde2dd8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_abdae338e31fdbdb0de60d60acdde2dd8_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_acbbf4b8066d0c02fd0e7193925eb3122}\label{lexer_8c_acbbf4b8066d0c02fd0e7193925eb3122} 
+\index{lexer.c@{lexer.c}!expand\_env\_var\_in\_str@{expand\_env\_var\_in\_str}}
+\index{expand\_env\_var\_in\_str@{expand\_env\_var\_in\_str}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{expand\_env\_var\_in\_str()}{expand\_env\_var\_in\_str()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} expand\+\_\+env\+\_\+var\+\_\+in\+\_\+str (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{ptr\+\_\+to\+\_\+cursor,  }\item[{int}]{last\+\_\+exit\+\_\+status,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Goes through a word token where a \$-\/sign was found and expands environment variables. 
+
+This function handles strings that were characterized as TOKEN\+\_\+\+WORD and goes through them supporting environment variable expansion (e.\+g., \$\+VAR) and escape sequences (e.\+g., "{}). Uses a similar structure to do this as extract\+\_\+double\+\_\+quoted\+\_\+word
+
+
+\begin{DoxyParams}{Parameters}
+{\em cursor} & The current position in the word that has is temporarily treated as the TOKEN\+\_\+\+WORD (before env var expansion). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} The token.\+value of that particular argument/word after env variable expansion 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_acbbf4b8066d0c02fd0e7193925eb3122_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_acbbf4b8066d0c02fd0e7193925eb3122_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_acee4344443155661326e68479c55c588}\label{lexer_8c_acee4344443155661326e68479c55c588} 
+\index{lexer.c@{lexer.c}!expand\_env\_vars\_into\_buffer@{expand\_env\_vars\_into\_buffer}}
+\index{expand\_env\_vars\_into\_buffer@{expand\_env\_vars\_into\_buffer}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{expand\_env\_vars\_into\_buffer()}{expand\_env\_vars\_into\_buffer()}}
+{\footnotesize\ttfamily void expand\+\_\+env\+\_\+vars\+\_\+into\+\_\+buffer (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{result,  }\item[{char \texorpdfstring{$\ast$}{*}}]{cursor,  }\item[{int}]{last\+\_\+exit\+\_\+status,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Expands environment variables in the input string without reallocating. 
+
+This function processes the input string, expands environment variables, and fills the preallocated result string with the expanded content.
+
+
+\begin{DoxyParams}{Parameters}
+{\em result} & The preallocated buffer for the result string. \\
+\hline
+{\em cursor} & The input string with potential environment variables. \\
+\hline
+{\em last\+\_\+exit\+\_\+status} & The last exit status for handling "{}\$?"{}. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_acee4344443155661326e68479c55c588_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_acee4344443155661326e68479c55c588_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_a920f8cc6d7c4b72790f2f663e7e16461}\label{lexer_8c_a920f8cc6d7c4b72790f2f663e7e16461} 
+\index{lexer.c@{lexer.c}!extract\_double\_quoted\_word@{extract\_double\_quoted\_word}}
+\index{extract\_double\_quoted\_word@{extract\_double\_quoted\_word}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{extract\_double\_quoted\_word()}{extract\_double\_quoted\_word()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} extract\+\_\+double\+\_\+quoted\+\_\+word (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{cursor,  }\item[{\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}}]{token,  }\item[{int}]{last\+\_\+exit\+\_\+status,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Extracts a word enclosed in double quotes from the input. 
+
+This function handles strings enclosed in double quotes, supporting environment variable expansion (e.\+g., \$\+VAR) and escape sequences (e.\+g., "{}).
+
+
+\begin{DoxyParams}{Parameters}
+{\em cursor} & The current position in the input string. \\
+\hline
+{\em token} & Pointer to the token where the extracted word will be stored. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} The updated position in the input string after processing the quoted word. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_a920f8cc6d7c4b72790f2f663e7e16461_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_a920f8cc6d7c4b72790f2f663e7e16461_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_a5062792229fce73ca5eba1928800156a}\label{lexer_8c_a5062792229fce73ca5eba1928800156a} 
+\index{lexer.c@{lexer.c}!extract\_single\_quoted\_word@{extract\_single\_quoted\_word}}
+\index{extract\_single\_quoted\_word@{extract\_single\_quoted\_word}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{extract\_single\_quoted\_word()}{extract\_single\_quoted\_word()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} extract\+\_\+single\+\_\+quoted\+\_\+word (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{cursor,  }\item[{\mbox{\hyperlink{minishell_8h_aead06bc7a81ebdd60cbdcf6b3b8e51d4}{t\+\_\+token}} \texorpdfstring{$\ast$}{*}}]{token }\end{DoxyParamCaption})}
+
+
+
+Extracts a word enclosed in single quotes from the input. 
+
+This function handles strings enclosed in single quotes and copies the content between the quotes into a token.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cursor} & The current position in the input string. \\
+\hline
+{\em token} & Pointer to the token where the extracted word will be stored. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} The updated position in the input string after processing the quoted word. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_a5062792229fce73ca5eba1928800156a_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_a6d29f1d9465b511398af6585a5007546}\label{lexer_8c_a6d29f1d9465b511398af6585a5007546} 
+\index{lexer.c@{lexer.c}!free\_tokens@{free\_tokens}}
+\index{free\_tokens@{free\_tokens}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{free\_tokens()}{free\_tokens()}}
+{\footnotesize\ttfamily void free\+\_\+tokens (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+
+
+Frees the memory allocated for the token array. 
+
+This function frees the dynamically allocated memory used by each token\textquotesingle{}s value and the token array itself.
+
+
+\begin{DoxyParams}{Parameters}
+{\em tokens} & The array of tokens. \\
+\hline
+{\em token\+\_\+count} & The number of tokens in the array. \\
+\hline
+\end{DoxyParams}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=308pt]{lexer_8c_a6d29f1d9465b511398af6585a5007546_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_a74ecccea4d691beb454679b012625c69}\label{lexer_8c_a74ecccea4d691beb454679b012625c69} 
+\index{lexer.c@{lexer.c}!join\_tokens\_in\_same\_word@{join\_tokens\_in\_same\_word}}
+\index{join\_tokens\_in\_same\_word@{join\_tokens\_in\_same\_word}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{join\_tokens\_in\_same\_word()}{join\_tokens\_in\_same\_word()}}
+{\footnotesize\ttfamily void join\+\_\+tokens\+\_\+in\+\_\+same\+\_\+word (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_a74ecccea4d691beb454679b012625c69_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_a74ecccea4d691beb454679b012625c69_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_a42a0f9e915117bf1220e2b9e8822a44a}\label{lexer_8c_a42a0f9e915117bf1220e2b9e8822a44a} 
+\index{lexer.c@{lexer.c}!lexer@{lexer}}
+\index{lexer@{lexer}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{lexer()}{lexer()}}
+{\footnotesize\ttfamily int lexer (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{input,  }\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data,  }\item[{int}]{last\+\_\+exit\+\_\+status }\end{DoxyParamCaption})}
+
+
+
+Tokenizes the input string into an array of tokens. 
+
+This function processes the input string, breaking it into words, operators, environment variables, and other token types.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input string to tokenize. \\
+\hline
+{\em tokens\+\_\+ptr} & A pointer to the array of tokens. \\
+\hline
+{\em token\+\_\+count} & The total number of tokens to expect. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int The number of tokens successfully created. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lexer_8c_a42a0f9e915117bf1220e2b9e8822a44a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=198pt]{lexer_8c_a42a0f9e915117bf1220e2b9e8822a44a_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{lexer_8c_a331f540b3451b1a5917bacbfa05dd934}\label{lexer_8c_a331f540b3451b1a5917bacbfa05dd934} 
+\index{lexer.c@{lexer.c}!remove\_null\_word\_tokens@{remove\_null\_word\_tokens}}
+\index{remove\_null\_word\_tokens@{remove\_null\_word\_tokens}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{remove\_null\_word\_tokens()}{remove\_null\_word\_tokens()}}
+{\footnotesize\ttfamily void remove\+\_\+null\+\_\+word\+\_\+tokens (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{minishell_8h_a24e28e95867f9681b9d87781b1caa65b}{t\+\_\+data}} \texorpdfstring{$\ast$}{*}}]{data }\end{DoxyParamCaption})}
+
+\Hypertarget{lexer_8c_a9b8fee24677c2dfcc34296bae3c113d6}\label{lexer_8c_a9b8fee24677c2dfcc34296bae3c113d6} 
+\index{lexer.c@{lexer.c}!skip\_spaces@{skip\_spaces}}
+\index{skip\_spaces@{skip\_spaces}!lexer.c@{lexer.c}}
+\doxysubsubsection{\texorpdfstring{skip\_spaces()}{skip\_spaces()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} skip\+\_\+spaces (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{cursor }\end{DoxyParamCaption})}
+
+
+
+Skips whitespace characters in the input string. 
+
+This function moves the cursor forward past any space or tab characters.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cursor} & A pointer to the current position in the input string. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char\texorpdfstring{$\ast$}{*} A pointer to the first non-\/space character. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=310pt]{lexer_8c_a9b8fee24677c2dfcc34296bae3c113d6_icgraph}
+\end{center}
+\end{figure}

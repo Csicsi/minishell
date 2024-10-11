@@ -1,0 +1,12 @@
+<map id="ft_putnbr_base" name="ft_putnbr_base">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,79,124,104"/>
+<area shape="rect" id="Node000002" href="$ft__printf__p_8c.html#a1814406757d2f7fcae609a4277aeacc2" title=" " alt="" coords="181,29,261,55"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,76,167,56,169,61,106,81"/>
+<area shape="rect" id="Node000004" href="$ft__printf__p_8c.html#a209597ce04c175ebc7d03cef6512b216" title=" " alt="" coords="172,79,271,104"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="124,89,158,89,158,94,124,94"/>
+<area shape="rect" id="Node000005" href="$ft__strlen_8c.html#abbb8c6c4ed85d892e7f1509f65f5768a" title=" " alt="" coords="184,128,259,153"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="106,101,171,122,170,127,105,107"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="196,31,191,21,194,11,204,5,221,3,242,6,251,15,247,19,239,11,221,8,206,10,198,15,196,20,201,28"/>
+<area shape="rect" id="Node000003" href="$ft__putchar__fd_8c.html#a8ee15a511946c1397bd2bdea4aed6aee" title=" " alt="" coords="319,29,425,55"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="262,39,305,39,305,45,262,45"/>
+</map>

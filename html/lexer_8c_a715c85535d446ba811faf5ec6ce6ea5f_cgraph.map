@@ -1,0 +1,19 @@
+<map id="calculate_expanded_length" name="calculate_expanded_length">
+<area shape="rect" id="Node000001" title="Calculates the final length of the string after expanding environment variables." alt="" coords="5,122,157,162"/>
+<area shape="rect" id="Node000002" href="$pure__utilities_8c.html#a39890f3daa20ec3d713c14ea01a8ee58" title=" " alt="" coords="205,104,288,129"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,128,191,122,192,128,158,133"/>
+<area shape="rect" id="Node000008" href="$ft__itoa_8c.html#a8a6ea3765dfd826eabfc00d36e28ea38" title=" " alt="" coords="215,153,278,179"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="158,150,202,157,201,162,157,156"/>
+<area shape="rect" id="Node000003" href="$ft__strjoin_8c.html#a91e6e3e428bcc9f2291b700e1829b82b" title=" " alt="" coords="342,55,421,80"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="281,101,332,83,334,88,283,106"/>
+<area shape="rect" id="Node000007" href="$ft__strncmp_8c.html#a9d2fe792187aa4ed08e5864fb2c4d6dc" title=" " alt="" coords="336,104,427,129"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="288,114,322,114,322,119,288,119"/>
+<area shape="rect" id="Node000004" href="$ft__strlcat_8c.html#a5ec5cb64412b189edcc4c4bd56183f54" title=" " alt="" coords="477,5,555,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="416,52,466,33,468,38,418,57"/>
+<area shape="rect" id="Node000005" href="$ft__strlcpy_8c.html#aa053827b3a2ea3d0118783d6fb59d178" title=" " alt="" coords="475,55,557,80"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="421,65,461,65,461,70,421,70"/>
+<area shape="rect" id="Node000006" href="$ft__strlen_8c.html#abbb8c6c4ed85d892e7f1509f65f5768a" title=" " alt="" coords="479,104,553,129"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="418,78,468,96,466,101,416,83"/>
+<area shape="rect" id="Node000009" href="$ft__itoa_8c.html#a06d9faba4cff026eaf6b0a12611afba4" title=" " alt="" coords="346,153,417,179"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="279,163,332,163,332,169,279,169"/>
+</map>
