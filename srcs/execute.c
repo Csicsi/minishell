@@ -55,55 +55,6 @@ int	execute_builtin(t_command *cmd, t_data *data, bool print_exit)
 }
 
 /**
- * @brief Frees a linked list of commands.
- *
- * This function releases all allocated memory in the command list.
- *
- * @param cmd_list The head of the command linked list to free.
- */
-void	free_cmd_list(t_command *cmd_list)
-{
-    t_command *tmp;
-
-    while (cmd_list)
-    {
-        tmp = cmd_list;
-
-        // Free each argument in the args array if allocated
-        if (cmd_list->args)
-        {
-            for (int i = 0; cmd_list->args[i]; i++)
-            {
-                free(cmd_list->args[i]);
-                cmd_list->args[i] = NULL;  // Avoid potential double free issues
-            }
-            free(cmd_list->args);  // Free the args array itself
-            cmd_list->args = NULL;
-        }
-
-        // Free input redirection file name if allocated
-        if (cmd_list->input)
-        {
-            free(cmd_list->input);
-            cmd_list->input = NULL;
-        }
-
-        // Free output redirection file name if allocated
-        if (cmd_list->output)
-        {
-            free(cmd_list->output);
-            cmd_list->output = NULL;
-        }
-
-        // Move to the next command and free the current one
-        cmd_list = cmd_list->next;
-        free(tmp);  // Free the current command
-        tmp = NULL;
-    }
-}
-
-
-/**
  * @brief Finds the appropriate path to run executables from the environment variable $PATH (typically in /usr/bin)
  *
  * @param cmd_args The command structure containing arguments.
@@ -122,7 +73,7 @@ char	*find_cmd_path(char **cmd_args, t_data *data)
 
 	// If not an absolute path, look for the command in the PATH environment variable
 	path_env = ft_getenv(strdup("PATH"), data->env_vars);
-	
+
 	if (!path_env)
 		return (NULL);  // In case PATH is not found, return NULL
 
@@ -236,7 +187,7 @@ int execute_single_cmd(t_command *cmd, t_data *data)
     {
         // If the command is not found, print an error and return
         fprintf(stderr, "%s: command not found\n", cmd->args[0]);
-        free_cmd_list(data->cmd_list);  // Free the command list
+        cleanup_data(data, true);
         exit(127);  // Exit with 127 to indicate "command not found"
     }
 
@@ -246,7 +197,7 @@ int execute_single_cmd(t_command *cmd, t_data *data)
     // If execve fails, print an error and clean up
     perror("minishell");
     free(cmd_path);  // Free the command path
-    free_cmd_list(data->cmd_list);  // Free the command list
+    cleanup_data(data, true);
     exit(EXIT_FAILURE);  // Exit with a failure status
 }
 
@@ -291,7 +242,7 @@ int execute_cmd_list(t_data *data)
     if (strcmp(current->args[0], "exit") == 0 && current->next == NULL)
     {
         data->last_exit_status = execute_builtin(current, data, true);  // Execute exit command directly
-        free_cmd_list(data->cmd_list);
+        cleanup_data(data, true);
         free(child_pids);  // Free allocated memory for child_pids
         return (data->last_exit_status);  // Return exit status directly
     }
@@ -329,7 +280,8 @@ int execute_cmd_list(t_data *data)
                 {
                     fprintf(stderr, ": %s: ", current->output);
         			perror("");
-                    free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
+                    cleanup_data(data, true);
+					free(child_pids);
                     exit(EXIT_FAILURE);
                 }
                 dup2(fd_out, STDOUT_FILENO);  // Redirect standard output
@@ -341,7 +293,8 @@ int execute_cmd_list(t_data *data)
             {
                 if (strcmp(current->args[0], "exit") == 0)
                 {
-                    free_cmd_list(data->cmd_list);  // Free resources but don't terminate the shell
+                    cleanup_data(data, true);
+					free(child_pids);
                     data->last_exit_status = 1;
                     exit(data->last_exit_status);
                 }
@@ -351,13 +304,15 @@ int execute_cmd_list(t_data *data)
                 {
                     data->last_exit_status = execute_builtin(current, data, false);
                 }
-
+				cleanup_data(data, true);
+				free(child_pids);
                 exit(data->last_exit_status);  // Exit with the status of the built-in
             }
             else
             {
                 data->last_exit_status = execute_single_cmd(current, data);
-                free_cmd_list(data->cmd_list);  // Free memory in the child before exiting
+				free(child_pids);
+				cleanup_data(data, true);
                 exit(data->last_exit_status);
             }
         }
@@ -377,7 +332,7 @@ int execute_cmd_list(t_data *data)
         else
         {
             perror("minishell: fork");  // If fork fails, print error
-            free_cmd_list(data->cmd_list);  // Free memory on error
+            cleanup_data(data, true);
             free(child_pids);  // Free dynamically allocated child_pids array
             return (1);
         }
@@ -393,7 +348,7 @@ int execute_cmd_list(t_data *data)
             data->last_exit_status = WEXITSTATUS(data->last_exit_status);  // Get the exit status of the last child process
     }
 
-    free_cmd_list(data->cmd_list);  // Free memory in the parent after all children have finished
+    cleanup_data(data, false);
     free(child_pids);  // Free dynamically allocated memory for child_pids
     return (data->last_exit_status);  // Return the exit status of the last command executed
 }
@@ -449,6 +404,8 @@ t_command *parse_tokens(t_data *data)
     current_cmd->heredoc_delim = NULL;
     current_cmd->is_heredoc = false;
     current_cmd->next = NULL;
+
+	t_token *tmp = data->tokens; // Keep a pointer to the head of the token list for cleanup
 
     // Iterate through the token linked list
     while (data->tokens)
@@ -550,6 +507,11 @@ t_command *parse_tokens(t_data *data)
     }
 
     current_cmd->args[arg_index] = NULL;  // Null-terminate the argument list for the last command
+
+	// Free the token list after parsing since it's no longer needed
+    data->tokens = tmp;  // Restore pointer to the head of the list
+    free_tokens(data);    // Free all tokens
+
     return cmd;  // Return the head of the command list
 }
 
@@ -682,6 +644,44 @@ void print_tokens(t_token *tokens)
     }
 }
 
+/**
+ * @brief Checks if the first token and the token after a pipe are valid commands.
+ *
+ * This function loops through the tokens and ensures that the first token and
+ * any token immediately following a pipe ('|') is a word (command).
+ * If any of these tokens is not a command, it returns an error.
+ *
+ * @param tokens The array of tokens to check.
+ * @return int Returns 0 if all checks pass, otherwise -1 for an error.
+ */
+int check_commands_in_tokens(t_token *tokens)
+{
+    t_token *current = tokens;  // Start with the head of the list
+
+    // Ensure the first token is a valid command
+    if (!current || current->type != TOKEN_WORD)
+    {
+        return (-1);
+    }
+
+    // Loop through the rest of the tokens
+    while (current)
+    {
+        // If a pipe is found, the next token must be a command
+        if (current->type == TOKEN_OPERATOR && strcmp(current->value, "|") == 0)
+        {
+            current = current->next; // Move to the next token after the pipe
+            if (!current || current->type != TOKEN_WORD)
+            {
+                fprintf(stderr, "Error: Expected command after pipe\n");
+                return (-1);
+            }
+        }
+        current = current->next; // Move to the next token
+    }
+
+    return 0; // All checks passed
+}
 
 /**
  * @brief Entry point for the minishell program.
@@ -706,8 +706,14 @@ int	main(int argc, char **argv, char **env_vars)
 	// Set up signal handlers
     signal(SIGINT, handle_sigint);   // Handle Ctrl+C
 
-	data.last_exit_status = 0;
 	data.exit_flag = false;
+	data.last_exit_status = 0;
+	data.token_count = 0;
+	data.input = NULL;
+	data.env_vars = NULL;
+	data.tokens = NULL;
+	data.cmd_list = NULL;
+
 	// Duplicate env_vars into dynamic memory
 	data.env_vars = duplicate_env_vars(env_vars);
 	if (!data.env_vars)
@@ -754,8 +760,7 @@ int	main(int argc, char **argv, char **env_vars)
 		if (lexer(input, &data, data.last_exit_status) == -1)
 		{
 			printf("Error tokenizing input!\n");
-			free(input); // Free input string on error
-			free_tokens(&data);
+			cleanup_data(&data, true);
 			return (1);  // Return 1 to indicate an error occurred
 		}
 
@@ -763,8 +768,7 @@ int	main(int argc, char **argv, char **env_vars)
 
 		if (check_commands_in_tokens(data.tokens) == -1)
 		{
-			free(input); // Free input string on error
-			free_tokens(&data);
+			cleanup_data(&data, true);
 			continue ;
 		}
 
@@ -775,23 +779,23 @@ int	main(int argc, char **argv, char **env_vars)
 		if (!data.cmd_list)
 		{
 			printf("Error parsing commands!\n");
-			free(input);                      // Free the input string
-			free_tokens(&data);
+			cleanup_data(&data, true);
 			return (1);                       // Return 1 to indicate an error occurred
 		}
 
 		// Execute the parsed list of commands and store the exit status of the last command
 		data.last_exit_status = execute_cmd_list(&data);
+
 		if (data.exit_flag == true)
 		{
-			free_tokens(&data); // Free the token array
-			free(input);                      // Free the input string
+			cleanup_data(&data, true);
 			return (data.last_exit_status);        // Return exit status
 		}
 
-		// Clean up the token array and free the input string
-		free(input);
 	}
+
+	// Final cleanup after the loop
+	cleanup_data(&data, true);
 
 	return (0); // Return 0 to indicate successful execution of the shell
 }

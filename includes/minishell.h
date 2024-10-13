@@ -53,6 +53,7 @@ typedef struct s_data
 	bool		exit_flag;
 	int			last_exit_status;
 	int			token_count;
+	char		*input;
 	char		**env_vars;
 	t_token		*tokens;
 	t_command	*cmd_list;
@@ -60,7 +61,8 @@ typedef struct s_data
 
 /* functions pertaining to lexer.c */
 int		lexer(char *input, t_data *data, int last_exit_status);
-void	free_tokens(t_data *data);
+void	cleanup_data(t_data *data, bool free_env);
+void free_tokens(t_data *data);
 t_command *parse_tokens(t_data *data);
 int count_tokens(t_token *tokens);
 //char	*expand_env_var(char *cursor, int last_exit_status);

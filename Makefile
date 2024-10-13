@@ -8,6 +8,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS = srcs/lexer.c \
 	   srcs/execute.c \
+	   srcs/cleanup.c \
 	   srcs/builtins/echo.c \
 	   srcs/builtins/cd.c \
 	   srcs/builtins/cd_utils.c \

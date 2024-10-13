@@ -174,7 +174,7 @@ char *expand_env_var(char *cursor, int last_exit_status, t_data *data)
 {
     // First pass: calculate the total length required for the result
     int final_length = calculate_expanded_length(cursor, last_exit_status, data);
-	printf("final_length: %d\n", final_length);
+	//printf("final_length: %d\n", final_length);
 
     // Allocate memory for the result string
     char *result = malloc(final_length + 1); // +1 for the null terminator
@@ -184,7 +184,7 @@ char *expand_env_var(char *cursor, int last_exit_status, t_data *data)
     // Second pass: fill the result buffer
     expand_env_vars_into_buffer(result, cursor, last_exit_status, data);
 
-	printf("len result:   %d\n", (int)strlen(result));
+	//printf("len result:   %d\n", (int)strlen(result));
     return result; // Return the expanded result
 }
 
@@ -357,42 +357,6 @@ void join_tokens_in_same_word(t_data *data)
     }
 }
 
-void remove_null_word_tokens(t_data *data)
-{
-    t_token *current = data->tokens;
-    t_token *previous = NULL;
-    t_token *temp;
-
-    while (current != NULL)
-    {
-        // Check if the token is of type WORD and has a NULL value
-        if (current->type == TOKEN_WORD && current->value[0] == '\0')
-        {
-            if (previous == NULL)
-            {
-                // If we are at the head of the list, move the head forward
-                data->tokens = current->next;
-            }
-            else
-            {
-                // Skip over the current token in the list
-                previous->next = current->next;
-            }
-
-            // Free the current token
-            temp = current;
-            current = current->next;
-            free(temp); // Free the token itself
-        }
-        else
-        {
-            // Move to the next token, keeping track of the previous one
-            previous = current;
-            current = current->next;
-        }
-    }
-}
-
 /**
  * @brief Tokenizes the input string into an array of tokens.
  *
@@ -423,11 +387,10 @@ int lexer(char *input, t_data *data, int last_exit_status)
         // Allocate a new token
         new_token = malloc(sizeof(t_token));
         if (!new_token)
-        {
-            free_tokens(data);
             return -1; // Return -1 on memory allocation failure
-        }
         new_token->next = NULL;
+		new_token->type = 0;
+		new_token->value = NULL;
 
         // Set the word index for this token
         new_token->word = word_index;
@@ -473,11 +436,7 @@ int lexer(char *input, t_data *data, int last_exit_status)
             }
             new_token->value = strndup(start, length);
             if (!new_token->value)
-            {
-                free(new_token);
-                free_tokens(data);
                 return -1;
-            }
 
             // Check if there is a $ for environment variable expansion
             if (!in_heredoc && ft_strchr(new_token->value, '$')) // Disable expansion only for the first word after heredoc
@@ -487,7 +446,6 @@ int lexer(char *input, t_data *data, int last_exit_status)
                 {
                     free(new_token->value);
                     free(new_token);
-                    free_tokens(data);
                     return -1;
                 }
                 new_token->value = expanded;
@@ -497,9 +455,7 @@ int lexer(char *input, t_data *data, int last_exit_status)
 
             // Reset the heredoc flag after the first word is processed
             if (in_heredoc)
-            {
                 in_heredoc = 0;
-            }
         }
 
         // Append the new token to the linked list
@@ -521,66 +477,5 @@ int lexer(char *input, t_data *data, int last_exit_status)
     //remove_null_word_tokens(data);
     join_tokens_in_same_word(data);
     return 0; // Return 0 on success
-}
-
-/**
- * @brief Frees the memory allocated for the token array.
- *
- * This function frees the dynamically allocated memory used by each token's value
- * and the token array itself.
- *
- * @param tokens The array of tokens.
- * @param token_count The number of tokens in the array.
- */
-void free_tokens(t_data *data)
-{
-    t_token *temp;
-
-    while (data->tokens)
-    {
-        temp = data->tokens;
-        data->tokens = data->tokens->next;
-        free(temp->value);
-        free(temp);
-    }
-}
-
-/**
- * @brief Checks if the first token and the token after a pipe are valid commands.
- *
- * This function loops through the tokens and ensures that the first token and
- * any token immediately following a pipe ('|') is a word (command).
- * If any of these tokens is not a command, it returns an error.
- *
- * @param tokens The array of tokens to check.
- * @return int Returns 0 if all checks pass, otherwise -1 for an error.
- */
-int check_commands_in_tokens(t_token *tokens)
-{
-    t_token *current = tokens;  // Start with the head of the list
-
-    // Ensure the first token is a valid command
-    if (!current || current->type != TOKEN_WORD)
-    {
-        return (-1);
-    }
-
-    // Loop through the rest of the tokens
-    while (current)
-    {
-        // If a pipe is found, the next token must be a command
-        if (current->type == TOKEN_OPERATOR && strcmp(current->value, "|") == 0)
-        {
-            current = current->next; // Move to the next token after the pipe
-            if (!current || current->type != TOKEN_WORD)
-            {
-                fprintf(stderr, "Error: Expected command after pipe\n");
-                return (-1);
-            }
-        }
-        current = current->next; // Move to the next token
-    }
-
-    return 0; // All checks passed
 }
 
