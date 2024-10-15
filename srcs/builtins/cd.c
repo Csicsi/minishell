@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 12:09:22 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/11 13:08:32 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/15 14:51:15 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,9 @@ static int	resolve_special_paths(t_command *cmd, t_data *data, char **target_pat
 	(void)data;
 
 	curpath = NULL;
-	// Check if the argument is `-`, which refers to the previous working directory (OLDPWD).
-	if (cmd->args[1] && ft_strncmp(cmd->args[1], "-", 2) == 0)
-	{
-		curpath = ft_getenv(strdup("OLDPWD"), data->env_vars);
-		// If OLDPWD is not set, display an error message.
-		if (curpath == NULL)
-			return (ft_putstr_fd("minishell: cd: OLDPWD not set\n",
-					STDERR_FILENO), 1);
-	}
+	
 	// Check if no arguments (or a ~) are passed, which means the user wants to go to HOME.
-	else if (cmd->args[1] == NULL || (cmd->args[1] && ft_strncmp(cmd->args[1], "~", 2) == 0))
+	if (cmd->args[1] == NULL || (cmd->args[1] && ft_strncmp(cmd->args[1], "~", 2) == 0))
 	{
 		curpath = ft_getenv(strdup("HOME"), data->env_vars);
 		// If HOME is not set, display an error message.
@@ -44,6 +36,17 @@ static int	resolve_special_paths(t_command *cmd, t_data *data, char **target_pat
 			return (ft_putstr_fd("minishell: cd: HOME not set\n",
 					STDERR_FILENO), 1);
 	}
+	else if (cmd->args[1] && ft_strncmp(cmd->args[1], "-", 2) == 0)
+	{
+		curpath = ft_getenv(strdup("OLDPWD"), data->env_vars);
+		// If OLDPWD is not set, display an error message.
+		if (curpath == NULL)
+			return (ft_putstr_fd("minishell: cd: OLDPWD not set\n",
+					STDERR_FILENO), 1);
+			//printf("%s\n", cwd);
+		
+	}
+	// Check if the argument is `-`, which refers to the previous working directory (OLDPWD).
 	else
 		// No special path detected, returning 0 to indicate normal path resolution.
 		return (0);
@@ -122,10 +125,9 @@ static int	change_directory(const char *curpath, t_data *data)
 	// Get the current working directory before changing it.
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (perror("minishell: cd: getcwd"),free(normalized_path), 1);
-	printf("cwd: %s\n", cwd);
-
+	
 	// Update OLDPWD with the current working directory.
-	if (setenv("OLDPWD", cwd, 1) != 0)
+	if (ft_setenv("OLDPWD", cwd, data) != 0)
 		return (perror("minishell: cd: setenv OLDPWD"), free(normalized_path), 1);
 
 	// Change the directory to the new path.
@@ -135,8 +137,9 @@ static int	change_directory(const char *curpath, t_data *data)
 	// Get the new working directory after changing it.
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (perror("minishell: cd: getcwd"), free(normalized_path), 1);
+	
 	// Update PWD with the current working directory.
-	if (setenv("PWD", cwd, 1) != 0)
+	if (ft_setenv("PWD", cwd, data) != 0)
 		return (perror("minishell: cd: setenv PWD"), free(normalized_path), 1);
 
 	// Free the normalized path.

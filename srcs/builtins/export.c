@@ -7,7 +7,7 @@
  *
  * @param cmd
  * @param data->env_vars The environment variables array.
- * @return int Returns 0 on success, or 1 if an error occurs.
+ * @return int Returns 1 if it is a valid environment variable, 0 if it is not.
  */
 static int	is_valid_env_var_name(const char *name)
 {
@@ -156,6 +156,7 @@ int	builtin_export(t_command *cmd, t_data *data)
 	while (cmd->args[arg] != NULL)
 	{
 		varname_value = cmd->args[arg];
+		//printf("varname_value: %s\n", varname_value);
 
 		// Find the '=' sign in the argument
 		equal_sign = ft_strchr(varname_value, '=');
@@ -168,22 +169,24 @@ int	builtin_export(t_command *cmd, t_data *data)
 		else
 			varname = strdup(varname_value);
 
+		//printf("varname: %s\n", varname);
 		// Check if the variable name is valid
-		if (!is_valid_env_var_name(varname))
+		if (!is_valid_env_var_name(varname) || *varname == '\0')
 		{
-			fprintf(stderr, "minishell: export: `%s`: not a valid identifier\n", varname);
+			fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", varname_value);
 			free(varname);
 			encountered_invalid_varname = 1; // set flag to 1 and return exit code 1 at the end of the function
 			arg++;
 			continue;  // Skip invalid argument and move to the next one
 		}
 
+
 		// Search for the variable in the environment list
 		i = 0;
 		while (data->env_vars[i] != NULL)
 		{
 			// Compare the varname with the environment variable before '='
-			// (or for declared but unassigned env_var (e.g. with "export TEST", varname_value is equal to TEST):
+			// (or for declared but unassigned env_var (e.g. with "export TEST"):
 			// compare the varname_value with the environment variable before \0)
 			if (ft_strncmp(data->env_vars[i], varname, ft_strlen(varname)) == 0 &&
 				(data->env_vars[i][ft_strlen(varname)] == '=' || data->env_vars[i][ft_strlen(varname)] == '\0'))
@@ -193,11 +196,14 @@ int	builtin_export(t_command *cmd, t_data *data)
 		// If found, update its value
 		if (data->env_vars[i] != NULL)
 		{
-			// Free the old value before assigning a new one
-			free(data->env_vars[i]);
-			data->env_vars[i] = strdup(varname_value);  // Duplicate the string into data->env_vars[i]
-			if (!data->env_vars[i])
-    			return (1);  // IMPLEMENT CLEAN UP Handle memory allocation failure
+			if (ft_strchr(varname_value, '='))
+			{
+				// Free the old value before assigning a new one
+				free(data->env_vars[i]);
+				data->env_vars[i] = strdup(varname_value);  // Duplicate the string into data->env_vars[i]
+				if (!data->env_vars[i])
+    				return (1);  // IMPLEMENT CLEAN UP Handle memory allocation failure
+			}
 		}
 		// If not found, add it to the environment list
 		else
