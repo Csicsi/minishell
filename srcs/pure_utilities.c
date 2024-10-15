@@ -75,6 +75,9 @@ char	*ft_getenv(char *env_var_name, char **envp)
 
 	len_match = strlen(look_for_match);
 	i = 0;
+    //printf("HEEEEEEERE\n");
+    //if (envp == NULL)
+    //    printf("IS NULL\n");
 	while (envp[i] != NULL)
 	{
 		//printf("envp[%d]: %s\n", i, envp[i]);
