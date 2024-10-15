@@ -803,7 +803,8 @@ int	main(int argc, char **argv, char **env_vars)
 
 		if (check_commands_in_tokens(data.tokens) == -1)
 		{
-			cleanup_data(&data, true);
+            //printf("SEG FAULT CAUSE?\n"); // yep, when no input, it freed all env vars (and ft_getenv will then try to derefence and seg fault)
+			//cleanup_data(&data, true);
 			continue ;
 		}
 
