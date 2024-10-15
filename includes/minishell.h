@@ -87,6 +87,8 @@ void	free_array_of_strs(char **tab);
 char	*free_null(char *str);
 int		check_commands_in_tokens(t_token *tokens);
 char	*ft_getenv(char *look_for_match, char **envp);
+int		ft_setenv(const char *varname, const char *value, t_data *data);
+
 
 
 #endif

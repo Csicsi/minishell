@@ -195,7 +195,8 @@ int execute_single_cmd(t_command *cmd, t_data *data)
     execve(cmd_path, cmd->args, data->env_vars);
 
     // If execve fails, print an error and clean up
-    perror("minishell");
+    if (!(*(cmd->args[0]) == '\0')) // if something (e.g. $notexists evaluates to "") do not print perror
+		perror("minishell");
     free(cmd_path);  // Free the command path
     cleanup_data(data, true);
     exit(EXIT_FAILURE);  // Exit with a failure status
@@ -760,7 +761,7 @@ int	main(int argc, char **argv, char **env_vars)
 	while (1)
 	{
 		// Prompt the user and read input using readline
-		input = readline("Don'tPanickShell> ");
+		input = readline("Don'tPanicShell> ");
 
 		// If the user inputs Ctrl-D (EOF), exit the shell
 		if (input == NULL)
