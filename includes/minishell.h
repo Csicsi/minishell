@@ -33,10 +33,6 @@ typedef enum e_token_type
 {
 	TOKEN_WORD,
 	TOKEN_OPERATOR,
-	TOKEN_ENV_VAR,
-	TOKEN_DOT,
-	TOKEN_DOTDOT,
-	TOKEN_UNKNOWN,
 	TOKEN_END
 }	t_token_type;
 

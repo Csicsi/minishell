@@ -198,7 +198,7 @@ char *expand_env_var(char *cursor, int last_exit_status, t_data *data)
  * @param token Pointer to the token where the extracted word will be stored.
  * @return char* The updated position in the input string after processing the quoted word.
  */
-char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_status, t_data *data)
+char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_status, t_data *data, int in_heredoc)
 {
     char *start = cursor + 1; // Skip the opening double quote
     int len = 0;
@@ -213,7 +213,6 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
         len++;
     }
 
-    // Allocate temporary buffer for the raw string content (before expansion)
     char *temp = malloc(len + 1); // +1 for null-terminator
     if (!temp)
         return NULL;
@@ -224,8 +223,7 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
     {
         if (*cursor == '\\' && (*(cursor + 1) == '"' || *(cursor + 1) == '$' || *(cursor + 1) == '\\'))
         {
-            // Handle escaped characters
-            temp[i++] = *(++cursor);
+            temp[i++] = *(++cursor); // Handle escaped characters
         }
         else
         {
@@ -235,8 +233,16 @@ char *extract_double_quoted_word(char *cursor, t_token *token, int last_exit_sta
     }
     temp[i] = '\0'; // Null-terminate the temporary string
 
-    // Now expand any environment variables in the raw content
-    expanded = expand_env_var(temp, last_exit_status, data);
+    // Only expand variables if not in heredoc context
+    if (!in_heredoc)
+    {
+        expanded = expand_env_var(temp, last_exit_status, data);
+    }
+    else
+    {
+        expanded = strdup(temp); // No expansion in heredoc context
+    }
+
     free(temp); // Free the temporary raw content
 
     // Assign the expanded string to the token value
@@ -406,7 +412,7 @@ int lexer(char *input, t_data *data, int last_exit_status)
         // Handle double-quoted strings
         else if (*cursor == '"')
         {
-            cursor = extract_double_quoted_word(cursor, new_token, last_exit_status, data);
+            cursor = extract_double_quoted_word(cursor, new_token, last_exit_status, data, in_heredoc);
             new_token->type = TOKEN_WORD;
         }
         // Handle single-quoted strings
@@ -478,4 +484,3 @@ int lexer(char *input, t_data *data, int last_exit_status)
     join_tokens_in_same_word(data);
     return 0; // Return 0 on success
 }
-
