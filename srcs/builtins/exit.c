@@ -49,19 +49,19 @@ int	builtin_exit(t_command *cmd, t_data *data, bool print_exit)
 
 	// Print exit message
 	if (isatty(STDIN_FILENO) && print_exit)
-		fprintf(stderr, "exit\n");
+		ft_fprintf(2, "exit\n");
 
 	// Handle too many arguments error
 	if (cmd->args[1] && cmd->args[2])
 	{
-		fprintf(stderr, "minishell: exit: too many arguments\n");
+		ft_fprintf(2, "minishell: exit: too many arguments\n");
 		return 1;
 	}
 
 	// Handle non-numeric argument error
 	if (cmd->args[1] && ft_strisnum(cmd->args[1]) == 0)
 	{
-		fprintf(stderr, "minishell: exit: %s: numeric argument required\n", cmd->args[1]);
+		ft_fprintf(2, "minishell: exit: %s: numeric argument required\n", cmd->args[1]);
 		return 255;
 	}
 

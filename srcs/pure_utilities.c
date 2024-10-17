@@ -87,3 +87,30 @@ char	*ft_getenv(char *env_var_name, char **envp)
 	}
 	return (free(look_for_match), NULL);
 }
+
+int	ft_fprintf(int fd, const char *format, ...)
+{
+	va_list	args;
+	int		i = 0;
+	int		count = 0;
+	const char	*str;
+
+	va_start(args, format);
+	while (format[i])
+	{
+		if (format[i] == '%' && format[i + 1] == 's')
+		{
+			str = va_arg(args, const char *);
+			if (str)
+				count += write(fd, str, strlen(str));
+			i += 2;
+		}
+		else
+		{
+			count += write(fd, &format[i], 1);
+			i++;
+		}
+	}
+	va_end(args);
+	return (count);
+}

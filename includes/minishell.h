@@ -78,6 +78,7 @@ char	*resolve_cdpath_if_needed(const char *path, t_data *data);
 int		update_directory_env(const char *cwd, t_data *data);
 char	*normalize_path(const char *path);
 /* pure utilities/ helper functions */
+int		ft_fprintf(int fd, const char *format, ...);
 char	*ft_strjoin_pipex(char *s1, char *s2);
 void	free_array_of_strs(char **tab);
 char	*free_null(char *str);

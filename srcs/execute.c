@@ -146,7 +146,7 @@ int execute_single_cmd(t_command *cmd, t_data *data)
         fd_in = open(cmd->input, O_RDONLY);  // Open input file
         if (fd_in < 0)  // Error check
         {
-            fprintf(stderr, ": %s: ", cmd->input);
+            ft_fprintf(2, ": %s: ", cmd->input);
             perror("");
             return (1);
         }
@@ -172,7 +172,7 @@ int execute_single_cmd(t_command *cmd, t_data *data)
         fd_out = open(cmd->output, O_WRONLY | O_CREAT | (cmd->append_output ? O_APPEND : O_TRUNC), 0644);  // Open output file
         if (fd_out < 0)  // Error check
         {
-            fprintf(stderr, ": %s: ", cmd->output);
+            ft_fprintf(2, ": %s: ", cmd->output);
             perror("");
             return (1);
         }
@@ -187,7 +187,7 @@ int execute_single_cmd(t_command *cmd, t_data *data)
     // If no non-empty argument was found, print ": : command not found"
     if (cmd->args[i] == NULL || *(cmd->args[i]) == '\0')
     {
-        fprintf(stderr, ": : command not found\n");
+        //ft_fprintf(2, ": : command not found\n");
         cleanup_data(data, true);
         return (127);  // Exit with 127 to indicate "command not found"
     }
@@ -201,7 +201,7 @@ int execute_single_cmd(t_command *cmd, t_data *data)
     if (!cmd_path)
     {
         // If the command is not found, print an error and return
-        fprintf(stderr, ": %s: command not found\n", cmd->args[i]);
+        ft_fprintf(2, ": %s: command not found\n", cmd->args[i]);
         cleanup_data(data, true);
         return (127);  // Exit with 127 to indicate "command not found"
     }
@@ -295,7 +295,7 @@ int execute_cmd_list(t_data *data)
                 int fd_out = open(current->output, O_WRONLY | O_CREAT | (current->append_output ? O_APPEND : O_TRUNC), 0644);
                 if (fd_out < 0)  // Check for errors
                 {
-                    fprintf(stderr, ": %s: ", current->output);
+                    ft_fprintf(2, ": %s: ", current->output);
                     perror("");
                     cleanup_data(data, true);
                     free(child_pids);
@@ -466,7 +466,7 @@ t_command *parse_tokens(t_data *data)
                 }
                 else
                 {
-                    fprintf(stderr, "minishell: syntax error near unexpected token newline\n");
+                    ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
                     return NULL;
                 }
             }
@@ -500,7 +500,7 @@ t_command *parse_tokens(t_data *data)
 				else
 				{
 					// Handle syntax error when no output file is provided
-					fprintf(stderr, "minishell: syntax error near unexpected token newline\n");
+					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
 					return NULL;
 				}
 			}
@@ -515,7 +515,7 @@ t_command *parse_tokens(t_data *data)
                 }
                 else
                 {
-                    fprintf(stderr, "minishell: syntax error near unexpected token newline\n");
+                    ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
                     return NULL;  // Return NULL or handle the error appropriately
                 }
             }
@@ -534,14 +534,14 @@ t_command *parse_tokens(t_data *data)
 						if (data->tokens->next == NULL || data->tokens->next->type == TOKEN_OPERATOR)
 						{
 							// If there is no command or the next token is an operator, print an error message
-							fprintf(stderr, "%s: command not found\n", data->tokens->next ? data->tokens->next->value : "command");
+							ft_fprintf(2, "%s: command not found\n", data->tokens->next ? data->tokens->next->value : "command");
 							return NULL;
 						}
 					}
 					else
 					{
 						// Handle the case where the input file doesn't exist
-						fprintf(stderr, ": %s: No such file or directory\n", data->tokens->next->value);
+						ft_fprintf(2, ": %s: No such file or directory\n", data->tokens->next->value);
 						return NULL;
 					}
 
@@ -553,7 +553,7 @@ t_command *parse_tokens(t_data *data)
 				}
 				else
 				{
-					fprintf(stderr, ": syntax error near unexpected token newline\n");
+					ft_fprintf(2, ": syntax error near unexpected token newline\n");
 					return NULL;  // Handle the case where input redirection has no file provided
 				}
 			}
@@ -757,7 +757,7 @@ int check_commands_in_tokens(t_token *tokens)
             // If the token after the pipe is missing or invalid, return an error
             if (!current || (current->type != TOKEN_WORD && (strcmp(current->value, ">") != 0 && strcmp(current->value, "<") != 0)))
             {
-                fprintf(stderr, ": syntax error near unexpected token `%s'\n", current ? current->value : "newline");
+                ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current ? current->value : "newline");
                 return (-1);
             }
         }
@@ -767,7 +767,7 @@ int check_commands_in_tokens(t_token *tokens)
             current = current->next;  // Move to the next token after the redirection
             if (!current || current->type != TOKEN_WORD)
             {
-                fprintf(stderr, ": syntax error near unexpected token `%s'\n", current ? current->value : "newline");
+                ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current ? current->value : "newline");
                 return (-1);
             }
         }
@@ -826,8 +826,8 @@ int	main(int argc, char **argv, char **env_vars)
 		// If the user inputs Ctrl-D (EOF), exit the shell
 		if (input == NULL)
 		{
-			//fprintf(stderr, "exit\n");
-			break;
+			//ft_fprintf(2, "exit\n");
+			return (data.last_exit_status);  // Return the last exit status
 		}
 
 		if (*input)  // Only add non-empty input to history
@@ -836,7 +836,7 @@ int	main(int argc, char **argv, char **env_vars)
 		in_quote = check_for_unclosed_quotes(input);
 		if (in_quote == 1)
 		{
-			fprintf(stderr, "syntax error: unclosed quote\n");
+			ft_fprintf(2, "syntax error: unclosed quote\n");
 			cleanup_data(&data, true);
 			return (1);  // Return 1 to indicate an error occurred
 		}
