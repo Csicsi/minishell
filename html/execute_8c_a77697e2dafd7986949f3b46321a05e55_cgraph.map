@@ -1,5 +1,0 @@
-<map id="is_builtin" name="is_builtin">
-<area shape="rect" id="Node000001" title="Checks if a command is a recognized builtin." alt="" coords="5,5,87,31"/>
-<area shape="rect" id="Node000002" href="$ft__strncmp_8c.html#a9d2fe792187aa4ed08e5864fb2c4d6dc" title=" " alt="" coords="135,5,225,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,15,121,15,121,21,87,21"/>
-</map>

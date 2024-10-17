@@ -1,7 +1,0 @@
-<map id="extract_double_quoted_word" name="extract_double_quoted_word">
-<area shape="rect" id="Node000001" title="Extracts a word enclosed in double quotes from the input." alt="" coords="211,5,421,31"/>
-<area shape="rect" id="Node000002" href="$lexer_8c.html#a42a0f9e915117bf1220e2b9e8822a44a" title="Tokenizes the input string into an array of tokens." alt="" coords="108,5,163,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,21,163,21,163,15,197,15"/>
-<area shape="rect" id="Node000003" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,5,60,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="94,21,60,21,60,15,94,15"/>
-</map>

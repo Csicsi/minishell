@@ -1,9 +1,0 @@
-<map id="ft_isspace" name="ft_isspace">
-<area shape="rect" id="Node000001" title=" " alt="" coords="296,31,383,56"/>
-<area shape="rect" id="Node000002" href="$ft__atoi__base_8c.html#a0127d3db5f4a6600c83ee99b68c7c766" title=" " alt="" coords="132,5,233,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="282,37,233,29,234,24,283,32"/>
-<area shape="rect" id="Node000003" href="$ft__atof_8c.html#ab52cf4ad6c90d92c9c66dbcbe7ef2afb" title=" " alt="" coords="117,55,248,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="283,55,249,60,248,55,282,49"/>
-<area shape="rect" id="Node000004" href="$ft__atof_8c.html#afca08c39a126e18b2cec12b916ff212f" title=" " alt="" coords="5,55,69,80"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="103,70,69,70,69,65,103,65"/>
-</map>

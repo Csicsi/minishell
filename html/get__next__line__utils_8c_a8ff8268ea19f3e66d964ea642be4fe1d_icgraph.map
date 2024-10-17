@@ -1,8 +1,0 @@
-<map id="gnl_strjoin" name="gnl_strjoin">
-<area shape="rect" id="Node000001" title=" " alt="" coords="311,5,401,31"/>
-<area shape="rect" id="Node000002" href="$get__next__line_8c.html#a78d68a5f50a6eec0380ce25b4a1bd5b7" title=" " alt="" coords="5,5,116,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="297,21,116,21,116,15,297,15"/>
-<area shape="rect" id="Node000003" href="$get__next__line_8c.html#a13369efe2cdd9c688de16abd78f408cd" title=" " alt="" coords="164,31,263,56"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="297,31,264,37,263,32,296,26"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="150,36,116,30,117,25,151,30"/>
-</map>

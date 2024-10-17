@@ -41,46 +41,19 @@ void	free_array_of_strs(char **tab)
 	}
 	free(tab);
 }
-/*
-char	*ft_getenv_path(char **envp)
-{
-	int		i;
-	char	*matchpath;
-
-	matchpath = "PATH=";
-	i = 0;
-	while (envp[i] != NULL)
-	{
-		if (ft_strncmp(envp[i], matchpath, 5) == 0)
-			return (envp[i] + 5);
-		i++;
-	}
-	return (ft_putstr_fd("Path not found. Command not valid.\n", 2), NULL);
-}
-*/
 
 char	*ft_getenv(char *env_var_name, char **envp)
 {
-	int	i;
-	int	len_match;
+	int		i;
+	int		len_match;
+	char	*look_for_match;
 
-	//printf("env_var_name: %s\n", env_var_name);
-	//printf("check len: %d\n", (int)(strlen(env_var_name)));
-
-	char *look_for_match = ft_strjoin(env_var_name, "=");
+	look_for_match = ft_strjoin(env_var_name, "=");
 	free(env_var_name);
-
-	//printf("look_for_match: %s\n", look_for_match);
-	//printf("check len: %d\n", (int)(strlen(look_for_match)));
-
 	len_match = strlen(look_for_match);
 	i = 0;
-    //printf("HEEEEEEERE\n");
-    //if (envp == NULL)
-    //    printf("IS NULL\n");
 	while (envp[i] != NULL)
 	{
-		//printf("envp[%d]: %s\n", i, envp[i]);
 		if (ft_strncmp(envp[i], look_for_match, len_match) == 0)
 			return (free(look_for_match), envp[i] + len_match);
 		i++;
@@ -90,11 +63,13 @@ char	*ft_getenv(char *env_var_name, char **envp)
 
 int	ft_fprintf(int fd, const char *format, ...)
 {
-	va_list	args;
-	int		i = 0;
-	int		count = 0;
+	va_list		args;
+	int			i;
+	int			count;
 	const char	*str;
 
+	i = 0;
+	count = 0;
 	va_start(args, format);
 	while (format[i])
 	{
