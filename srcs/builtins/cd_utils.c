@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 15:43:02 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/10/15 11:39:55 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/17 15:55:05 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	ft_setenv(const char *varname, const char *value, t_data *data)
 	ft_strlcpy(varname_value, varname, len_varname + 1);  // Copy the variable name
 	varname_value[len_varname] = '=';  // Add the '=' sign
 	ft_strlcpy(varname_value + len_varname + 1, value, len_value + 1);  // Copy the value
-	
+
 	// Search for the variable in the environment list
 	i = 0;
 	while (data->env_vars[i] != NULL)
@@ -165,7 +165,7 @@ char	*normalize_path(const char *path)
 	if (realpath(path, normalized_path) == NULL)
 	{
 		//perror("minishell: cd: realpath");
-		fprintf(stderr, "minishell: cd: %s: No such file or directory\n", path);
+		fprintf(stderr, ": cd: %s: No such file or directory\n", path);
 		return (NULL);
 	}
 	return (ft_strdup(normalized_path)); // Return the normalized path.
@@ -196,11 +196,11 @@ char	*resolve_cdpath_if_needed(const char *path, t_data *data)
 int	update_directory_env(const char *cwd, t_data *data)
 {
 	(void)data;
-	
+
     // Update the PWD environment variable with the new current working directory.
 	if (setenv("PWD", cwd, 1) != 0)
 	{
-		perror("minishell: cd: setenv PWD");
+		perror(": cd: setenv PWD");
 		return (1);
 	}
 

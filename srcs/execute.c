@@ -138,6 +138,7 @@ int execute_single_cmd(t_command *cmd, t_data *data)
     int fd_in = -1;
     int fd_out = -1;
     char *cmd_path;
+    int i = 0;  // Add index for argument checking
 
     // Handle input redirection if specified
     if (cmd->input != NULL)
@@ -179,38 +180,37 @@ int execute_single_cmd(t_command *cmd, t_data *data)
         close(fd_out);  // Close the original file descriptor
     }
 
-    // If there's no command but redirection is provided, just create/truncate the file
-    if (cmd->args[0] == NULL || *(cmd->args[0]) == '\0')
+    // Find the first non-empty argument
+    while (cmd->args[i] && *(cmd->args[i]) == '\0')
+        i++;
+
+    // If no non-empty argument was found, print ": : command not found"
+    if (cmd->args[i] == NULL || *(cmd->args[i]) == '\0')
     {
-        // No command, but output file exists
-        if (cmd->output != NULL)
-        {
-            // The file has already been created/truncated above, so just return success
-            return (0);
-        }
-        // No command and no redirection, return an error
-        return (1);
+        fprintf(stderr, ": : command not found\n");
+        cleanup_data(data, true);
+        return (127);  // Exit with 127 to indicate "command not found"
     }
 
     // Check if the command is a builtin and execute it
-    if (is_builtin(cmd->args[0]))
+    if (is_builtin(cmd->args[i]))
         return (execute_builtin(cmd, data, false));
 
     // Find the command path using environment PATH or check if it's an absolute path
-    cmd_path = find_cmd_path(cmd->args, data);
+    cmd_path = find_cmd_path(cmd->args + i, data);  // Use the correct argument for path finding
     if (!cmd_path)
     {
         // If the command is not found, print an error and return
-        fprintf(stderr, ": %s: command not found\n", cmd->args[0]);
+        fprintf(stderr, ": %s: command not found\n", cmd->args[i]);
         cleanup_data(data, true);
         return (127);  // Exit with 127 to indicate "command not found"
     }
 
     // Try to execute the command
-    execve(cmd_path, cmd->args, data->env_vars);
+    execve(cmd_path, cmd->args + i, data->env_vars);
 
     // If execve fails, print an error and clean up
-    if (!(*(cmd->args[0]) == '\0')) // if something (e.g. $notexists evaluates to "") do not print perror
+    if (!(*(cmd->args[i]) == '\0'))  // if something (e.g. $notexists evaluates to "") do not print perror
         perror("minishell");
 
     free(cmd_path);  // Free the command path
@@ -520,30 +520,44 @@ t_command *parse_tokens(t_data *data)
                 }
             }
             // Handle input redirection ("<")
-            else if (strcmp(data->tokens->value, "<") == 0)
-            {
-                if (data->tokens->next != NULL)
-                {
+            else if (strcmp(data->tokens->value, "<") == 0)  // Handle input redirection "<"
+			{
+				if (data->tokens->next != NULL)
+				{
 					// Check if the input file exists
-                    if (access(data->tokens->next->value, F_OK) != 0)
-                    {
-                        current_cmd->input = strdup(data->tokens->next->value);   // Set the input file name from the next token
-                        // Move to the next command if there is one
-            			while (data->tokens && strcmp(data->tokens->value, "|") != 0)
-            			{
-              				data->tokens = data->tokens->next;  // Skip all tokens until the next command (pipe or end)
-            			}
-						continue;
-        			}
-                    current_cmd->input = strdup(data->tokens->next->value);   // Set the input file name from the next token
-                    data->tokens = data->tokens->next;
-                }
-                else
-                {
-                    fprintf(stderr, "minishell: syntax error near unexpected token newline\n");
-                    return NULL;  // Return NULL or handle the error appropriately
-                }
-            }
+					if (access(data->tokens->next->value, F_OK) == 0)
+					{
+						current_cmd->input = strdup(data->tokens->next->value);   // Set the input file name from the next token
+						data->tokens = data->tokens->next;
+
+						// Check if the token after input redirection is a valid command
+						if (data->tokens->next == NULL || data->tokens->next->type == TOKEN_OPERATOR)
+						{
+							// If there is no command or the next token is an operator, print an error message
+							fprintf(stderr, "%s: command not found\n", data->tokens->next ? data->tokens->next->value : "command");
+							return NULL;
+						}
+					}
+					else
+					{
+						// Handle the case where the input file doesn't exist
+						fprintf(stderr, ": %s: No such file or directory\n", data->tokens->next->value);
+						return NULL;
+					}
+
+					// Skip all tokens until the next command (pipe or end)
+					while (data->tokens && strcmp(data->tokens->value, "|") != 0)
+					{
+						data->tokens = data->tokens->next;
+					}
+				}
+				else
+				{
+					fprintf(stderr, ": syntax error near unexpected token newline\n");
+					return NULL;  // Handle the case where input redirection has no file provided
+				}
+			}
+
             // Handle pipe operator: create a new command
             else if (strcmp(data->tokens->value, "|") == 0)
             {
@@ -575,7 +589,10 @@ t_command *parse_tokens(t_data *data)
                 arg_index = 0;  // Reset argument index for the new command
             }
         }
-        data->tokens = data->tokens->next;  // Move to the next token
+        if (data->tokens)  // Ensure data->tokens is not NULL
+		{
+			data->tokens = data->tokens->next;  // Move to the next token
+		}
     }
 
     current_cmd->args[arg_index] = NULL;  // Null-terminate the argument list for the last command
@@ -723,7 +740,7 @@ int check_commands_in_tokens(t_token *tokens)
 {
     t_token *current = tokens;  // Start with the head of the list
 
-    // Special case: If the first token is a redirection operator (>, <), it should still be valid
+    // Special case: If the first token is neither a word nor a valid operator, return an error
     if (!current || (current->type != TOKEN_WORD && current->type != TOKEN_OPERATOR))
     {
         return (-1);
@@ -732,30 +749,32 @@ int check_commands_in_tokens(t_token *tokens)
     // Loop through the rest of the tokens
     while (current)
     {
-        // If a pipe is found, the next token must be a command
+        // If a pipe is found, the next token must be a command or a redirection operator
         if (current->type == TOKEN_OPERATOR && strcmp(current->value, "|") == 0)
         {
-            current = current->next; // Move to the next token after the pipe
-            if (!current || current->type != TOKEN_WORD)
+            current = current->next;  // Move to the next token after the pipe
+
+            // If the token after the pipe is missing or invalid, return an error
+            if (!current || (current->type != TOKEN_WORD && (strcmp(current->value, ">") != 0 && strcmp(current->value, "<") != 0)))
             {
-                fprintf(stderr, "Error: Expected command after pipe\n");
+                fprintf(stderr, ": syntax error near unexpected token `%s'\n", current ? current->value : "newline");
                 return (-1);
             }
         }
         // Handle output/input redirection operators (>, >>, <)
-        else if (current->type == TOKEN_OPERATOR && (strcmp(current->value, ">") == 0 || strcmp(current->value, "<") == 0))
+        else if (current->type == TOKEN_OPERATOR && (strcmp(current->value, ">") == 0 || strcmp(current->value, ">>") == 0 || strcmp(current->value, "<") == 0))
         {
-            current = current->next; // Move to the next token after the redirection
+            current = current->next;  // Move to the next token after the redirection
             if (!current || current->type != TOKEN_WORD)
             {
-                fprintf(stderr, "Error: Expected file name after redirection\n");
+                fprintf(stderr, ": syntax error near unexpected token `%s'\n", current ? current->value : "newline");
                 return (-1);
             }
         }
-        current = current->next; // Move to the next token
+        current = current->next;  // Move to the next token
     }
 
-    return 0; // All checks passed
+    return 0;  // All checks passed
 }
 
 /**
@@ -842,9 +861,8 @@ int	main(int argc, char **argv, char **env_vars)
 		//if (lexer(input, &data.tokens, data.token_count, data.last_exit_status) == -1)
 		if (lexer(input, &data, data.last_exit_status) == -1)
 		{
-			printf("Error tokenizing input!\n");
 			cleanup_data(&data, true);
-			return (1);  // Return 1 to indicate an error occurred
+			continue ;
 		}
 
 		//print_tokens(data.tokens);
@@ -861,9 +879,8 @@ int	main(int argc, char **argv, char **env_vars)
 		// If parsing fails, print an error message and clean up
 		if (!data.cmd_list)
 		{
-			printf("Error parsing commands!\n");
 			cleanup_data(&data, true);
-			return (1);                       // Return 1 to indicate an error occurred
+			continue ;
 		}
 
 		// Execute the parsed list of commands and store the exit status of the last command

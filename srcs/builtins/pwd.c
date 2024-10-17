@@ -19,7 +19,7 @@ int	builtin_pwd(void)
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		// Print an error message if getcwd fails.
-		perror("minishell: pwd");
+		perror(": pwd");
 		return (1);
 	}
 
