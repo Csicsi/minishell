@@ -30,7 +30,7 @@ int	ft_setenv(const char *varname, const char *value, t_data *data)
 		if (ft_strchr(varname_value, '='))
 		{
 			free(data->env_vars[i]);
-			data->env_vars[i] = strdup(varname_value);
+			data->env_vars[i] = ft_strdup(varname_value);
 			if (!data->env_vars[i])
 				return (1);
 			free(varname_value);
@@ -42,7 +42,7 @@ int	ft_setenv(const char *varname, const char *value, t_data *data)
 		data->env_vars = ft_realloc(data->env_vars, (env_count + 1) * sizeof(char *), (env_count + 2) * sizeof(char *));
 		if (!data->env_vars)
 			return (1);
-		data->env_vars[env_count] = strdup(varname_value);
+		data->env_vars[env_count] = ft_strdup(varname_value);
 		if (!data->env_vars[env_count])
 			return (1);
 		data->env_vars[env_count + 1] = NULL;
@@ -104,7 +104,7 @@ char	*resolve_cdpath_if_needed(const char *path, t_data *data)
 {
 	char	*cdpath;
 
-	cdpath = ft_getenv(strdup("CDPATH"), data->env_vars);
+	cdpath = ft_getenv(ft_strdup("CDPATH"), data->env_vars);
 	if (cdpath != NULL)
 		return (resolve_cdpath(cdpath, path));
 	return (NULL);

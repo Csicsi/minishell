@@ -263,6 +263,75 @@ void	join_tokens_in_same_word(t_data *data)
 	}
 }
 
+void	print_tokens(t_token *tokens)
+{
+	t_token	*current;
+
+	current = tokens;
+	while (current)
+	{
+		printf("type: %d, value: %s, word: %d, is_expanded: %d\n", current->type, current->value, current->word, current->is_expanded);
+		current = current->next;
+	}
+}
+
+void	split_expanded_tokens_by_spaces(t_data *data)
+{
+	t_token	*current;
+	t_token	*new_token;
+	t_token	*next_token;
+	char	**split_words;
+	int		i;
+	int		word_index;
+
+	current = data->tokens;
+	while (current)
+	{
+		if (current->is_expanded)
+		{
+			split_words = ft_split(current->value, ' ');
+			if (!split_words)
+				return;
+			free(current->value);
+			current->value = ft_strdup(split_words[0]);
+			if (!current->value)
+				return;
+			word_index = current->word;
+			i = 1;
+			while (split_words[i])
+			{
+				new_token = malloc(sizeof(t_token));
+				if (!new_token)
+					return;
+				new_token->value = ft_strdup(split_words[i]);
+				if (!new_token->value)
+				{
+					free(new_token);
+					return;
+				}
+				new_token->type = TOKEN_WORD;
+				new_token->word = ++word_index;
+				new_token->is_expanded = false;
+				new_token->next = current->next;
+				current->next = new_token;
+				current = new_token;
+				i++;
+			}
+			i = 0;
+			while (split_words[i])
+				free(split_words[i++]);
+			free(split_words);
+			next_token = current->next;
+			while (next_token)
+			{
+				next_token->word += (word_index - current->word);
+				next_token = next_token->next;
+			}
+		}
+		current = current->next;
+	}
+}
+
 int	lexer(char *input, t_data *data, int last_exit_status)
 {
 	char	*cursor;
@@ -291,6 +360,7 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 		new_token->type = 0;
 		new_token->value = NULL;
 		new_token->word = word_index;
+		new_token->is_expanded = false;
 		if (*cursor == '<' && *(cursor + 1) == '<')
 		{
 			new_token->type = TOKEN_OPERATOR;
@@ -319,8 +389,8 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 			start = cursor;
 			length = 0;
 			while (!isspace(*cursor) && *cursor != '|' && *cursor != '&'
-					&& *cursor != '>' && *cursor != '<' && *cursor != '\0'
-					&& *cursor != '"' && *cursor != '\'')
+				&& *cursor != '>' && *cursor != '<' && *cursor != '\0'
+				&& *cursor != '"' && *cursor != '\'')
 			{
 				length++;
 				cursor++;
@@ -337,6 +407,7 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 					free(new_token);
 					return (-1);
 				}
+				new_token->is_expanded = true;
 				new_token->value = expanded;
 			}
 			new_token->type = TOKEN_WORD;
@@ -352,6 +423,8 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 			word_index++;
 		cursor = skip_spaces(cursor);
 	}
+	split_expanded_tokens_by_spaces(data);
+	//print_tokens(data->tokens);
 	join_tokens_in_same_word(data);
 	return (0);
 }

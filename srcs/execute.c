@@ -58,10 +58,10 @@ char	*find_cmd_path(char **cmd_args, t_data *data)
 	{
 		path_for_execve = ft_strjoin_pipex(allpath[i], cmd_args[0]);
 		if (access(path_for_execve, F_OK | X_OK) == 0)
-			return (free_array_of_strs(allpath), path_for_execve);
+			return (free_string_array(allpath), path_for_execve);
 		path_for_execve = free_null(path_for_execve);
 	}
-	return (free_array_of_strs(allpath), NULL);
+	return (free_string_array(allpath), NULL);
 }
 
 int	handle_heredoc(t_command *cmd)
@@ -366,6 +366,7 @@ t_command	*parse_tokens(t_data *data)
 				else
 				{
 					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
+					data->last_exit_status = 2;
 					return (NULL);
 				}
 			}
@@ -392,6 +393,7 @@ t_command	*parse_tokens(t_data *data)
 				else
 				{
 					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
+					data->last_exit_status = 2;
 					return (NULL);
 				}
 			}
@@ -406,6 +408,7 @@ t_command	*parse_tokens(t_data *data)
 				else
 				{
 					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
+					data->last_exit_status = 2;
 					return (NULL);
 				}
 			}
@@ -437,6 +440,7 @@ t_command	*parse_tokens(t_data *data)
 				else
 				{
 					ft_fprintf(2, ": syntax error near unexpected token newline\n");
+					data->last_exit_status = 2;
 					return (NULL);
 				}
 			}
@@ -531,7 +535,7 @@ void	handle_sigint(int sig)
 	rl_redisplay();
 }
 
-int	check_commands_in_tokens(t_token *tokens)
+int	check_commands_in_tokens(t_token *tokens, t_data *data)
 {
 	t_token	*current;
 
@@ -546,9 +550,15 @@ int	check_commands_in_tokens(t_token *tokens)
 			if (!current || (current->type != TOKEN_WORD && (ft_strcmp(current->value, ">") != 0 && ft_strcmp(current->value, "<") != 0)))
 			{
 				if (current)
+				{
 					ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current->value);
+					data->last_exit_status = 2;
+				}
 				else
+				{
 					ft_fprintf(2, ": syntax error near unexpected token `newline'\n");
+					data->last_exit_status = 2;
+				}
 				return (-1);
 			}
 		}
@@ -558,9 +568,15 @@ int	check_commands_in_tokens(t_token *tokens)
 			if (!current || current->type != TOKEN_WORD)
 			{
 				if (current)
+				{
 					ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current->value);
+					data->last_exit_status = 2;
+				}
 				else
+				{
 					ft_fprintf(2, ": syntax error near unexpected token `newline'\n");
+					data->last_exit_status = 2;
+				}
 				return (-1);
 			}
 		}
@@ -571,7 +587,6 @@ int	check_commands_in_tokens(t_token *tokens)
 
 int	main(int argc, char **argv, char **env_vars)
 {
-	char	*input;
 	int		in_quote;
 	t_data	data;
 
@@ -593,24 +608,27 @@ int	main(int argc, char **argv, char **env_vars)
 	}
 	while (1)
 	{
-		input = readline("Don'tPanicShell> ");
-		if (input == NULL)
+		data.input = readline("Don'tPanicShell> ");
+		if (data.input == NULL)
+		{
+			cleanup_data(&data, true);
 			return (data.last_exit_status);
-		if (*input)
-			add_history(input);
-		in_quote = check_for_unclosed_quotes(input);
+		}
+		if (*data.input)
+			add_history(data.input);
+		in_quote = check_for_unclosed_quotes(data.input);
 		if (in_quote == 1)
 		{
 			ft_fprintf(2, "syntax error: unclosed quote\n");
 			cleanup_data(&data, true);
 			return (1);
 		}
-		if (lexer(input, &data, data.last_exit_status) == -1)
+		if (lexer(data.input, &data, data.last_exit_status) == -1)
 		{
 			cleanup_data(&data, true);
 			continue ;
 		}
-		if (check_commands_in_tokens(data.tokens) == -1)
+		if (check_commands_in_tokens(data.tokens, &data) == -1)
 		{
 			cleanup_data(&data, false);
 			continue ;
