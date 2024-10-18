@@ -49,7 +49,7 @@ char	*find_cmd_path(char **cmd_args, t_data *data)
 
 	if (access(cmd_args[0], F_OK | X_OK) == 0)
 		return (ft_strdup(cmd_args[0]));
-	path_env = ft_getenv(strdup("PATH"), data->env_vars);
+	path_env = ft_getenv(ft_strdup("PATH"), data->env_vars);
 	if (!path_env)
 		return (NULL);
 	allpath = ft_split(path_env, ':');
@@ -77,7 +77,7 @@ int	handle_heredoc(t_command *cmd)
 	while (true)
 	{
 		line = readline("> ");
-		if (!line || strcmp(line, cmd->heredoc_delim) == 0)
+		if (!line || ft_strcmp(line, cmd->heredoc_delim) == 0)
 		{
 			free(line);
 			break ;
@@ -196,14 +196,14 @@ int	execute_cmd_list(t_data *data)
 	}
 	current = data->cmd_list;
 	prev_fd = -1;
-	if (current->args[0] && strcmp(current->args[0], "exit") == 0 && current->next == NULL)
+	if (current->args[0] && ft_strcmp(current->args[0], "exit") == 0 && current->next == NULL)
 	{
 		data->last_exit_status = execute_builtin(current, data, true);
 		cleanup_data(data, true);
 		free(child_pids);
 		return (data->last_exit_status);
 	}
-	if (current->args[0] != NULL && ((strcmp(current->args[0], "export") == 0 || strcmp(current->args[0], "unset") == 0 || strcmp(current->args[0], "cd") == 0) && current->next == NULL))
+	if (current->args[0] != NULL && ((ft_strcmp(current->args[0], "export") == 0 || ft_strcmp(current->args[0], "unset") == 0 || ft_strcmp(current->args[0], "cd") == 0) && current->next == NULL))
 		data->last_exit_status = execute_builtin(current, data, false);
 	while (current != NULL)
 	{
@@ -242,13 +242,13 @@ int	execute_cmd_list(t_data *data)
 			}
 			if (is_builtin(current->args[0]))
 			{
-				if (strcmp(current->args[0], "exit") == 0)
+				if (ft_strcmp(current->args[0], "exit") == 0)
 				{
 					cleanup_data(data, true);
 					free(child_pids);
 					exit(0);
 				}
-				if (!(strcmp(current->args[0], "export") == 0) && !(strcmp(current->args[0], "unset") == 0) && !(strcmp(current->args[0], "cd") == 0))
+				if (!(ft_strcmp(current->args[0], "export") == 0) && !(ft_strcmp(current->args[0], "unset") == 0) && !(ft_strcmp(current->args[0], "cd") == 0))
 				{
 					data->last_exit_status = execute_builtin(current, data, false);
 				}
@@ -306,7 +306,7 @@ int	count_words(t_token *tokens)
 	word_count = 0;
 	while (tokens)
 	{
-		if ((strcmp(tokens->value, "|") == 0) && tokens->next != NULL)
+		if ((ft_strcmp(tokens->value, "|") == 0) && tokens->next != NULL)
 		{
 			tokens = tokens->next;
 		}
@@ -316,7 +316,7 @@ int	count_words(t_token *tokens)
 		}
 		else if (tokens->type == TOKEN_OPERATOR)
 		{
-			if (strcmp(tokens->value, "|") == 0)
+			if (ft_strcmp(tokens->value, "|") == 0)
 				break ;
 		}
 		tokens = tokens->next;
@@ -338,7 +338,7 @@ t_command	*parse_tokens(t_data *data)
 	current_cmd = cmd;
 	arg_index = 0;
 	words_count = count_words(data->tokens);
-	current_cmd->args = calloc(words_count + 1, sizeof(char *));
+	current_cmd->args = ft_calloc(words_count + 1, sizeof(char *));
 	if (!current_cmd->args)
 		return (NULL);
 	current_cmd->input = NULL;
@@ -352,15 +352,15 @@ t_command	*parse_tokens(t_data *data)
 	while (data->tokens)
 	{
 		if (data->tokens->type == TOKEN_WORD)
-			current_cmd->args[arg_index++] = strdup(data->tokens->value);
+			current_cmd->args[arg_index++] = ft_strdup(data->tokens->value);
 		else if (data->tokens->type == TOKEN_OPERATOR)
 		{
-			if (strcmp(data->tokens->value, "<<") == 0)
+			if (ft_strcmp(data->tokens->value, "<<") == 0)
 			{
 				current_cmd->is_heredoc = true;
 				if (data->tokens->next != NULL)
 				{
-					current_cmd->heredoc_delim = strdup(data->tokens->next->value);
+					current_cmd->heredoc_delim = ft_strdup(data->tokens->next->value);
 					data->tokens = data->tokens->next;
 				}
 				else
@@ -369,24 +369,24 @@ t_command	*parse_tokens(t_data *data)
 					return (NULL);
 				}
 			}
-			else if (strcmp(data->tokens->value, ">") == 0)
+			else if (ft_strcmp(data->tokens->value, ">") == 0)
 			{
 				if (data->tokens->next != NULL)
 				{
-					current_cmd->output = strdup(data->tokens->next->value);
+					current_cmd->output = ft_strdup(data->tokens->next->value);
 					data->tokens = data->tokens->next;
 					if (data->tokens->next != NULL)
 					{
 						if ((arg_index == 0) && !current_cmd->args[0])
 						{
-							current_cmd->args[arg_index++] = strdup(data->tokens->next->value);
+							current_cmd->args[arg_index++] = ft_strdup(data->tokens->next->value);
 							data->tokens = data->tokens->next;
 						}
 					}
 					else
 					{
 						if ((arg_index == 0) && !current_cmd->args[0])
-							current_cmd->args[arg_index++] = strdup("");
+							current_cmd->args[arg_index++] = ft_strdup("");
 					}
 				}
 				else
@@ -395,11 +395,11 @@ t_command	*parse_tokens(t_data *data)
 					return (NULL);
 				}
 			}
-			else if (strcmp(data->tokens->value, ">>") == 0)
+			else if (ft_strcmp(data->tokens->value, ">>") == 0)
 			{
 				if (data->tokens->next != NULL)
 				{
-					current_cmd->output = strdup(data->tokens->next->value);
+					current_cmd->output = ft_strdup(data->tokens->next->value);
 					current_cmd->append_output = 1;
 					data->tokens = data->tokens->next;
 				}
@@ -409,13 +409,13 @@ t_command	*parse_tokens(t_data *data)
 					return (NULL);
 				}
 			}
-			else if (strcmp(data->tokens->value, "<") == 0)
+			else if (ft_strcmp(data->tokens->value, "<") == 0)
 			{
 				if (data->tokens->next != NULL)
 				{
 					if (access(data->tokens->next->value, F_OK) == 0)
 					{
-						current_cmd->input = strdup(data->tokens->next->value);
+						current_cmd->input = ft_strdup(data->tokens->next->value);
 						data->tokens = data->tokens->next;
 						if (data->tokens->next == NULL || data->tokens->next->type == TOKEN_OPERATOR)
 						{
@@ -431,7 +431,7 @@ t_command	*parse_tokens(t_data *data)
 						ft_fprintf(2, ": %s: No such file or directory\n", data->tokens->next->value);
 						return (NULL);
 					}
-					while (data->tokens && strcmp(data->tokens->value, "|") != 0)
+					while (data->tokens && ft_strcmp(data->tokens->value, "|") != 0)
 						data->tokens = data->tokens->next;
 				}
 				else
@@ -440,7 +440,7 @@ t_command	*parse_tokens(t_data *data)
 					return (NULL);
 				}
 			}
-			else if (strcmp(data->tokens->value, "|") == 0)
+			else if (ft_strcmp(data->tokens->value, "|") == 0)
 			{
 				current_cmd->args[arg_index] = NULL;
 				current_cmd->next = malloc(sizeof(t_command));
@@ -508,7 +508,7 @@ char	**duplicate_env_vars(char **env_vars)
 	i = 0;
 	while (env_vars[i] != NULL)
 	{
-		new_env_vars[i] = strdup(env_vars[i]);
+		new_env_vars[i] = ft_strdup(env_vars[i]);
 		if (!new_env_vars[i])
 		{
 			while (i-- > 0)
@@ -540,10 +540,10 @@ int	check_commands_in_tokens(t_token *tokens)
 		return (-1);
 	while (current)
 	{
-		if (current->type == TOKEN_OPERATOR && strcmp(current->value, "|") == 0)
+		if (current->type == TOKEN_OPERATOR && ft_strcmp(current->value, "|") == 0)
 		{
 			current = current->next;
-			if (!current || (current->type != TOKEN_WORD && (strcmp(current->value, ">") != 0 && strcmp(current->value, "<") != 0)))
+			if (!current || (current->type != TOKEN_WORD && (ft_strcmp(current->value, ">") != 0 && ft_strcmp(current->value, "<") != 0)))
 			{
 				if (current)
 					ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current->value);
@@ -552,7 +552,7 @@ int	check_commands_in_tokens(t_token *tokens)
 				return (-1);
 			}
 		}
-		else if (current->type == TOKEN_OPERATOR && (strcmp(current->value, ">") == 0 || strcmp(current->value, ">>") == 0 || strcmp(current->value, "<") == 0))
+		else if (current->type == TOKEN_OPERATOR && (ft_strcmp(current->value, ">") == 0 || ft_strcmp(current->value, ">>") == 0 || ft_strcmp(current->value, "<") == 0))
 		{
 			current = current->next;
 			if (!current || current->type != TOKEN_WORD)

@@ -10,14 +10,14 @@ static int	resolve_special_paths(t_command *cmd,
 	if (cmd->args[1] == NULL || (cmd->args[1]
 			&& ft_strncmp(cmd->args[1], "~", 2) == 0))
 	{
-		curpath = ft_getenv(strdup("HOME"), data->env_vars);
+		curpath = ft_getenv(ft_strdup("HOME"), data->env_vars);
 		if (curpath == NULL || *curpath == '\0')
 			return (ft_putstr_fd(": cd: HOME not set\n",
 					STDERR_FILENO), 1);
 	}
 	else if (cmd->args[1] && ft_strncmp(cmd->args[1], "-", 2) == 0)
 	{
-		curpath = ft_getenv(strdup("OLDPWD"), data->env_vars);
+		curpath = ft_getenv(ft_strdup("OLDPWD"), data->env_vars);
 		if (curpath == NULL)
 			return (ft_putstr_fd(": cd: OLDPWD not set\n",
 					STDERR_FILENO), 1);
@@ -26,7 +26,7 @@ static int	resolve_special_paths(t_command *cmd,
 		return (0);
 	if (curpath == NULL)
 		return (1);
-	*target_path = strdup(curpath);
+	*target_path = ft_strdup(curpath);
 	return (0);
 }
 
@@ -56,7 +56,7 @@ static int	resolve_target_path(t_command *cmd,
 	}
 	if (curpath == NULL)
 		return (1);
-	*target_path = strdup(curpath);
+	*target_path = ft_strdup(curpath);
 	return (0);
 }
 

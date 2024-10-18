@@ -39,8 +39,7 @@ int	ft_setenv(const char *varname, const char *value, t_data *data)
 	else
 	{
 		env_count = i;
-		data->env_vars = realloc(data->env_vars,
-				(env_count + 2) * sizeof(char *));
+		data->env_vars = ft_realloc(data->env_vars, (env_count + 1) * sizeof(char *), (env_count + 2) * sizeof(char *));
 		if (!data->env_vars)
 			return (1);
 		data->env_vars[env_count] = strdup(varname_value);

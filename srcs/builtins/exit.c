@@ -34,7 +34,7 @@ int	builtin_exit(t_command *cmd, t_data *data, bool print_exit)
 		return (255);
 	}
 	if (cmd->args[1])
-		data->last_exit_status = atoi(cmd->args[1]);
+		data->last_exit_status = ft_atoi(cmd->args[1]);
 	data->last_exit_status &= 255;
 	return (data->last_exit_status);
 }

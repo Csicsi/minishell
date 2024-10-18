@@ -50,7 +50,7 @@ char	*ft_getenv(char *env_var_name, char **envp)
 
 	look_for_match = ft_strjoin(env_var_name, "=");
 	free(env_var_name);
-	len_match = strlen(look_for_match);
+	len_match = ft_strlen(look_for_match);
 	i = 0;
 	while (envp[i] != NULL)
 	{
@@ -77,7 +77,7 @@ int	ft_fprintf(int fd, const char *format, ...)
 		{
 			str = va_arg(args, const char *);
 			if (str)
-				count += write(fd, str, strlen(str));
+				count += write(fd, str, ft_strlen(str));
 			i += 2;
 		}
 		else
@@ -88,4 +88,73 @@ int	ft_fprintf(int fd, const char *format, ...)
 	}
 	va_end(args);
 	return (count);
+}
+
+char	*ft_strncpy(char *dest, const char *src, size_t n)
+{
+	size_t i;
+
+	i = 0;
+	while (src[i] && i < n)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
+}
+
+char	*ft_strndup(const char *s, size_t n)
+{
+	char	*dest;
+	size_t	len;
+
+	len = ft_strlen(s);
+	if (len > n)
+		len = n;
+	dest = malloc((len + 1) * sizeof(char));
+	if (dest == NULL)
+		return (NULL);
+	ft_strncpy(dest, s, len);
+	dest[len] = '\0';
+	return (dest);
+}
+
+char	*ft_strcpy(char *dest, const char *src)
+{
+	size_t i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
+
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
+{
+	void	*new_ptr;
+
+	if (new_size == 0)
+	{
+		free(ptr);
+		return (NULL);
+	}
+	if (!ptr)
+		return (malloc(new_size));
+	new_ptr = malloc(new_size);
+	if (!new_ptr)
+		return (NULL);
+	if (new_size < old_size)
+		old_size = new_size;
+	ft_memcpy(new_ptr, ptr, old_size);
+	free(ptr);
+	return (new_ptr);
 }

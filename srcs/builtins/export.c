@@ -107,7 +107,7 @@ int	builtin_export(t_command *cmd, t_data *data)
 		if (equal_sign)
 			varname = ft_substr(varname_value, 0, equal_sign - varname_value);
 		else
-			varname = strdup(varname_value);
+			varname = ft_strdup(varname_value);
 		if (!is_valid_env_var_name(varname) || *varname == '\0')
 		{
 			fprintf(stderr, ": export: `%s': not a valid identifier\n",
@@ -131,7 +131,7 @@ int	builtin_export(t_command *cmd, t_data *data)
 			if (ft_strchr(varname_value, '='))
 			{
 				free(data->env_vars[i]);
-				data->env_vars[i] = strdup(varname_value);
+				data->env_vars[i] = ft_strdup(varname_value);
 				if (!data->env_vars[i])
 					return (1);
 			}
@@ -139,11 +139,11 @@ int	builtin_export(t_command *cmd, t_data *data)
 		else
 		{
 			env_count = i;
-			data->env_vars = realloc(data->env_vars,
+			data->env_vars = ft_realloc(data->env_vars, (env_count + 1) * sizeof(char *),
 					(env_count + 2) * sizeof(char *));
 			if (!data->env_vars)
 				return (1);
-			data->env_vars[env_count] = strdup(varname_value);
+			data->env_vars[env_count] = ft_strdup(varname_value);
 			if (!data->env_vars[env_count])
 				return (1);
 			data->env_vars[env_count + 1] = NULL;
