@@ -53,21 +53,21 @@ void	free_tokens(t_data *data)
 	data->tokens = NULL;
 }
 
-static void	free_env_vars(char **env_vars)
+void	free_string_array(char **string_array)
 {
 	int	i;
 
-	if (!env_vars)
+	if (!string_array)
 		return ;
 	i = 0;
-	while (env_vars[i])
+	while (string_array[i])
 	{
-		free(env_vars[i]);
-		env_vars[i] = NULL;
+		free(string_array[i]);
+		string_array[i] = NULL;
 		i++;
 	}
-	free(env_vars);
-	env_vars = NULL;
+	free(string_array);
+	string_array = NULL;
 }
 
 void	cleanup_data(t_data *data, bool free_env)
@@ -84,7 +84,7 @@ void	cleanup_data(t_data *data, bool free_env)
 	}
 	if (data->env_vars && free_env)
 	{
-		free_env_vars(data->env_vars);
+		free_string_array(data->env_vars);
 		data->env_vars = NULL;
 	}
 	if (data->input)

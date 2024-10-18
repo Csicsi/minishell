@@ -33,6 +33,7 @@ typedef enum e_token_type
 {
 	TOKEN_WORD,
 	TOKEN_OPERATOR,
+	TOKEN_UNKNOWN,
 	TOKEN_END
 }	t_token_type;
 
@@ -41,6 +42,7 @@ typedef struct s_token
 	t_token_type	type;
 	char			*value;
 	int				word;
+	bool			is_expanded;
 	struct s_token	*next;
 }	t_token;
 
@@ -80,7 +82,7 @@ char		*normalize_path(const char *path);
 /* pure utilities/ helper functions */
 int			ft_fprintf(int fd, const char *format, ...);
 char		*ft_strjoin_pipex(char *s1, char *s2);
-void		free_array_of_strs(char **tab);
+void		free_string_array(char **string_array);
 char		*free_null(char *str);
 int			check_commands_in_tokens(t_token *tokens);
 char		*ft_getenv(char *look_for_match, char **envp);
