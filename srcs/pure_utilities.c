@@ -41,46 +41,19 @@ void	free_array_of_strs(char **tab)
 	}
 	free(tab);
 }
-/*
-char	*ft_getenv_path(char **envp)
-{
-	int		i;
-	char	*matchpath;
-
-	matchpath = "PATH=";
-	i = 0;
-	while (envp[i] != NULL)
-	{
-		if (ft_strncmp(envp[i], matchpath, 5) == 0)
-			return (envp[i] + 5);
-		i++;
-	}
-	return (ft_putstr_fd("Path not found. Command not valid.\n", 2), NULL);
-}
-*/
 
 char	*ft_getenv(char *env_var_name, char **envp)
 {
-	int	i;
-	int	len_match;
+	int		i;
+	int		len_match;
+	char	*look_for_match;
 
-	//printf("env_var_name: %s\n", env_var_name);
-	//printf("check len: %d\n", (int)(strlen(env_var_name)));
-
-	char *look_for_match = ft_strjoin(env_var_name, "=");
+	look_for_match = ft_strjoin(env_var_name, "=");
 	free(env_var_name);
-
-	//printf("look_for_match: %s\n", look_for_match);
-	//printf("check len: %d\n", (int)(strlen(look_for_match)));
-
-	len_match = strlen(look_for_match);
+	len_match = ft_strlen(look_for_match);
 	i = 0;
-    //printf("HEEEEEEERE\n");
-    //if (envp == NULL)
-    //    printf("IS NULL\n");
 	while (envp[i] != NULL)
 	{
-		//printf("envp[%d]: %s\n", i, envp[i]);
 		if (ft_strncmp(envp[i], look_for_match, len_match) == 0)
 			return (free(look_for_match), envp[i] + len_match);
 		i++;
@@ -90,11 +63,13 @@ char	*ft_getenv(char *env_var_name, char **envp)
 
 int	ft_fprintf(int fd, const char *format, ...)
 {
-	va_list	args;
-	int		i = 0;
-	int		count = 0;
+	va_list		args;
+	int			i;
+	int			count;
 	const char	*str;
 
+	i = 0;
+	count = 0;
 	va_start(args, format);
 	while (format[i])
 	{
@@ -102,7 +77,7 @@ int	ft_fprintf(int fd, const char *format, ...)
 		{
 			str = va_arg(args, const char *);
 			if (str)
-				count += write(fd, str, strlen(str));
+				count += write(fd, str, ft_strlen(str));
 			i += 2;
 		}
 		else
@@ -113,4 +88,73 @@ int	ft_fprintf(int fd, const char *format, ...)
 	}
 	va_end(args);
 	return (count);
+}
+
+char	*ft_strncpy(char *dest, const char *src, size_t n)
+{
+	size_t i;
+
+	i = 0;
+	while (src[i] && i < n)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
+}
+
+char	*ft_strndup(const char *s, size_t n)
+{
+	char	*dest;
+	size_t	len;
+
+	len = ft_strlen(s);
+	if (len > n)
+		len = n;
+	dest = malloc((len + 1) * sizeof(char));
+	if (dest == NULL)
+		return (NULL);
+	ft_strncpy(dest, s, len);
+	dest[len] = '\0';
+	return (dest);
+}
+
+char	*ft_strcpy(char *dest, const char *src)
+{
+	size_t i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
+
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
+{
+	void	*new_ptr;
+
+	if (new_size == 0)
+	{
+		free(ptr);
+		return (NULL);
+	}
+	if (!ptr)
+		return (malloc(new_size));
+	new_ptr = malloc(new_size);
+	if (!new_ptr)
+		return (NULL);
+	if (new_size < old_size)
+		old_size = new_size;
+	ft_memcpy(new_ptr, ptr, old_size);
+	free(ptr);
+	return (new_ptr);
 }

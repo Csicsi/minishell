@@ -1,9 +1,0 @@
-<map id="s_data" name="s_data">
-<area shape="rect" id="Node000001" title=" " alt="" coords="65,253,197,379"/>
-<area shape="rect" id="Node000002" href="$structs__token.html" title=" " alt="" coords="5,45,71,151"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="63,150,101,237,96,239,58,152"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="72,73,89,78,95,86,97,98,95,110,89,118,85,115,90,108,92,98,90,88,86,82,70,78"/>
-<area shape="rect" id="Node000003" href="$structs__command.html" title=" " alt="" coords="165,5,290,191"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="189,192,168,239,163,237,184,190"/>
-<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="291,73,309,81,317,98,314,109,307,117,303,113,309,107,311,98,305,85,289,78"/>
-</map>

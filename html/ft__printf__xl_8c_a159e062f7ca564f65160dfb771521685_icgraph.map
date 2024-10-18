@@ -1,9 +1,0 @@
-<map id="ft_putnbr_base" name="ft_putnbr_base">
-<area shape="rect" id="Node000001" title=" " alt="" coords="432,5,551,31"/>
-<area shape="rect" id="Node000002" href="$ft__printf__xl_8c.html#af7f2924a8e173d20abe9feb2f1e7315c" title=" " alt="" coords="292,5,384,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="418,21,384,21,384,15,418,15"/>
-<area shape="rect" id="Node000003" href="$handle__format_8c.html#a6faabd4aad8adb9efc72866865aeb6a6" title=" " alt="" coords="127,5,244,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="278,21,244,21,244,15,278,15"/>
-<area shape="rect" id="Node000004" href="$ft__printf_8c.html#a406d92a51310a0f38edd6205f037ad32" title=" " alt="" coords="5,5,79,31"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="113,21,79,21,79,15,113,15"/>
-</map>

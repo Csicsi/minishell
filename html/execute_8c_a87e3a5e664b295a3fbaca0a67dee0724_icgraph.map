@@ -1,5 +1,0 @@
-<map id="check_for_unclosed_quotes" name="check_for_unclosed_quotes">
-<area shape="rect" id="Node000001" title="Checks if (single or double) quotes in input string remain open This function checks if there are (si..." alt="" coords="108,5,259,45"/>
-<area shape="rect" id="Node000002" href="$execute_8c.html#a100b97ad5323cc9341dc87eef4118111" title="Entry point for the minishell program." alt="" coords="5,13,60,38"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="94,28,60,28,60,23,94,23"/>
-</map>

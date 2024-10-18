@@ -1,7 +1,0 @@
-<map id="ft_lstmap" name="ft_lstmap">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,88,56"/>
-<area shape="rect" id="Node000002" href="$ft__lstclear_8c.html#a6e900cfaea2857bbf490f3105e38da93" title=" " alt="" coords="136,5,223,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="88,33,122,26,123,31,89,38"/>
-<area shape="rect" id="Node000003" href="$ft__lstnew_8c.html#a8fe4ea6f56f5a2a75ee13d97416b60ed" title=" " alt="" coords="139,55,220,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="89,48,126,55,125,60,88,53"/>
-</map>

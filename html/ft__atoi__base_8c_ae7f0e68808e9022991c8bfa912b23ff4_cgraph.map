@@ -1,9 +1,0 @@
-<map id="get_value" name="get_value">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,55,92,80"/>
-<area shape="rect" id="Node000002" href="$ft__isalpha_8c.html#ac283963beaa3b8c7d09b78851cda297e" title=" " alt="" coords="141,5,226,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="83,52,134,33,136,38,85,57"/>
-<area shape="rect" id="Node000003" href="$ft__isdigit_8c.html#a2cf15b8a1a277d1e2ce3654101a2003d" title=" " alt="" coords="144,55,223,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="92,65,130,65,130,70,92,70"/>
-<area shape="rect" id="Node000004" href="$ft__tolower_8c.html#ab86e5297914753b6c82d7e3c3020ce17" title=" " alt="" coords="140,104,227,129"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="85,78,136,96,134,101,83,83"/>
-</map>

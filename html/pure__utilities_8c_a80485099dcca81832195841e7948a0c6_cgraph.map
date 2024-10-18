@@ -1,7 +1,0 @@
-<map id="ft_strjoin_pipex" name="ft_strjoin_pipex">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,128,56"/>
-<area shape="rect" id="Node000002" href="$ft__memcpy_8c.html#a41a6f05af30cf85ff63a08e383826322" title=" " alt="" coords="176,5,271,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="128,31,162,25,163,30,129,36"/>
-<area shape="rect" id="Node000003" href="$ft__strlen_8c.html#abbb8c6c4ed85d892e7f1509f65f5768a" title=" " alt="" coords="186,55,261,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="129,50,173,57,172,62,128,55"/>
-</map>

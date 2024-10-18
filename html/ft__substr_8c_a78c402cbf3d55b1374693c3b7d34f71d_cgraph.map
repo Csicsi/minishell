@@ -1,8 +1,0 @@
-<map id="ft_substr" name="ft_substr">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,84,56"/>
-<area shape="rect" id="Node000002" href="$ft__substr_8c.html#a54f148d11d169b8d63f800cee938136c" title=" " alt="" coords="132,5,211,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,33,118,26,119,31,85,38"/>
-<area shape="rect" id="Node000003" href="$ft__strlen_8c.html#abbb8c6c4ed85d892e7f1509f65f5768a" title=" " alt="" coords="259,31,333,56"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="84,41,244,41,244,46,84,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="212,23,246,30,244,36,211,29"/>
-</map>

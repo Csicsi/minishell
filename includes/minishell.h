@@ -56,36 +56,37 @@ typedef struct s_data
 }	t_data;
 
 /* functions pertaining to lexer.c */
-int		lexer(char *input, t_data *data, int last_exit_status);
-void	cleanup_data(t_data *data, bool free_env);
-void free_tokens(t_data *data);
-t_command *parse_tokens(t_data *data);
-int count_tokens(t_token *tokens);
-//char	*expand_env_var(char *cursor, int last_exit_status);
-//char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status);
-char	*expand_env_var(char *cursor, int last_exit_status, t_data *data);
-char	*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *data);
+int			lexer(char *input, t_data *data, int last_exit_status);
+void		cleanup_data(t_data *data, bool free_env);
+void		free_tokens(t_data *data);
+t_command	*parse_tokens(t_data *data);
+int			count_tokens(t_token *tokens);
+//char		*expand_env_var(char *cursor, int last_exit_status);
+//char		*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status);
+char		*expand_env_var(char *cursor, int last_exit_status, t_data *data);
+char		*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *data);
 /* functions pertaining to lexer.c */
 /* implementing the builtin functions */
-int		builtin_echo(t_command *cmd);
-int		builtin_cd(t_command *cmd, t_data *data);
-int		builtin_pwd(void);
-int		builtin_export(t_command *cmd, t_data *data);
-int		builtin_unset(t_command *cmd, t_data *data);
-int		builtin_env(t_data *data);
-int		builtin_exit(t_command *cmd, t_data *data, bool print_exit);
-char	*resolve_cdpath_if_needed(const char *path, t_data *data);
-int		update_directory_env(const char *cwd, t_data *data);
-char	*normalize_path(const char *path);
+int			builtin_echo(t_command *cmd);
+int			builtin_cd(t_command *cmd, t_data *data);
+int			builtin_pwd(void);
+int			builtin_export(t_command *cmd, t_data *data);
+int			builtin_unset(t_command *cmd, t_data *data);
+int			builtin_env(t_data *data);
+int			builtin_exit(t_command *cmd, t_data *data, bool print_exit);
+char		*resolve_cdpath_if_needed(const char *path, t_data *data);
+int			update_directory_env(const char *cwd, t_data *data);
+char		*normalize_path(const char *path);
 /* pure utilities/ helper functions */
-int		ft_fprintf(int fd, const char *format, ...);
-char	*ft_strjoin_pipex(char *s1, char *s2);
-void	free_array_of_strs(char **tab);
-char	*free_null(char *str);
-int		check_commands_in_tokens(t_token *tokens);
-char	*ft_getenv(char *look_for_match, char **envp);
-int		ft_setenv(const char *varname, const char *value, t_data *data);
-
-
+int			ft_fprintf(int fd, const char *format, ...);
+char		*ft_strjoin_pipex(char *s1, char *s2);
+void		free_array_of_strs(char **tab);
+char		*free_null(char *str);
+int			check_commands_in_tokens(t_token *tokens);
+char		*ft_getenv(char *look_for_match, char **envp);
+int			ft_setenv(const char *varname, const char *value, t_data *data);
+char		*ft_strndup(const char *s, size_t n);
+char		*ft_strcpy(char *dest, const char *src);
+void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 
 #endif
