@@ -84,7 +84,6 @@ int			ft_fprintf(int fd, const char *format, ...);
 char		*ft_strjoin_pipex(char *s1, char *s2);
 void		free_string_array(char **string_array);
 char		*free_null(char *str);
-int			check_commands_in_tokens(t_token *tokens);
 char		*ft_getenv(char *look_for_match, char **envp);
 int			ft_setenv(const char *varname, const char *value, t_data *data);
 char		*ft_strndup(const char *s, size_t n);
