@@ -1,100 +1,100 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/19 11:06:55 by krabitsc          #+#    #+#             */
+/*   Updated: 2024/10/19 16:16:33 by krabitsc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
-static int	is_valid_env_var_name(const char *name)
-{
-	if (!ft_isalpha(*name) && *name != '_')
-		return (0);
-	while (*name)
-	{
-		if (!ft_isalnum(*name) && *name != '_')
-			return (0);
-		name++;
-	}
-	return (1);
-}
-
-void	sort_env_vars(char **env_vars, int count)
+static int	find_and_update_var(char **env_vars,
+	const char *varname, const char *varname_value)
 {
 	int		i;
-	int		j;
-	char	*temp;
+	int		varname_len;
 
-	i = 0;
-	while (i < count - 1)
-	{
-		j = i + 1;
-		while (j < count)
-		{
-			if (ft_strcmp(env_vars[i], env_vars[j]) > 0)
-			{
-				temp = env_vars[i];
-				env_vars[i] = env_vars[j];
-				env_vars[j] = temp;
-			}
-			j++;
-		}
-		i++;
-	}
-}
-
-void	print_sorted_env_vars(char **env_vars)
-{
-	int		i;
-	char	*equal_sign;
-
+	varname_len = ft_strlen(varname);
 	i = 0;
 	while (env_vars[i] != NULL)
 	{
-		equal_sign = ft_strchr(env_vars[i], '=');
-		if (equal_sign)
+		if (ft_strncmp(env_vars[i], varname, varname_len) == 0
+			&& (env_vars[i][varname_len] == '='
+			|| env_vars[i][varname_len] == '\0'))
 		{
-			printf("declare -x ");
-			printf("%.*s", (int)(equal_sign - env_vars[i]), env_vars[i]);
-			printf("=\"%s\"\n", equal_sign + 1);
-		}
-		else
-		{
-			printf("declare -x %s\n", env_vars[i]);
+			if (ft_strchr(varname_value, '='))
+			{
+				free(env_vars[i]);
+				env_vars[i] = ft_strdup(varname_value);
+				if (!env_vars[i])
+					return (1);
+			}
+			return (0);
 		}
 		i++;
 	}
+	return (2);
 }
 
-static int	handle_export_wo_args(t_command *cmd, t_data *data)
+static int	add_new_var(char ***env_vars, const char *varname_value)
 {
 	int		env_count;
-	char	**sorted_env_vars;
-	int		i;
+	char	**new_env_vars;
 
-	(void)cmd;
 	env_count = 0;
-	while (data->env_vars[env_count] != NULL)
+	while ((*env_vars)[env_count] != NULL)
 		env_count++;
-	sorted_env_vars = malloc((env_count + 1) * sizeof(char *));
-	if (!sorted_env_vars)
+	new_env_vars = ft_realloc(*env_vars,
+			(env_count + 1) * sizeof(char *),
+			(env_count + 2) * sizeof(char *));
+	if (!new_env_vars)
 		return (1);
-	i = 0;
-	while (i < env_count)
-	{
-		sorted_env_vars[i] = data->env_vars[i];
-		i++;
-	}
-	sorted_env_vars[env_count] = NULL;
-	sort_env_vars(sorted_env_vars, env_count);
-	print_sorted_env_vars(sorted_env_vars);
-	free(sorted_env_vars);
+	new_env_vars[env_count] = ft_strdup(varname_value);
+	if (!new_env_vars[env_count])
+		return (1);
+	new_env_vars[env_count + 1] = NULL;
+	*env_vars = new_env_vars;
 	return (0);
+}
+
+static int	handle_invalid_identifier(const char *varname_value)
+{
+	ft_fprintf(2, ": export: `%s': not a valid identifier\n",
+		varname_value);
+	return (1);
+}
+
+static int	process_export_argument(const char *varname_value, t_data *data)
+{
+	char	*varname;
+	char	*equal_sign;
+	int		ret;
+
+	equal_sign = ft_strchr(varname_value, '=');
+	if (equal_sign)
+		varname = ft_substr(varname_value, 0, equal_sign - varname_value);
+	else
+		varname = ft_strdup(varname_value);
+	if (!is_valid_env_var_name(varname) || *varname == '\0')
+	{
+		free(varname);
+		return (handle_invalid_identifier(varname_value));
+	}
+	ret = find_and_update_var(data->env_vars, varname, varname_value);
+	if (ret == 2)
+		ret = add_new_var(&data->env_vars, varname_value);
+	free(varname);
+	return (ret);
 }
 
 int	builtin_export(t_command *cmd, t_data *data)
 {
-	int		i;
 	int		arg;
-	char	*equal_sign;
-	char	*varname;
-	char	*varname_value;
 	int		encountered_invalid_varname;
-	int		env_count;
 
 	encountered_invalid_varname = 0;
 	if (cmd->args[1] == NULL)
@@ -102,53 +102,8 @@ int	builtin_export(t_command *cmd, t_data *data)
 	arg = 1;
 	while (cmd->args[arg] != NULL)
 	{
-		varname_value = cmd->args[arg];
-		equal_sign = ft_strchr(varname_value, '=');
-		if (equal_sign)
-			varname = ft_substr(varname_value, 0, equal_sign - varname_value);
-		else
-			varname = ft_strdup(varname_value);
-		if (!is_valid_env_var_name(varname) || *varname == '\0')
-		{
-			fprintf(stderr, ": export: `%s': not a valid identifier\n",
-				varname_value);
-			free(varname);
+		if (process_export_argument(cmd->args[arg], data))
 			encountered_invalid_varname = 1;
-			arg++;
-			continue ;
-		}
-		i = 0;
-		while (data->env_vars[i] != NULL)
-		{
-			if (ft_strncmp(data->env_vars[i], varname, ft_strlen(varname)) == 0
-				&& (data->env_vars[i][ft_strlen(varname)] == '='
-				|| data->env_vars[i][ft_strlen(varname)] == '\0'))
-				break ;
-			i++;
-		}
-		if (data->env_vars[i] != NULL)
-		{
-			if (ft_strchr(varname_value, '='))
-			{
-				free(data->env_vars[i]);
-				data->env_vars[i] = ft_strdup(varname_value);
-				if (!data->env_vars[i])
-					return (1);
-			}
-		}
-		else
-		{
-			env_count = i;
-			data->env_vars = ft_realloc(data->env_vars, (env_count + 1) * sizeof(char *),
-					(env_count + 2) * sizeof(char *));
-			if (!data->env_vars)
-				return (1);
-			data->env_vars[env_count] = ft_strdup(varname_value);
-			if (!data->env_vars[env_count])
-				return (1);
-			data->env_vars[env_count + 1] = NULL;
-		}
-		free(varname);
 		arg++;
 	}
 	if (encountered_invalid_varname == 1)

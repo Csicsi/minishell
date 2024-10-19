@@ -68,11 +68,15 @@ int			count_tokens(t_token *tokens);
 char		*expand_env_var(char *cursor, int last_exit_status, t_data *data);
 char		*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *data);
 /* functions pertaining to lexer.c */
+
 /* implementing the builtin functions */
 int			builtin_echo(t_command *cmd);
 int			builtin_cd(t_command *cmd, t_data *data);
+char		*ft_realpath(const char *path, char *resolved_path);
 int			builtin_pwd(void);
 int			builtin_export(t_command *cmd, t_data *data);
+int			handle_export_wo_args(t_command *cmd, t_data *data);
+int			is_valid_env_var_name(const char *name);
 int			builtin_unset(t_command *cmd, t_data *data);
 int			builtin_env(t_data *data);
 int			builtin_exit(t_command *cmd, t_data *data, bool print_exit);
@@ -84,6 +88,7 @@ int			ft_fprintf(int fd, const char *format, ...);
 char		*ft_strjoin_pipex(char *s1, char *s2);
 void		free_string_array(char **string_array);
 char		*free_null(char *str);
+void		free_array_of_strs(char **arr);
 char		*ft_getenv(char *look_for_match, char **envp);
 int			ft_setenv(const char *varname, const char *value, t_data *data);
 char		*ft_strndup(const char *s, size_t n);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd_utils.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/19 17:24:52 by krabitsc          #+#    #+#             */
+/*   Updated: 2024/10/19 20:13:05 by krabitsc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 int	ft_setenv(const char *varname, const char *value, t_data *data)
@@ -93,6 +105,12 @@ char	*normalize_path(const char *path)
 	char	normalized_path[PATH_MAX];
 
 	if (realpath(path, normalized_path) == NULL)
+	/*
+	printf("input: path: %s\n", path);
+	char *test = realpath(path, normalized_path);
+	printf("comparison, test: %s\n", test);
+	if (ft_realpath(path, normalized_path) == NULL)
+	*/
 	{
 		fprintf(stderr, ": cd: %s: No such file or directory\n", path);
 		return (NULL);

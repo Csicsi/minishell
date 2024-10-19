@@ -12,8 +12,10 @@ SRCS = srcs/lexer.c \
 	   srcs/builtins/echo.c \
 	   srcs/builtins/cd.c \
 	   srcs/builtins/cd_utils.c \
+	   srcs/builtins/cd_utils2.c \
 	   srcs/builtins/pwd.c \
 	   srcs/builtins/export.c \
+	   srcs/builtins/export_utils.c \
 	   srcs/builtins/unset.c \
 	   srcs/builtins/env.c \
 	   srcs/builtins/exit.c \
