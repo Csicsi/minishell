@@ -475,160 +475,18 @@ t_command	*parse_tokens(t_data *data)
 	return (cmd);
 }
 
-int	check_for_unclosed_quotes(char *cursor)
-{
-	int		in_quote;
-	char	quote_char;
-
-	in_quote = 0;
-	quote_char = '\0';
-	while (*cursor)
-	{
-		if ((*cursor == '"' || *cursor == '\'') && in_quote == 0)
-		{
-			in_quote = 1;
-			quote_char = *cursor;
-		}
-		else if (*cursor == quote_char && in_quote == 1)
-		{
-			in_quote = 0;
-		}
-		cursor++;
-	}
-	return (in_quote);
-}
-
-char	**duplicate_env_vars(char **env_vars)
-{
-	int		i;
-	char	**new_env_vars;
-
-	i = 0;
-	while (env_vars[i] != NULL)
-		i++;
-	new_env_vars = (char **)malloc((i + 1) * sizeof(char *));
-	if (!new_env_vars)
-		return (NULL);
-	i = 0;
-	while (env_vars[i] != NULL)
-	{
-		new_env_vars[i] = ft_strdup(env_vars[i]);
-		if (!new_env_vars[i])
-		{
-			while (i-- > 0)
-				free(new_env_vars[i]);
-			free(new_env_vars);
-			return (NULL);
-		}
-		i++;
-	}
-	new_env_vars[i] = NULL;
-	return (new_env_vars);
-}
-
-void	handle_sigint(int sig)
-{
-	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-}
-
-int	check_commands_in_tokens(t_token *tokens, t_data *data)
-{
-	t_token	*current;
-
-	current = tokens;
-	if (!current || (current->type != TOKEN_WORD && current->type != TOKEN_OPERATOR))
-		return (-1);
-	while (current)
-	{
-		if (current->type == TOKEN_OPERATOR && ft_strcmp(current->value, "|") == 0)
-		{
-			current = current->next;
-			if (!current || (current->type != TOKEN_WORD && (ft_strcmp(current->value, ">") != 0 && ft_strcmp(current->value, "<") != 0)))
-			{
-				if (current)
-				{
-					ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current->value);
-					data->last_exit_status = 2;
-				}
-				else
-				{
-					ft_fprintf(2, ": syntax error near unexpected token `newline'\n");
-					data->last_exit_status = 2;
-				}
-				return (-1);
-			}
-		}
-		else if (current->type == TOKEN_OPERATOR && (ft_strcmp(current->value, ">") == 0 || ft_strcmp(current->value, ">>") == 0 || ft_strcmp(current->value, "<") == 0))
-		{
-			current = current->next;
-			if (!current || current->type != TOKEN_WORD)
-			{
-				if (current)
-				{
-					ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current->value);
-					data->last_exit_status = 2;
-				}
-				else
-				{
-					ft_fprintf(2, ": syntax error near unexpected token `newline'\n");
-					data->last_exit_status = 2;
-				}
-				return (-1);
-			}
-		}
-		current = current->next;
-	}
-	return (0);
-}
-
 int	main(int argc, char **argv, char **env_vars)
 {
-	int		in_quote;
 	t_data	data;
 
-	(void)argc;
-	(void)argv;
-	signal(SIGINT, handle_sigint);
-	data.exit_flag = false;
-	data.last_exit_status = 0;
-	data.token_count = 0;
-	data.input = NULL;
-	data.env_vars = NULL;
-	data.tokens = NULL;
-	data.cmd_list = NULL;
-	data.env_vars = duplicate_env_vars(env_vars);
-	if (!data.env_vars)
-	{
-		printf("Error allocating memory for env_vars");
+ 	if (initialize(&data, env_vars, argc, argv))
 		return (1);
-	}
 	while (1)
 	{
-		data.input = readline("Don'tPanicShell> ");
-		if (data.input == NULL)
-		{
-			cleanup_data(&data, true);
-			return (data.last_exit_status);
-		}
-		if (*data.input)
-			add_history(data.input);
-		in_quote = check_for_unclosed_quotes(data.input);
-		if (in_quote == 1)
-		{
-			ft_fprintf(2, "syntax error: unclosed quote\n");
-			cleanup_data(&data, true);
-			return (1);
-		}
-		if (lexer(data.input, &data, data.last_exit_status) == -1)
-		{
-			cleanup_data(&data, true);
-			continue ;
-		}
-		if (check_commands_in_tokens(data.tokens, &data) == -1)
+		if (get_input_line(&data) == NULL)
+			return (cleanup_data(&data, true), data.last_exit_status);
+		if (lexer(data.input, &data, data.last_exit_status) == -1
+			|| check_commands_in_tokens(data.tokens, &data) == -1)
 		{
 			cleanup_data(&data, false);
 			continue ;
@@ -641,11 +499,7 @@ int	main(int argc, char **argv, char **env_vars)
 		}
 		data.last_exit_status = execute_cmd_list(&data);
 		if (data.exit_flag == true)
-		{
-			cleanup_data(&data, true);
-			return (data.last_exit_status);
-		}
+			return (cleanup_data(&data, true), data.last_exit_status);
 	}
-	cleanup_data(&data, true);
-	return (0);
+	return (cleanup_data(&data, true), 0);
 }
