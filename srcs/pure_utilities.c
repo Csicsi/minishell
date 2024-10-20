@@ -29,19 +29,6 @@ char	*free_null(char *str)
 	return (NULL);
 }
 
-void	free_array_of_strs(char **arr)
-{
-	int	i;
-
-	i = 0;
-	while (arr[i] != NULL)
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-}
-
 char	*ft_getenv(char *env_var_name, char **envp)
 {
 	int		i;

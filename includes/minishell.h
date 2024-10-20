@@ -70,6 +70,12 @@ char		*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data 
 /* ********************************** */
 /* functions pertaining to execute.c  */
 /* ********************************** */
+/* execute_utils1.c */
+bool		initialize(t_data *data, char **env_vars, int argc, char **argv);
+char		*get_input_line(t_data *data);
+/* execute_utils2.c */
+int			check_commands_in_tokens(t_token *tokens, t_data *data);
+
 t_command	*parse_tokens(t_data *data);
 
 /* ********************************** */
@@ -100,13 +106,16 @@ int			builtin_env(t_data *data);
 int			builtin_exit(t_command *cmd, t_data *data, bool print_exit);
 
 /* ********************************** */
+/* cleanup.c 						  */
+/* ********************************** */
+void		free_string_array(char **string_array);
+
+/* ********************************** */
 /* pure utilities/ helper functions   */
 /* ********************************** */
 int			ft_fprintf(int fd, const char *format, ...);
 char		*ft_strjoin_pipex(char *s1, char *s2);
-void		free_string_array(char **string_array);
 char		*free_null(char *str);
-void		free_array_of_strs(char **arr);
 char		*ft_getenv(char *look_for_match, char **envp);
 char		*ft_strndup(const char *s, size_t n);
 char		*ft_strcpy(char *dest, const char *src);
