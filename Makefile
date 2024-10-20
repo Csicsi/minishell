@@ -11,7 +11,7 @@ SRCS = srcs/lexer.c \
 	   srcs/cleanup.c \
 	   srcs/builtins/echo.c \
 	   srcs/builtins/cd.c \
-	   srcs/builtins/cd_utils.c \
+	   srcs/builtins/cd_utils1.c \
 	   srcs/builtins/cd_utils2.c \
 	   srcs/builtins/pwd.c \
 	   srcs/builtins/export.c \

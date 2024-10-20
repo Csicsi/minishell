@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
+/*   Updated: 2024/10/20 11:05:57 by krabitsc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 static int	resolve_special_paths(t_command *cmd,
@@ -60,10 +72,23 @@ static int	resolve_target_path(t_command *cmd,
 	return (0);
 }
 
+static char	*normalize_path(const char *path)
+{
+	char	normalized_path[PATH_MAX];
+
+	if (realpath(path, normalized_path) == NULL)
+	{
+		ft_fprintf(2, ": cd: %s: No such file or directory\n", path);
+		return (NULL);
+	}
+	return (ft_strdup(normalized_path));
+}
+
 static int	change_directory(const char *curpath, t_data *data)
 {
 	char	cwd[PATH_MAX];
 	char	*normalized_path;
+	int		ret;
 
 	normalized_path = normalize_path(curpath);
 	if (normalized_path == NULL)
@@ -76,10 +101,11 @@ static int	change_directory(const char *curpath, t_data *data)
 		return (perror(": cd"), free(normalized_path), 1);
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (perror(": cd: getcwd"), free(normalized_path), 1);
-	if (ft_setenv("PWD", cwd, data) != 0)
+	ret = ft_setenv("PWD", cwd, data);
+	if (ret != 0)
 		return (perror(": cd: setenv PWD"), free(normalized_path), 1);
 	free(normalized_path);
-	return (update_directory_env(cwd, data));
+	return (ret);
 }
 
 int	builtin_cd(t_command *cmd, t_data *data)

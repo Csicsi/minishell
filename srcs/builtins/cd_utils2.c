@@ -5,128 +5,92 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/19 17:25:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/19 20:05:59 by krabitsc         ###   ########.fr       */
+/*   Created: 2024/10/20 10:55:16 by krabitsc          #+#    #+#             */
+/*   Updated: 2024/10/20 11:09:57 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../includes/minishell.h"
 
-char *ft_realpath(const char *path, char *resolved_path)
+static char	*construct_varname_value(const char *varname, const char *value)
 {
-    char temp[PATH_MAX];
-    char **path_parts;
-	char *stack[PATH_MAX];
-    int top = 0;
+	int		len_varname;
+	int		len_value;
+	char	*varname_value;
+
+	len_varname = ft_strlen(varname);
+	len_value = ft_strlen(value);
+	varname_value = malloc(len_varname + len_value + 2);
+	if (!varname_value)
+		return (NULL);
+	ft_strlcpy(varname_value, varname, len_varname + 1);
+	varname_value[len_varname] = '=';
+	ft_strlcpy(varname_value + len_varname + 1, value, len_value + 1);
+	return (varname_value);
+}
+
+static int	find_env_var_index(const char *varname, t_data *data)
+{
 	int	i;
 
-	printf("stack[%d]: %s\n", 0, stack[0]);
-
-    if (path == NULL)
-        return NULL;
-    // If the path is absolute, start from the root "/"
-    if (path[0] == '/')
+	i = 0;
+	while (data->env_vars[i] != NULL)
 	{
-        strcpy(temp, "/");
-        path++;
-		 printf("temp (absolute start): %s\n", temp);
-    }
+		if (ft_strncmp(data->env_vars[i], varname, ft_strlen(varname)) == 0
+			&& (data->env_vars[i][ft_strlen(varname)] == '='
+			|| data->env_vars[i][ft_strlen(varname)] == '\0'))
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+static int	update_existing_env_var(int i, char *varname_value, t_data *data)
+{
+	free(data->env_vars[i]);
+	data->env_vars[i] = ft_strdup(varname_value);
+	if (!data->env_vars[i])
+		return (1);
+	return (0);
+}
+
+static int	add_new_env_var(char *varname_value, t_data *data)
+{
+	int	env_count;
+
+	env_count = 0;
+	while (data->env_vars[env_count] != NULL)
+		env_count++;
+	data->env_vars = ft_realloc(data->env_vars,
+			(env_count + 1) * sizeof(char *), (env_count + 2) * sizeof(char *));
+	if (!data->env_vars)
+		return (1);
+	data->env_vars[env_count] = ft_strdup(varname_value);
+	if (!data->env_vars[env_count])
+		return (1);
+	data->env_vars[env_count + 1] = NULL;
+	return (0);
+}
+
+int	ft_setenv(const char *varname, const char *value, t_data *data)
+{
+	char	*varname_value;
+	int		index;
+
+	varname_value = construct_varname_value(varname, value);
+	if (!varname_value)
+		return (1);
+	index = find_env_var_index(varname, data);
+	if (index >= 0)
+	{
+		if (update_existing_env_var(index, varname_value, data) != 0)
+			return (free(varname_value), 1);
+	}
 	else
 	{
-        // Otherwise, get the current working directory
-        if (getcwd(temp, sizeof(temp)) == NULL)
-            return NULL;
-		printf("temp (relative start): %s\n", temp);
-    }
-
-    // Use ft_split to split the path into path_parts
-    path_parts = ft_split((char *)path, '/');
-    if (!path_parts)
-		return NULL;
-
-	i = 0;
-	while (path_parts[i] != NULL)
-	{
-	    printf("path_parts[%d]: %s\n", i, path_parts[i]);
-	    i++;
+		if (add_new_env_var(varname_value, data) != 0)
+			return (free(varname_value), 1);
 	}
-
-
-
-    // Process each component of the path
-	i = 0;
-	while (path_parts[i] != NULL) 
-	{
-        if (strcmp(path_parts[i], ".") == 0)
-		{
-			
-		}
-        else if (strcmp(path_parts[i], "..") == 0)
-		{
-            // Go one level up for ".." if possible
-            if (top > 0)
-                top--;
-            else if (temp[0] != '\0' && strcmp(temp, "/") != 0)
-            {
-                // If at root, ".." has no effect, otherwise remove the last component
-                char *last_slash = strrchr(temp, '/');
-                if (last_slash != NULL)
-                {
-                    *last_slash = '\0'; // Truncate at the last '/'
-                    if (strlen(temp) == 0) // If we removed everything, reset to root
-                        strcpy(temp, "/");
-					printf("temp if ..: %s\n", temp);
-                }
-            }				
-        }
-		else
-		{
-            // Normal directory component, add it to the stack
-            stack[top++] = path_parts[i];
-        }
-		i++;
-    }
-
-	printf("stack[%d]: %s\n", 0, stack[0]);
-
-	i = 0;
-	while (stack[i] != NULL)
-	{
-	    printf("stack[%d]: %s\n", i, stack[i]);
-	    i++;
-	}
-	printf("top: %d\n", top);
-
-    // Reconstruct the absolute path
-    if (temp[strlen(temp) - 1] != '/')
-        ft_strlcat(temp, "/", sizeof(temp)); // Add a trailing slash if not already present
-    i = 0;
-	while (i < top)
-	{
-		if (ft_strlcat(temp, "/", sizeof(temp)) >= sizeof(temp) ||
-            ft_strlcat(temp, stack[i], sizeof(temp)) >= sizeof(temp))
-        {
-            // Handle buffer overflow
-			free_array_of_strs(path_parts);
-            return (NULL);
-        }
-		i++;
-    }
-
-    // Handle special case for root "/"
-    if (temp[0] == '\0')
-        strcpy(temp, "/");
-
-    // Copy the final resolved path to the output buffer
-    if (resolved_path)
-        strncpy(resolved_path, temp, PATH_MAX);
-    else
-		resolved_path = strdup(temp);
-
-    // Free the path_parts array returned by ft_split
-	free_array_of_strs(path_parts);
-
-	printf("resolved_path ft_realpath: %s\n", resolved_path);
-    return (resolved_path);
+	free(varname_value);
+	return (0);
 }
