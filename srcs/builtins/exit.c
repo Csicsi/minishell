@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/19 17:10:13 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/21 07:03:06 by dcsicsak         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
@@ -70,7 +59,7 @@ int	ft_strisnum(const char *str)
 	return (1);
 }
 
-int	builtin_exit(t_command *cmd, t_data *data, bool print_exit)
+int	builtin_exit(t_cmd *cmd, t_data *data, bool print_exit)
 {
 	data->exit_flag = true;
 	if (isatty(STDIN_FILENO) && print_exit)
