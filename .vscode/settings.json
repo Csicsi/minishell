@@ -9,6 +9,7 @@
 		"type_traits": "c",
 		"utility": "c",
 		"minishell.h": "c",
-		"typeinfo": "c"
+		"typeinfo": "c",
+		"ctype.h": "c"
 	}
 }

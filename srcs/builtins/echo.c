@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 17:01:43 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/19 17:01:44 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/21 09:21:16 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static void	print_args(char **args, int i, bool no_newline)
 		printf("\n");
 }
 
-int	builtin_echo(t_command *cmd)
+int	builtin_echo(t_cmd *cmd)
 {
 	int		i;
 	bool	no_newline;

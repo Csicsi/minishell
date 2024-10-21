@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 12:33:41 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/19 16:07:57 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/21 09:21:16 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static void	print_sorted_env_vars(char **env_vars)
 	}
 }
 
-int	handle_export_wo_args(t_command *cmd, t_data *data)
+int	handle_export_wo_args(t_cmd *cmd, t_data *data)
 {
 	int		env_count;
 	char	**sorted_env_vars;
