@@ -13,6 +13,7 @@
 # include <ctype.h>
 # include <stdbool.h>
 # include <signal.h>
+# include <limits.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../libft/libft.h"

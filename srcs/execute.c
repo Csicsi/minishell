@@ -142,7 +142,7 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 	if (cmd->args[i] == NULL || *(cmd->args[i]) == '\0')
 	{
 		cleanup_data(data, true);
-		return (127);
+		return (0);
 	}
 	if (is_builtin(cmd->args[i]))
 		return (execute_builtin(cmd, data, false));
@@ -299,31 +299,6 @@ int	execute_cmd_list(t_data *data)
 	return (data->last_exit_status);
 }
 
-int	count_words(t_token *tokens)
-{
-	int	word_count;
-
-	word_count = 0;
-	while (tokens)
-	{
-		if ((ft_strcmp(tokens->value, "|") == 0) && tokens->next != NULL)
-		{
-			tokens = tokens->next;
-		}
-		if (tokens->type == TOKEN_WORD)
-		{
-			word_count++;
-		}
-		else if (tokens->type == TOKEN_OPERATOR)
-		{
-			if (ft_strcmp(tokens->value, "|") == 0)
-				break ;
-		}
-		tokens = tokens->next;
-	}
-	return (word_count);
-}
-
 t_command	*parse_tokens(t_data *data)
 {
 	t_command	*cmd;
@@ -337,7 +312,7 @@ t_command	*parse_tokens(t_data *data)
 		return (NULL);
 	current_cmd = cmd;
 	arg_index = 0;
-	words_count = count_words(data->tokens);
+	words_count = count_tokens(data->tokens);
 	current_cmd->args = ft_calloc(words_count + 1, sizeof(char *));
 	if (!current_cmd->args)
 		return (NULL);
@@ -432,6 +407,7 @@ t_command	*parse_tokens(t_data *data)
 					else
 					{
 						ft_fprintf(2, ": %s: No such file or directory\n", data->tokens->next->value);
+						data->last_exit_status = 1;
 						return (NULL);
 					}
 					while (data->tokens && ft_strcmp(data->tokens->value, "|") != 0)
@@ -452,7 +428,7 @@ t_command	*parse_tokens(t_data *data)
 					return (NULL);
 				current_cmd = current_cmd->next;
 				arg_index = 0;
-				words_count = count_words(data->tokens);
+				words_count = count_tokens(data->tokens);
 				current_cmd->args = malloc(sizeof(char *) * (words_count + 1));
 				if (!current_cmd->args)
 					return (NULL);
