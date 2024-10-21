@@ -36,7 +36,7 @@ char	*ft_getenv(char *env_var_name, char **envp)
 	char	*look_for_match;
 
 	look_for_match = ft_strjoin(env_var_name, "=");
-	free(env_var_name);
+	//free(env_var_name);
 	len_match = ft_strlen(look_for_match);
 	i = 0;
 	while (envp[i] != NULL)

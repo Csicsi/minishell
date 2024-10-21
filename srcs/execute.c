@@ -141,6 +141,7 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		i++;
 	if (cmd->args[i] == NULL || *(cmd->args[i]) == '\0')
 	{
+		ft_fprintf(2, ": %s: command not found\n", cmd->args[i]);
 		cleanup_data(data, true);
 		return (127);
 	}
