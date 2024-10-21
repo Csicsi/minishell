@@ -6,13 +6,13 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/20 11:05:57 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/21 09:21:16 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static int	resolve_special_paths(t_command *cmd,
+static int	resolve_special_paths(t_cmd *cmd,
 		t_data *data, char **target_path)
 {
 	char	*curpath;
@@ -42,7 +42,7 @@ static int	resolve_special_paths(t_command *cmd,
 	return (0);
 }
 
-static int	resolve_target_path(t_command *cmd,
+static int	resolve_target_path(t_cmd *cmd,
 		t_data *data, char **target_path)
 {
 	char	*curpath;
@@ -108,7 +108,7 @@ static int	change_directory(const char *curpath, t_data *data)
 	return (ret);
 }
 
-int	builtin_cd(t_command *cmd, t_data *data)
+int	builtin_cd(t_cmd *cmd, t_data *data)
 {
 	char	*target_path;
 	int		result;

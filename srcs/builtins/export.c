@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 11:06:55 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/19 16:16:33 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/21 09:21:16 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static int	process_export_argument(const char *varname_value, t_data *data)
 	return (ret);
 }
 
-int	builtin_export(t_command *cmd, t_data *data)
+int	builtin_export(t_cmd *cmd, t_data *data)
 {
 	int		arg;
 	int		encountered_invalid_varname;

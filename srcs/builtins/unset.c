@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 11:00:53 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/19 11:05:17 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/21 09:21:16 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	find_env_var_index(char **env_vars, const char *arg)
 	return (-1);
 }
 
-int	builtin_unset(t_command *cmd, t_data *data)
+int	builtin_unset(t_cmd *cmd, t_data *data)
 {
 	int	arg;
 	int	index;
