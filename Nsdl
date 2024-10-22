@@ -3,144 +3,142 @@ Already up to date.
 # **************************************************************************** #
 #                         MSTEST - 42_MINISHELL_TESTER                         #
 # **************************************************************************** #
-  🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
-  🚀                                 MANDATORY                                  🚀
-  🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
+  🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+  🌟                                    ALL                                     🌟
+  🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
   # **************************************************************************** #
-  #                                 PARSING HELL                                 #
+  #                                    LEAKS                                     #
   # **************************************************************************** #
-  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(127) ]  CRASH: ✅  /cmds/mand/10_parsing_hell.sh:5
+  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(127) bash(0) ]  CRASH: ✅  funcheck/leaks.sh:5
   # **************************************************************************** #
   #                                  EXPANSION                                   #
   # **************************************************************************** #
-  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ❌ [ minishell(1) bash(0) ]  CRASH: ✅  /cmds/mand/11_expansion.sh:5
-  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/11_expansion.sh:7
+  1:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(127) bash(0) ]  CRASH: ✅  mand/11_expansion.sh:5
+  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/11_expansion.sh:7
   # **************************************************************************** #
   #                                      CD                                      #
   # **************************************************************************** #
-  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_builtins_cd.sh:5
-  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_builtins_cd.sh:9
-  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_builtins_cd.sh:13
-  4:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_builtins_cd.sh:18
+  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_builtins_cd.sh:5
+  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_builtins_cd.sh:9
+  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_builtins_cd.sh:13
+  4:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_builtins_cd.sh:18
   # **************************************************************************** #
   #                                     ECHO                                     #
   # **************************************************************************** #
-  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_builtins_echo.sh:5
+  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_builtins_echo.sh:5
   # **************************************************************************** #
   #                                    EXPORT                                    #
   # **************************************************************************** #
-  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_builtins_export.sh:5
+  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_builtins_export.sh:5
   # **************************************************************************** #
   #                                  PIPELINES                                   #
   # **************************************************************************** #
-  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_pipelines.sh:5
-  2:	STD_OUT: ✅  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_pipelines.sh:7
-  3:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(2) ]  CRASH: ✅  /cmds/mand/1_pipelines.sh:13
-  4:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_pipelines.sh:15
-  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_pipelines.sh:19
-  6:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_pipelines.sh:24
-  7:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_pipelines.sh:29
+  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_pipelines.sh:5
+  2:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(2) ]  CRASH: ✅  mand/1_pipelines.sh:7
+  3:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_pipelines.sh:9
+  4:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_pipelines.sh:13
+  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_pipelines.sh:18
+  6:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_pipelines.sh:23
   # **************************************************************************** #
   #                                    REDIRS                                    #
   # **************************************************************************** #
-  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:5
-  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:7
-  3:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:9
-  4:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:11
-  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:13
-  6:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:15
-  7:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:17
-  8:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:19
-  9:	STD_OUT: ✅  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:21
-  10:	STD_OUT: ✅  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:23
-  11:	STD_OUT: ✅  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:25
-  12:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:27
-  13:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:29
-  14:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:31
-  15:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:33
-  16:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:35
-  17:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:37
-  18:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:39
-  19:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:41
-  20:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:43
-  21:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:45
-  22:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_redirs.sh:47
-  23:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(0) ]  CRASH: ✅  /cmds/mand/1_redirs.sh:51
+  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_redirs.sh:5
+  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_redirs.sh:7
+  3:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_redirs.sh:9
+  4:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_redirs.sh:11
+  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_redirs.sh:13
+  6:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_redirs.sh:15
+  7:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_redirs.sh:17
+  8:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_redirs.sh:19
+  9:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(0) ]  CRASH: ✅  mand/1_redirs.sh:23
   # **************************************************************************** #
   #                                     SCMD                                     #
   # **************************************************************************** #
-  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  /cmds/mand/1_scmds.sh:5
-  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_scmds.sh:7
-  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_scmds.sh:9
+  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_scmds.sh:5
+  2:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_scmds.sh:7
   # **************************************************************************** #
   #                                  BROKEN SCMD                                 #
   # **************************************************************************** #
-  4:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(127) ]  CRASH: ✅  /cmds/mand/1_scmds.sh:15
-  5:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  /cmds/mand/1_scmds.sh:17
-  6:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  /cmds/mand/1_scmds.sh:19
-  7:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  /cmds/mand/1_scmds.sh:21
-  8:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  /cmds/mand/1_scmds.sh:23
-  9:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  /cmds/mand/1_scmds.sh:25
-  10:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_scmds.sh:27
-  11:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(126) ]  CRASH: ✅  /cmds/mand/1_scmds.sh:29
-  12:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_scmds.sh:31
-  13:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_scmds.sh:33
-  14:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(2) ]  CRASH: ✅  /cmds/mand/1_scmds.sh:35
+  3:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(127) ]  CRASH: ✅  mand/1_scmds.sh:13
+  4:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  mand/1_scmds.sh:15
+  5:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  mand/1_scmds.sh:17
+  6:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  mand/1_scmds.sh:19
+  7:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  mand/1_scmds.sh:21
+  8:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  mand/1_scmds.sh:23
+  9:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_scmds.sh:25
+  10:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(126) ]  CRASH: ✅  mand/1_scmds.sh:27
+  11:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_scmds.sh:29
+  12:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/1_scmds.sh:31
+  13:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(2) ]  CRASH: ✅  mand/1_scmds.sh:33
   # **************************************************************************** #
   #                                  VARIABLES                                   #
   # **************************************************************************** #
-  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_variables.sh:6
-  2:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_variables.sh:13
-  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_variables.sh:16
-  4:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_variables.sh:19
-  5:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_variables.sh:22
-  6:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_variables.sh:25
-  7:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_variables.sh:28
-  8:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_variables.sh:31
-  9:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/1_variables.sh:34
+  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_variables.sh:6
+  2:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_variables.sh:13
+  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_variables.sh:16
+  4:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_variables.sh:19
+  5:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_variables.sh:22
+  6:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_variables.sh:25
+  7:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_variables.sh:28
+  8:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_variables.sh:31
+  9:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/1_variables.sh:34
   # **************************************************************************** #
   #                                  CORRECTION                                  #
   # **************************************************************************** #
-  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(127) ]  CRASH: ✅  /cmds/mand/2_correction.sh:5
-  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/2_correction.sh:7
-  3:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/2_correction.sh:9
-  4:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/2_correction.sh:11
-  5:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/2_correction.sh:13
-  6:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/2_correction.sh:15
+  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/2_correction.sh:5
+  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/2_correction.sh:7
+  3:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/2_correction.sh:9
+  4:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/2_correction.sh:11
+  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/2_correction.sh:13
   # **************************************************************************** #
   #                                  PATH CHECK                                  #
   # **************************************************************************** #
-  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/2_path_check.sh:5
-  2:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/2_path_check.sh:12
-  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/2_path_check.sh:14
-  4:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/2_path_check.sh:18
-  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(139) bash(127) ]  CRASH: ❌ [ SIGSEGV ]  /cmds/mand/2_path_check.sh:37
+  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/2_path_check.sh:5
+  2:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/2_path_check.sh:12
+  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/2_path_check.sh:14
+  4:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/2_path_check.sh:18
+  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(139) bash(127) ]  CRASH: ❌ [ SIGSEGV ]  mand/2_path_check.sh:37
   # **************************************************************************** #
   #                                SYNTAX ERRORS                                 #
   # **************************************************************************** #
-  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:5
-  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:7
-  3:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:9
-  4:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(126) ]  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:11
-  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(127) ]  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:13
-  6:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(127) ]  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:15
-  7:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:17
-  8:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:19
-  9:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(2) ]  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:21
-  10:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(2) ]  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:23
-  11:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(126) ]  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:25
-  12:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(2) ]  CRASH: ✅  /cmds/mand/8_syntax_errors.sh:27
+  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(127) bash(2) ]  CRASH: ✅  mand/8_syntax_errors.sh:5
+  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/8_syntax_errors.sh:7
+  3:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/8_syntax_errors.sh:9
+  4:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(126) ]  CRASH: ✅  mand/8_syntax_errors.sh:11
+  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(127) ]  CRASH: ✅  mand/8_syntax_errors.sh:13
+  6:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(127) ]  CRASH: ✅  mand/8_syntax_errors.sh:15
+  7:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/8_syntax_errors.sh:17
+  8:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/8_syntax_errors.sh:19
+  9:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(2) ]  CRASH: ✅  mand/8_syntax_errors.sh:21
+  10:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(2) ]  CRASH: ✅  mand/8_syntax_errors.sh:23
+  11:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(1) bash(126) ]  CRASH: ✅  mand/8_syntax_errors.sh:25
+  12:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ❌ [ minishell(0) bash(2) ]  CRASH: ✅  mand/8_syntax_errors.sh:27
   # **************************************************************************** #
   #                                   GO WILD                                    #
   # **************************************************************************** #
-  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/9_go_wild.sh:5
-  2:	STD_OUT: ❌  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/9_go_wild.sh:10
-  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  /cmds/mand/9_go_wild.sh:14
+  1:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/9_go_wild.sh:5
+  2:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  mand/9_go_wild.sh:10
+  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  mand/9_go_wild.sh:14
+  # **************************************************************************** #
+  #                                    NO ENV                                    #
+  # **************************************************************************** #
+  1:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:5
+  2:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:8
+  3:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:11
+  4:	STD_OUT: ❌  STD_ERR: ✅  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:13
+  5:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:15
+  6:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:18
+  7:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:22
+  8:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:25
+  9:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:30
+  10:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:36
+  11:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:41
+  12:	STD_OUT: ✅  STD_ERR: ❌  EXIT_CODE: ✅  CRASH: ✅  no_env/10_no_env.sh:48
 🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁
 🏁                                    RESULT                                    🏁
 🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁🏁
-                       TOTAL TEST COUNT: 88  TESTS PASSED: 4
-               STD_OUT: 32  STD_ERR: 62  EXIT_CODE: 22  CRASHING: 1
+                       TOTAL TEST COUNT: 83  TESTS PASSED: 0
+               STD_OUT: 35  STD_ERR: 59  EXIT_CODE: 21  CRASHING: 1
                           TOTAL FAILED AND PASSED CASES:
-                                      ❌ 117
-                                      ✅ 148
+                                      ❌ 116
+                                      ✅ 134

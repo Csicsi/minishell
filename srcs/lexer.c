@@ -426,5 +426,6 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 	split_expanded_tokens_by_spaces(data);
 	//print_tokens(data->tokens);
 	join_tokens_in_same_word(data);
+	//print_tokens(data->tokens);
 	return (0);
 }

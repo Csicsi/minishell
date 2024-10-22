@@ -137,12 +137,11 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 		dup2(fd_out, STDOUT_FILENO);
 		close(fd_out);
 	}
-	while (cmd->args[i] && *(cmd->args[i]) == '\0')
-		i++;
 	if (cmd->args[i] == NULL || *(cmd->args[i]) == '\0')
 	{
+		ft_fprintf(2, ": %s: command not found\n", cmd->args[i]);
 		cleanup_data(data, true);
-		return (0);
+		return (127);
 	}
 	if (is_builtin(cmd->args[i]))
 		return (execute_builtin(cmd, data, false));
@@ -207,6 +206,16 @@ int	execute_cmd_list(t_data *data)
 		data->last_exit_status = execute_builtin(current, data, false);
 	while (current != NULL)
 	{
+		if (current->input != NULL)
+		{
+			if (access(current->input, F_OK) != 0)
+			{
+				ft_fprintf(2, ": %s: No such file or directory\n", current->input);
+				data->last_exit_status = 1;
+				current = current->next;
+				continue;
+			}
+		}
 		if (current->next != NULL)
 			pipe(pipe_fd);
 		pid = fork();
@@ -347,6 +356,7 @@ t_command	*parse_tokens(t_data *data)
 	current_cmd->is_heredoc = false;
 	current_cmd->next = NULL;
 	tmp = data->tokens;
+
 	while (data->tokens)
 	{
 		if (data->tokens->type == TOKEN_WORD)
@@ -357,78 +367,61 @@ t_command	*parse_tokens(t_data *data)
 		{
 			if (ft_strcmp(data->tokens->value, "<<") == 0)
 			{
-				current_cmd->is_heredoc = true;
-				if (data->tokens->next != NULL)
+				// Check for heredoc and skip over the next token (heredoc delimiter)
+				if (current_cmd->is_heredoc == false && data->tokens->next != NULL)
 				{
+					current_cmd->is_heredoc = true;
 					current_cmd->heredoc_delim = ft_strdup(data->tokens->next->value);
-					data->tokens = data->tokens->next;
+					data->tokens = data->tokens->next;  // Skip over the delimiter
 				}
 				else
 				{
-					data->last_exit_status = 2;
-					return (NULL);
+					data->tokens = data->tokens->next;  // Skip operator and argument
 				}
 			}
 			else if (ft_strcmp(data->tokens->value, ">") == 0)
 			{
-				if (data->tokens->next != NULL)
+				// Skip if output is already set, otherwise set output and skip
+				if (current_cmd->output == NULL && data->tokens->next != NULL)
 				{
 					current_cmd->output = ft_strdup(data->tokens->next->value);
-					data->tokens = data->tokens->next;
-					if (data->tokens->next != NULL)
-					{
-						if ((arg_index == 0) && !current_cmd->args[0])
-						{
-							current_cmd->args[arg_index++] = ft_strdup(data->tokens->next->value);
-							data->tokens = data->tokens->next;
-						}
-					}
-					else
-					{
-						if ((arg_index == 0) && !current_cmd->args[0])
-						{
-							current_cmd->args[arg_index++] = ft_strdup("");
-						}
-					}
+					data->tokens = data->tokens->next;  // Skip over the output file
 				}
 				else
 				{
-					ft_fprintf(2, ": syntax error near unexpected token newline\n");
-					data->last_exit_status = 2;
-					return (NULL);
+					data->tokens = data->tokens->next;  // Skip operator and argument
 				}
 			}
 			else if (ft_strcmp(data->tokens->value, ">>") == 0)
 			{
-				if (data->tokens->next != NULL)
+				// Skip if output is already set, otherwise set output and skip
+				if (current_cmd->output == NULL && data->tokens->next != NULL)
 				{
 					current_cmd->output = ft_strdup(data->tokens->next->value);
 					current_cmd->append_output = 1;
-					data->tokens = data->tokens->next;
+					data->tokens = data->tokens->next;  // Skip over the output file
 				}
 				else
 				{
-					ft_fprintf(2, ": syntax error near unexpected token newline\n");
-					data->last_exit_status = 2;
-					return (NULL);
+					data->tokens = data->tokens->next;  // Skip operator and argument
 				}
 			}
 			else if (ft_strcmp(data->tokens->value, "<") == 0)
 			{
-				if (data->tokens->next != NULL)
+				// Skip if input is already set, otherwise set input and skip
+				if (current_cmd->input == NULL && data->tokens->next != NULL)
 				{
 					current_cmd->input = ft_strdup(data->tokens->next->value);
-					data->tokens = data->tokens->next;
+					data->tokens = data->tokens->next;  // Skip over the input file
 				}
 				else
 				{
-					ft_fprintf(2, ": syntax error near unexpected token newline\n");
-					data->last_exit_status = 2;
-					return (NULL);
+					data->tokens = data->tokens->next;  // Skip operator and argument
 				}
 			}
 			else if (ft_strcmp(data->tokens->value, "|") == 0)
 			{
+				// Start a new command when encountering a pipe
 				current_cmd->args[arg_index] = NULL;
 				current_cmd->next = malloc(sizeof(t_command));
 				if (!current_cmd->next)
@@ -457,7 +450,6 @@ t_command	*parse_tokens(t_data *data)
 	current_cmd->args[arg_index] = NULL;
 	data->tokens = tmp;
 	free_tokens(data);
-	//print_parsed_commands(cmd);
 	return (cmd);
 }
 
