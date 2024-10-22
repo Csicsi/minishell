@@ -191,7 +191,7 @@ int	execute_cmd_list(t_data *data)
 	child_pids = malloc(sizeof(pid_t) * num_commands);
 	if (!child_pids)
 	{
-		perror("minishell: malloc");
+		perror(": malloc");
 		return (1);
 	}
 	current = data->cmd_list;
@@ -279,7 +279,7 @@ int	execute_cmd_list(t_data *data)
 		}
 		else
 		{
-			perror("minishell: fork");
+			perror(": fork");
 			cleanup_data(data, true);
 			free(child_pids);
 			return (1);
@@ -297,6 +297,29 @@ int	execute_cmd_list(t_data *data)
 	cleanup_data(data, false);
 	free(child_pids);
 	return (data->last_exit_status);
+}
+
+void print_parsed_commands(t_command *cmd_list)
+{
+	t_command *current_cmd;
+	int i;
+
+	current_cmd = cmd_list;
+	while (current_cmd)
+	{
+		printf("Command:\n");
+		for (i = 0; current_cmd->args[i]; i++)
+		{
+			printf("  Arg[%d]: %s\n", i, current_cmd->args[i]);
+		}
+		if (current_cmd->input)
+			printf("  Input: %s\n", current_cmd->input);
+		if (current_cmd->output)
+			printf("  Output: %s\n", current_cmd->output);
+		if (current_cmd->is_heredoc)
+			printf("  Heredoc Delim: %s\n", current_cmd->heredoc_delim);
+		current_cmd = current_cmd->next;
+	}
 }
 
 t_command	*parse_tokens(t_data *data)
@@ -327,7 +350,9 @@ t_command	*parse_tokens(t_data *data)
 	while (data->tokens)
 	{
 		if (data->tokens->type == TOKEN_WORD)
+		{
 			current_cmd->args[arg_index++] = ft_strdup(data->tokens->value);
+		}
 		else if (data->tokens->type == TOKEN_OPERATOR)
 		{
 			if (ft_strcmp(data->tokens->value, "<<") == 0)
@@ -340,7 +365,6 @@ t_command	*parse_tokens(t_data *data)
 				}
 				else
 				{
-					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
 					data->last_exit_status = 2;
 					return (NULL);
 				}
@@ -362,12 +386,14 @@ t_command	*parse_tokens(t_data *data)
 					else
 					{
 						if ((arg_index == 0) && !current_cmd->args[0])
+						{
 							current_cmd->args[arg_index++] = ft_strdup("");
+						}
 					}
 				}
 				else
 				{
-					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
+					ft_fprintf(2, ": syntax error near unexpected token newline\n");
 					data->last_exit_status = 2;
 					return (NULL);
 				}
@@ -382,7 +408,7 @@ t_command	*parse_tokens(t_data *data)
 				}
 				else
 				{
-					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
+					ft_fprintf(2, ": syntax error near unexpected token newline\n");
 					data->last_exit_status = 2;
 					return (NULL);
 				}
@@ -391,27 +417,8 @@ t_command	*parse_tokens(t_data *data)
 			{
 				if (data->tokens->next != NULL)
 				{
-					if (access(data->tokens->next->value, F_OK) == 0)
-					{
-						current_cmd->input = ft_strdup(data->tokens->next->value);
-						data->tokens = data->tokens->next;
-						if (data->tokens->next == NULL || data->tokens->next->type == TOKEN_OPERATOR)
-						{
-							if (data->tokens->next)
-								ft_fprintf(2, "%s: command not found\n", data->tokens->next->value);
-							else
-								ft_fprintf(2, "command: command not found\n");
-							return (NULL);
-						}
-					}
-					else
-					{
-						ft_fprintf(2, ": %s: No such file or directory\n", data->tokens->next->value);
-						data->last_exit_status = 1;
-						return (NULL);
-					}
-					while (data->tokens && ft_strcmp(data->tokens->value, "|") != 0)
-						data->tokens = data->tokens->next;
+					current_cmd->input = ft_strdup(data->tokens->next->value);
+					data->tokens = data->tokens->next;
 				}
 				else
 				{
@@ -443,11 +450,14 @@ t_command	*parse_tokens(t_data *data)
 			}
 		}
 		if (data->tokens)
+		{
 			data->tokens = data->tokens->next;
+		}
 	}
 	current_cmd->args[arg_index] = NULL;
 	data->tokens = tmp;
 	free_tokens(data);
+	//print_parsed_commands(cmd);
 	return (cmd);
 }
 
@@ -597,7 +607,7 @@ int	main(int argc, char **argv, char **env_vars)
 		{
 			ft_fprintf(2, "syntax error: unclosed quote\n");
 			cleanup_data(&data, true);
-			return (1);
+			continue;
 		}
 		if (lexer(data.input, &data, data.last_exit_status) == -1)
 		{
