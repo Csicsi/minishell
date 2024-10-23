@@ -305,6 +305,22 @@ void split_expanded_tokens_by_spaces(t_data *data)
 	{
 		if (current->is_expanded)
 		{
+			if (ft_strcmp(current->value, "") == 0)
+			{
+				next_token = current->next;
+				if (prev)
+				{
+					prev->next = next_token;
+				}
+				else
+				{
+					data->tokens = next_token;
+				}
+				free(current->value);
+				free(current);
+				current = next_token;
+				continue;
+			}
 			if (is_all_spaces(current->value))
 			{
 				next_token = current->next;
@@ -493,9 +509,11 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 		cursor = skip_spaces(cursor);
 	}
 
-	// Split expanded tokens by spaces and join tokens in the same word
+	//print_tokens(data->tokens);
 	split_expanded_tokens_by_spaces(data);
+	//print_tokens(data->tokens);
 	join_tokens_in_same_word(data);
+	//print_tokens(data->tokens);
 
 	return (0);
 }

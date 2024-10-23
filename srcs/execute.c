@@ -74,19 +74,29 @@ int	handle_heredoc(t_command *cmd)
 		perror("pipe");
 		return (-1);
 	}
+
 	while (true)
 	{
-		line = readline("> ");
+		if (isatty(0))
+			write(1, "> ", 2);
+		line = get_next_line(0);
+
+		if (line && line[ft_strlen(line) - 1] == '\n')
+			line[ft_strlen(line) - 1] = '\0';
+
 		if (!line || ft_strcmp(line, cmd->heredoc_delim) == 0)
 		{
 			free(line);
 			break ;
 		}
+
 		write(pipe_fd[1], line, ft_strlen(line));
 		write(pipe_fd[1], "\n", 1);
 		free(line);
 	}
+
 	close(pipe_fd[1]);
+
 	return (pipe_fd[0]);
 }
 
@@ -148,7 +158,10 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 	cmd_path = find_cmd_path(cmd->args + i, data);
 	if (!cmd_path)
 	{
-		ft_fprintf(2, ": %s: command not found\n", cmd->args[i]);
+		if (ft_strchr(cmd->args[i], '/'))
+			ft_fprintf(2, ": %s: No such file or directory\n", cmd->args[i]);
+		else
+			ft_fprintf(2, ": %s: command not found\n", cmd->args[i]);
 		cleanup_data(data, true);
 		return (127);
 	}
@@ -178,227 +191,150 @@ char	*get_directory_from_path(const char *path)
 	int		i;
 	char	*dir;
 
-	// Find the last '/' in the path
 	i = ft_strlen(path) - 1;
 	while (i >= 0 && path[i] != '/')
 		i--;
-
-	// If no '/' was found, there is no directory in the path
 	if (i < 0)
 		return (NULL);
-
-	// Allocate memory for the directory string and copy the directory portion
 	dir = ft_strndup(path, i);
 	if (!dir)
 		return (NULL);
-
 	return (dir);
 }
 
-t_token *find_token_by_value(t_token *tokens, const char *value)
+int execute_cmd_list(t_data *data)
 {
-    t_token *current = tokens;
+    t_command   *current;
+    int         pipe_fd[2];
+    int         prev_fd;
+    pid_t       pid;
+    int         num_children;
+    int         num_commands;
+    pid_t       *child_pids;
+    int         i;
+    int         fd_out;
 
+    num_children = 0;
+    num_commands = count_commands(data->cmd_list);
+    child_pids = malloc(sizeof(pid_t) * num_commands);
+    if (!child_pids)
+    {
+        perror(": malloc");
+        return (1);
+    }
+    current = data->cmd_list;
+    prev_fd = -1;
+    if (current->args[0] && ft_strcmp(current->args[0], "exit") == 0 && current->next == NULL)
+    {
+        data->last_exit_status = execute_builtin(current, data, true);
+        cleanup_data(data, true);
+        free(child_pids);
+        return (data->last_exit_status);
+    }
+    if (current->args[0] != NULL && ((ft_strcmp(current->args[0], "export") == 0 || ft_strcmp(current->args[0], "unset") == 0 || ft_strcmp(current->args[0], "cd") == 0) && current->next == NULL))
+        data->last_exit_status = execute_builtin(current, data, false);
     while (current != NULL)
     {
-        if (ft_strcmp(current->value, value) == 0)
-            return current;
+        if (current->input != NULL)
+        {
+            if (access(current->input, F_OK) != 0)
+            {
+                ft_fprintf(2, ": %s: No such file or directory\n", current->input);
+                data->last_exit_status = 1;
+                current = current->next;
+                continue;
+            }
+        }
+        if (current->next != NULL)
+            pipe(pipe_fd);
+        pid = fork();
+        if (pid == 0)
+        {
+            if (prev_fd != -1)
+            {
+                dup2(prev_fd, STDIN_FILENO);
+                close(prev_fd);
+            }
+            if (current->next != NULL)
+            {
+                dup2(pipe_fd[1], STDOUT_FILENO);
+                close(pipe_fd[0]);
+                close(pipe_fd[1]);
+            }
+            else if (current->output != NULL)
+            {
+                if (current->append_output)
+                    fd_out = open(current->output, O_WRONLY | O_CREAT | O_APPEND, 0644);
+                else
+                    fd_out = open(current->output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+                if (fd_out < 0)
+                {
+                    ft_fprintf(2, ": %s: ", current->output);
+                    perror("");
+                    cleanup_data(data, true);
+                    free(child_pids);
+                    exit(EXIT_FAILURE);
+                }
+                dup2(fd_out, STDOUT_FILENO);
+                close(fd_out);
+            }
+            if (is_builtin(current->args[0]))
+            {
+                if (ft_strcmp(current->args[0], "exit") == 0)
+                {
+                    cleanup_data(data, true);
+                    free(child_pids);
+                    exit(0);
+                }
+                if (!(ft_strcmp(current->args[0], "export") == 0) && !(ft_strcmp(current->args[0], "unset") == 0) && !(ft_strcmp(current->args[0], "cd") == 0))
+                {
+                    data->last_exit_status = execute_builtin(current, data, false);
+                }
+                cleanup_data(data, true);
+                free(child_pids);
+                exit(data->last_exit_status);
+            }
+            else
+            {
+                data->last_exit_status = execute_single_cmd(current, data);
+                cleanup_data(data, true);
+                free(child_pids);
+                exit(data->last_exit_status);
+            }
+        }
+        else if (pid > 0)
+        {
+            child_pids[num_children++] = pid;
+            if (prev_fd != -1)
+                close(prev_fd);
+            if (current->next != NULL)
+            {
+                close(pipe_fd[1]);
+                prev_fd = pipe_fd[0];
+            }
+            else
+                prev_fd = -1;
+        }
+        else
+        {
+            perror(": fork");
+            cleanup_data(data, true);
+            free(child_pids);
+            return (1);
+        }
         current = current->next;
     }
-
-    return NULL;
-}
-
-int	execute_cmd_list(t_data *data)
-{
-	t_command	*current;
-	int			pipe_fd[2];
-	int			prev_fd;
-	pid_t		pid;
-	int			num_children;
-	int			num_commands;
-	pid_t		*child_pids;
-	int			i;
-	int			fd_out;
-	char		*output_dir;
-
-	num_children = 0;
-	num_commands = count_commands(data->cmd_list);
-	child_pids = malloc(sizeof(pid_t) * num_commands);
-	if (!child_pids)
-	{
-		perror(": malloc");
-		return (1);
-	}
-	current = data->cmd_list;
-	prev_fd = -1;
-	if (current->args[0] && ft_strcmp(current->args[0], "exit") == 0 && current->next == NULL)
-	{
-		data->last_exit_status = execute_builtin(current, data, true);
-		cleanup_data(data, true);
-		free(child_pids);
-		return (data->last_exit_status);
-	}
-	if (current->args[0] != NULL && ((ft_strcmp(current->args[0], "export") == 0 || ft_strcmp(current->args[0], "unset") == 0 || ft_strcmp(current->args[0], "cd") == 0) && current->next == NULL))
-		data->last_exit_status = execute_builtin(current, data, false);
-	while (current != NULL)
-	{
-		// We now use the word positions to check which error to print first
-		t_token *input_token = NULL;
-		t_token *output_token = NULL;
-
-		// Find the input and output tokens by position
-		if (current->input)
-		{
-			input_token = find_token_by_value(data->tokens, current->input);
-		}
-		if (current->output)
-		{
-			output_token = find_token_by_value(data->tokens, current->output);
-		}
-
-		// If both input and output exist, check which comes first by comparing the word index
-		if (input_token && output_token)
-		{
-			if (input_token->word < output_token->word)
-			{
-				// Input comes first, check if the file exists
-				if (access(current->input, F_OK) != 0)
-				{
-					ft_fprintf(2, ": %s: No such file or directory\n", current->input);
-					current = current->next;
-					continue;  // Move to the next command if the input file is missing
-				}
-			}
-			else
-			{
-				// Output comes first, check if the directory exists
-				output_dir = get_directory_from_path(current->output);
-				if (output_dir && access(output_dir, F_OK) != 0)
-				{
-					ft_fprintf(2, ": %s: No such directory\n", output_dir);
-					free(output_dir);
-					current = current->next;
-					continue;  // Skip the command if the directory does not exist
-				}
-				free(output_dir);
-			}
-		}
-		else if (input_token)
-		{
-			// Only input exists, check if the file exists
-			if (access(current->input, F_OK) != 0)
-			{
-				ft_fprintf(2, ": %s: No such file or directory\n", current->input);
-				current = current->next;
-				continue;
-			}
-		}
-		else if (output_token)
-		{
-			// Only output exists, check if the directory exists
-			output_dir = get_directory_from_path(current->output);
-			if (output_dir && access(output_dir, F_OK) != 0)
-			{
-				ft_fprintf(2, ": %s: No such directory\n", output_dir);
-				free(output_dir);
-				current = current->next;
-				continue;
-			}
-			free(output_dir);
-		}
-
-		// Fork and execute the command
-		if (current->next != NULL)
-			pipe(pipe_fd);
-		pid = fork();
-		if (pid == 0)
-		{
-			if (prev_fd != -1)
-			{
-				dup2(prev_fd, STDIN_FILENO);
-				close(prev_fd);
-			}
-			if (current->next != NULL)
-			{
-				dup2(pipe_fd[1], STDOUT_FILENO);
-				close(pipe_fd[0]);
-				close(pipe_fd[1]);
-			}
-			else if (current->output != NULL)
-			{
-				if (current->append_output)
-					fd_out = open(current->output, O_WRONLY | O_CREAT | O_APPEND, 0644);
-				else
-					fd_out = open(current->output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-				if (fd_out < 0)
-				{
-					ft_fprintf(2, ": %s: ", current->output);
-					perror("");
-					cleanup_data(data, true);
-					free(child_pids);
-					exit(EXIT_FAILURE);
-				}
-				dup2(fd_out, STDOUT_FILENO);
-				close(fd_out);
-			}
-			if (is_builtin(current->args[0]))
-			{
-				if (ft_strcmp(current->args[0], "exit") == 0)
-				{
-					cleanup_data(data, true);
-					free(child_pids);
-					exit(0);
-				}
-				if (!(ft_strcmp(current->args[0], "export") == 0) && !(ft_strcmp(current->args[0], "unset") == 0) && !(ft_strcmp(current->args[0], "cd") == 0))
-				{
-					data->last_exit_status = execute_builtin(current, data, false);
-				}
-				cleanup_data(data, true);
-				free(child_pids);
-				exit(data->last_exit_status);
-			}
-			else
-			{
-				data->last_exit_status = execute_single_cmd(current, data);
-				cleanup_data(data, true);
-				free(child_pids);
-				exit(data->last_exit_status);
-			}
-		}
-		else if (pid > 0)
-		{
-			child_pids[num_children++] = pid;
-			if (prev_fd != -1)
-				close(prev_fd);
-			if (current->next != NULL)
-			{
-				close(pipe_fd[1]);
-				prev_fd = pipe_fd[0];
-			}
-			else
-				prev_fd = -1;
-		}
-		else
-		{
-			perror(": fork");
-			cleanup_data(data, true);
-			free(child_pids);
-			return (1);
-		}
-		current = current->next;
-	}
-	i = 0;
-	while (i < num_children)
-	{
-		waitpid(child_pids[i], &data->last_exit_status, 0);
-		if (WIFEXITED(data->last_exit_status))
-			data->last_exit_status = WEXITSTATUS(data->last_exit_status);
-		i++;
-	}
-	cleanup_data(data, false);
-	free(child_pids);
-	return (data->last_exit_status);
+    i = 0;
+    while (i < num_children)
+    {
+        waitpid(child_pids[i], &data->last_exit_status, 0);
+        if (WIFEXITED(data->last_exit_status))
+            data->last_exit_status = WEXITSTATUS(data->last_exit_status);
+        i++;
+    }
+    cleanup_data(data, false);
+    free(child_pids);
+    return (data->last_exit_status);
 }
 
 void print_parsed_commands(t_command *cmd_list)
@@ -411,9 +347,7 @@ void print_parsed_commands(t_command *cmd_list)
 	{
 		printf("Command:\n");
 		for (i = 0; current_cmd->args[i]; i++)
-		{
 			printf("  Arg[%d]: %s\n", i, current_cmd->args[i]);
-		}
 		if (current_cmd->input)
 			printf("  Input: %s\n", current_cmd->input);
 		if (current_cmd->output)
@@ -680,13 +614,30 @@ int	main(int argc, char **argv, char **env_vars)
 	}
 	while (1)
 	{
-		data.input = readline("Don'tPanicShell> ");
+		if (isatty(0))
+		{
+			data.input = readline("Don'tPanicShell> ");
+		}
+		else
+		{
+			data.input = get_next_line(0);
+			if (data.input == NULL)
+			{
+				cleanup_data(&data, true);
+				return (data.last_exit_status);
+			}
+
+			// Check if the last character is a newline and remove it
+			size_t len = ft_strlen(data.input);
+			if (len > 0 && data.input[len - 1] == '\n')
+				data.input[len - 1] = '\0';
+		}
 		if (data.input == NULL)
 		{
 			cleanup_data(&data, true);
 			return (data.last_exit_status);
 		}
-		if (*data.input)
+		if (isatty(0) && *data.input)
 			add_history(data.input);
 		in_quote = check_for_unclosed_quotes(data.input);
 		if (in_quote == 1)
