@@ -21,6 +21,8 @@ static int	resolve_special_paths(t_command *cmd,
 		if (curpath == NULL)
 			return (ft_putstr_fd(": cd: OLDPWD not set\n",
 					STDERR_FILENO), 1);
+		ft_putstr_fd(curpath, STDOUT_FILENO);
+		ft_putchar_fd('\n', STDOUT_FILENO);
 	}
 	else
 		return (0);
@@ -73,7 +75,11 @@ static int	change_directory(const char *curpath, t_data *data)
 	if (ft_setenv("OLDPWD", cwd, data) != 0)
 		return (perror(": cd: setenv OLDPWD"), free(normalized_path), 1);
 	if (chdir(normalized_path) != 0)
-		return (perror(": cd"), free(normalized_path), 1);
+	{
+		ft_fprintf(STDERR_FILENO, "cd: %s: Not a directory\n", curpath);
+		free(normalized_path);
+		return (1);
+	}
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (perror(": cd: getcwd"), free(normalized_path), 1);
 	if (ft_setenv("PWD", cwd, data) != 0)

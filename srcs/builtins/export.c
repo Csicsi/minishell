@@ -70,6 +70,7 @@ static int	handle_export_wo_args(t_command *cmd, t_data *data)
 	env_count = 0;
 	while (data->env_vars[env_count] != NULL)
 		env_count++;
+
 	sorted_env_vars = malloc((env_count + 1) * sizeof(char *));
 	if (!sorted_env_vars)
 		return (1);
@@ -80,6 +81,7 @@ static int	handle_export_wo_args(t_command *cmd, t_data *data)
 		i++;
 	}
 	sorted_env_vars[env_count] = NULL;
+
 	sort_env_vars(sorted_env_vars, env_count);
 	print_sorted_env_vars(sorted_env_vars);
 	free(sorted_env_vars);
@@ -108,15 +110,16 @@ int	builtin_export(t_command *cmd, t_data *data)
 			varname = ft_substr(varname_value, 0, equal_sign - varname_value);
 		else
 			varname = ft_strdup(varname_value);
+
 		if (!is_valid_env_var_name(varname) || *varname == '\0')
 		{
-			fprintf(stderr, ": export: `%s': not a valid identifier\n",
-				varname_value);
+			fprintf(stderr, ": export: `%s': not a valid identifier\n", varname_value);
 			free(varname);
 			encountered_invalid_varname = 1;
 			arg++;
 			continue ;
 		}
+
 		i = 0;
 		while (data->env_vars[i] != NULL)
 		{
@@ -126,6 +129,7 @@ int	builtin_export(t_command *cmd, t_data *data)
 				break ;
 			i++;
 		}
+
 		if (data->env_vars[i] != NULL)
 		{
 			if (ft_strchr(varname_value, '='))

@@ -515,5 +515,13 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 	join_tokens_in_same_word(data);
 	//print_tokens(data->tokens);
 
+	// Check if the first token is a pipe
+	if (data->tokens && data->tokens->type == TOKEN_OPERATOR && strcmp(data->tokens->value, "|") == 0)
+	{
+		ft_fprintf(2, ": syntax error near unexpected token `%s'\n", data->tokens->value);
+		data->last_exit_status = 2;
+		return (-1);
+	}
+
 	return (0);
 }
