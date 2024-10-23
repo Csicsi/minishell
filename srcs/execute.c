@@ -173,6 +173,42 @@ int	count_commands(t_command *cmd_list)
 	return (count);
 }
 
+char	*get_directory_from_path(const char *path)
+{
+	int		i;
+	char	*dir;
+
+	// Find the last '/' in the path
+	i = ft_strlen(path) - 1;
+	while (i >= 0 && path[i] != '/')
+		i--;
+
+	// If no '/' was found, there is no directory in the path
+	if (i < 0)
+		return (NULL);
+
+	// Allocate memory for the directory string and copy the directory portion
+	dir = ft_strndup(path, i);
+	if (!dir)
+		return (NULL);
+
+	return (dir);
+}
+
+t_token *find_token_by_value(t_token *tokens, const char *value)
+{
+    t_token *current = tokens;
+
+    while (current != NULL)
+    {
+        if (ft_strcmp(current->value, value) == 0)
+            return current;
+        current = current->next;
+    }
+
+    return NULL;
+}
+
 int	execute_cmd_list(t_data *data)
 {
 	t_command	*current;
@@ -184,6 +220,7 @@ int	execute_cmd_list(t_data *data)
 	pid_t		*child_pids;
 	int			i;
 	int			fd_out;
+	char		*output_dir;
 
 	num_children = 0;
 	num_commands = count_commands(data->cmd_list);
@@ -206,16 +243,72 @@ int	execute_cmd_list(t_data *data)
 		data->last_exit_status = execute_builtin(current, data, false);
 	while (current != NULL)
 	{
-		if (current->input != NULL)
+		// We now use the word positions to check which error to print first
+		t_token *input_token = NULL;
+		t_token *output_token = NULL;
+
+		// Find the input and output tokens by position
+		if (current->input)
 		{
+			input_token = find_token_by_value(data->tokens, current->input);
+		}
+		if (current->output)
+		{
+			output_token = find_token_by_value(data->tokens, current->output);
+		}
+
+		// If both input and output exist, check which comes first by comparing the word index
+		if (input_token && output_token)
+		{
+			if (input_token->word < output_token->word)
+			{
+				// Input comes first, check if the file exists
+				if (access(current->input, F_OK) != 0)
+				{
+					ft_fprintf(2, ": %s: No such file or directory\n", current->input);
+					current = current->next;
+					continue;  // Move to the next command if the input file is missing
+				}
+			}
+			else
+			{
+				// Output comes first, check if the directory exists
+				output_dir = get_directory_from_path(current->output);
+				if (output_dir && access(output_dir, F_OK) != 0)
+				{
+					ft_fprintf(2, ": %s: No such directory\n", output_dir);
+					free(output_dir);
+					current = current->next;
+					continue;  // Skip the command if the directory does not exist
+				}
+				free(output_dir);
+			}
+		}
+		else if (input_token)
+		{
+			// Only input exists, check if the file exists
 			if (access(current->input, F_OK) != 0)
 			{
 				ft_fprintf(2, ": %s: No such file or directory\n", current->input);
-				data->last_exit_status = 1;
 				current = current->next;
 				continue;
 			}
 		}
+		else if (output_token)
+		{
+			// Only output exists, check if the directory exists
+			output_dir = get_directory_from_path(current->output);
+			if (output_dir && access(output_dir, F_OK) != 0)
+			{
+				ft_fprintf(2, ": %s: No such directory\n", output_dir);
+				free(output_dir);
+				current = current->next;
+				continue;
+			}
+			free(output_dir);
+		}
+
+		// Fork and execute the command
 		if (current->next != NULL)
 			pipe(pipe_fd);
 		pid = fork();
@@ -449,6 +542,7 @@ t_command	*parse_tokens(t_data *data)
 	}
 	current_cmd->args[arg_index] = NULL;
 	data->tokens = tmp;
+	//print_parsed_commands(cmd);
 	free_tokens(data);
 	return (cmd);
 }
