@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/20 13:19:06 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/24 08:44:06 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ bool	initialize(t_data *data, char **env_vars, int argc, char **argv)
 	return (data->exit_flag);
 }
 
-static int	check_for_unclosed_quotes(char *cursor)
+int	check_for_unclosed_quotes(char *cursor)
 {
 	int		in_quote;
 	char	quote_char;

@@ -270,9 +270,9 @@ int	execute_cmd_list(t_data *data)
 	return (data->last_exit_status);
 }
 
-void print_parsed_commands(t_command *cmd_list)
+void print_parsed_commands(t_cmd *cmd_list)
 {
-	t_command *current_cmd;
+	t_cmd *current_cmd;
 	int i;
 
 	current_cmd = cmd_list;
@@ -288,16 +288,6 @@ void print_parsed_commands(t_command *cmd_list)
 		if (current_cmd->is_heredoc)
 			printf("  Heredoc Delim: %s\n", current_cmd->heredoc_delim);
 		current_cmd = current_cmd->next;
-	}
-}
-
-void print_env_vars(char **env_vars)
-{
-	int i = 0;
-	while (env_vars[i])
-	{
-		printf("%s\n", env_vars[i]);
-		i++;
 	}
 }
 
@@ -335,8 +325,7 @@ int	main(int argc, char **argv, char **env_vars)
 		}
 		if (isatty(0) && *data.input)
 			add_history(data.input);
-		in_quote = check_for_unclosed_quotes(data.input);
-		if (in_quote == 1)
+		if (check_for_unclosed_quotes(data.input))
 		{
 			ft_fprintf(2, "syntax error: unclosed quote\n");
 			cleanup_data(&data, true);

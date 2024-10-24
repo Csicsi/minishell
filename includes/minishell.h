@@ -74,6 +74,7 @@ char		*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data 
 /* execute_utils1.c */
 bool		initialize(t_data *data, char **env_vars, int argc, char **argv);
 char		*get_input_line(t_data *data);
+int			check_for_unclosed_quotes(char *cursor);
 /* execute_utils2.c */
 int			check_commands_in_tokens(t_token *tokens, t_data *data);
 int			count_cmds(t_cmd *cmd_list);
@@ -83,6 +84,10 @@ int			is_builtin(char *command_name);
 int			execute_builtin(t_cmd *cmd, t_data *data, bool print_exit);
 int			handle_heredoc(t_cmd *cmd);
 char		*find_cmd_path(char **cmd_args, t_data *data);
+/* execute_utils4.c */
+int			update_last_command_env_var(t_data *data, char *cmd_path);
+char		*get_directory_from_path(const char *path);
+t_token		*find_token_by_value(t_token *tokens, const char *value);
 /* execute_parse_tokens_utils1.c */
 t_cmd		*parse_tokens(t_data *data);
 /* execute_parse_tokens_utils2.c */
