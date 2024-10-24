@@ -275,34 +275,99 @@ void	print_tokens(t_token *tokens)
 	}
 }
 
-void	split_expanded_tokens_by_spaces(t_data *data)
+bool is_all_spaces(char *str)
 {
-	t_token	*current;
-	t_token	*new_token;
-	t_token	*next_token;
-	char	**split_words;
-	int		i;
-	int		word_index;
+	while (*str)
+	{
+		if (!isspace(*str))
+			return false;
+		str++;
+	}
+	return true;
+}
+
+void split_expanded_tokens_by_spaces(t_data *data)
+{
+	t_token *current;
+	t_token *prev = NULL;
+	t_token *next_token;
+	t_token *new_token;
+	char **split_words;
+	int i;
+	int word_index;
+	int increment;
+	int original_word;
+	bool ends_with_space;
+	bool starts_with_space;
 
 	current = data->tokens;
 	while (current)
 	{
 		if (current->is_expanded)
 		{
+			if (ft_strcmp(current->value, "") == 0)
+			{
+				next_token = current->next;
+				if (prev)
+				{
+					prev->next = next_token;
+				}
+				else
+				{
+					data->tokens = next_token;
+				}
+				free(current->value);
+				free(current);
+				current = next_token;
+				continue;
+			}
+			if (is_all_spaces(current->value))
+			{
+				next_token = current->next;
+				if (prev)
+				{
+					prev->next = next_token;
+				}
+				else
+				{
+					data->tokens = next_token;
+				}
+				free(current->value);
+				free(current);
+				if (next_token)
+				{
+					next_token->word++;
+				}
+				current = next_token;
+				continue;
+			}
+			ends_with_space = (current->value[ft_strlen(current->value) - 1] == ' ');
+			starts_with_space = (current->value[0] == ' ');
 			split_words = ft_split(current->value, ' ');
 			if (!split_words)
+			{
 				return;
+			}
 			free(current->value);
 			current->value = ft_strdup(split_words[0]);
 			if (!current->value)
+			{
 				return;
-			word_index = current->word;
+			}
+			original_word = current->word;
+			word_index = original_word;
+			if (starts_with_space)
+			{
+				word_index++;
+				current->word = word_index;
+			}
 			i = 1;
 			while (split_words[i])
 			{
 				new_token = malloc(sizeof(t_token));
 				if (!new_token)
 					return;
+
 				new_token->value = ft_strdup(split_words[i]);
 				if (!new_token->value)
 				{
@@ -315,19 +380,26 @@ void	split_expanded_tokens_by_spaces(t_data *data)
 				new_token->next = current->next;
 				current->next = new_token;
 				current = new_token;
+
 				i++;
 			}
 			i = 0;
 			while (split_words[i])
 				free(split_words[i++]);
 			free(split_words);
+			increment = word_index - original_word;
+			if (ends_with_space)
+			{
+				increment++;
+			}
 			next_token = current->next;
 			while (next_token)
 			{
-				next_token->word += (word_index - current->word);
+				next_token->word += increment;
 				next_token = next_token->next;
 			}
 		}
+		prev = current;
 		current = current->next;
 	}
 }
@@ -345,7 +417,7 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 
 	cursor = input;
 	current = NULL;
-	word_index = 0;
+	word_index = 0;  // This tracks the position of tokens
 	in_heredoc = 0;
 	data->tokens = NULL;
 	while (*cursor != '\0')
@@ -359,31 +431,37 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 		new_token->next = NULL;
 		new_token->type = 0;
 		new_token->value = NULL;
-		new_token->word = word_index;
+		new_token->word = word_index;  // Assign word index to each token
 		new_token->is_expanded = false;
+
+		// Handle heredoc operator <<
 		if (*cursor == '<' && *(cursor + 1) == '<')
 		{
 			new_token->type = TOKEN_OPERATOR;
 			cursor = check_operator(cursor, new_token);
 			in_heredoc = 1;
-			word_index++;
+			word_index++;  // Increment word index after an operator
 		}
+		// Handle double-quoted strings
 		else if (*cursor == '"')
 		{
 			cursor = extract_double_quoted_word(cursor, new_token, last_exit_status, data, in_heredoc);
 			new_token->type = TOKEN_WORD;
 		}
+		// Handle single-quoted strings
 		else if (*cursor == '\'')
 		{
 			cursor = extract_single_quoted_word(cursor, new_token);
 			new_token->type = TOKEN_WORD;
 		}
+		// Handle other operators like >, <, |, &
 		else if (*cursor == '>' || *cursor == '<' || *cursor == '|' || *cursor == '&')
 		{
 			new_token->type = TOKEN_OPERATOR;
 			cursor = check_operator(cursor, new_token);
-			word_index++;
+			word_index++;  // Increment word index after an operator
 		}
+		// Handle normal words and variables
 		else
 		{
 			start = cursor;
@@ -398,6 +476,8 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 			new_token->value = ft_strndup(start, length);
 			if (!new_token->value)
 				return (-1);
+
+			// Expand environment variables if not in a heredoc
 			if (!in_heredoc && ft_strchr(new_token->value, '$'))
 			{
 				expanded = expand_env_var_in_str(&new_token->value, last_exit_status, data);
@@ -414,17 +494,34 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 			if (in_heredoc)
 				in_heredoc = 0;
 		}
+
+		// Add the token to the token list
 		if (!data->tokens)
 			data->tokens = new_token;
 		else
 			current->next = new_token;
 		current = new_token;
+
+		// Increment word_index when we hit spaces or operators
 		if (isspace(*cursor) || *cursor == '|' || *cursor == '&' || *cursor == '>' || *cursor == '<')
 			word_index++;
+
 		cursor = skip_spaces(cursor);
 	}
+
+	//print_tokens(data->tokens);
 	split_expanded_tokens_by_spaces(data);
 	//print_tokens(data->tokens);
 	join_tokens_in_same_word(data);
+	//print_tokens(data->tokens);
+
+	// Check if the first token is a pipe
+	if (data->tokens && data->tokens->type == TOKEN_OPERATOR && strcmp(data->tokens->value, "|") == 0)
+	{
+		ft_fprintf(2, ": syntax error near unexpected token `%s'\n", data->tokens->value);
+		data->last_exit_status = 2;
+		return (-1);
+	}
+
 	return (0);
 }

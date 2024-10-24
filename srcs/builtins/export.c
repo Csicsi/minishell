@@ -48,10 +48,8 @@ static int	add_new_var(char ***env_vars, const char *varname_value)
 	env_count = 0;
 	while ((*env_vars)[env_count] != NULL)
 		env_count++;
-	new_env_vars = ft_realloc(*env_vars,
-			(env_count + 1) * sizeof(char *),
-			(env_count + 2) * sizeof(char *));
-	if (!new_env_vars)
+	sorted_env_vars = malloc((env_count + 1) * sizeof(char *));
+	if (!sorted_env_vars)
 		return (1);
 	new_env_vars[env_count] = ft_strdup(varname_value);
 	if (!new_env_vars[env_count])
@@ -84,11 +82,12 @@ static int	process_export_argument(const char *varname_value, t_data *data)
 		free(varname);
 		return (handle_invalid_identifier(varname_value));
 	}
-	ret = find_and_update_var(data->env_vars, varname, varname_value);
-	if (ret == 2)
-		ret = add_new_var(&data->env_vars, varname_value);
-	free(varname);
-	return (ret);
+	sorted_env_vars[env_count] = NULL;
+
+	sort_env_vars(sorted_env_vars, env_count);
+	print_sorted_env_vars(sorted_env_vars);
+	free(sorted_env_vars);
+	return (0);
 }
 
 int	builtin_export(t_cmd *cmd, t_data *data)
@@ -102,8 +101,55 @@ int	builtin_export(t_cmd *cmd, t_data *data)
 	arg = 1;
 	while (cmd->args[arg] != NULL)
 	{
-		if (process_export_argument(cmd->args[arg], data))
+		varname_value = cmd->args[arg];
+		equal_sign = ft_strchr(varname_value, '=');
+		if (equal_sign)
+			varname = ft_substr(varname_value, 0, equal_sign - varname_value);
+		else
+			varname = ft_strdup(varname_value);
+
+		if (!is_valid_env_var_name(varname) || *varname == '\0')
+		{
+			fprintf(stderr, ": export: `%s': not a valid identifier\n", varname_value);
+			free(varname);
 			encountered_invalid_varname = 1;
+			arg++;
+			continue ;
+		}
+
+		i = 0;
+		while (data->env_vars[i] != NULL)
+		{
+			if (ft_strncmp(data->env_vars[i], varname, ft_strlen(varname)) == 0
+				&& (data->env_vars[i][ft_strlen(varname)] == '='
+				|| data->env_vars[i][ft_strlen(varname)] == '\0'))
+				break ;
+			i++;
+		}
+
+		if (data->env_vars[i] != NULL)
+		{
+			if (ft_strchr(varname_value, '='))
+			{
+				free(data->env_vars[i]);
+				data->env_vars[i] = ft_strdup(varname_value);
+				if (!data->env_vars[i])
+					return (1);
+			}
+		}
+		else
+		{
+			env_count = i;
+			data->env_vars = ft_realloc(data->env_vars, (env_count + 1) * sizeof(char *),
+					(env_count + 2) * sizeof(char *));
+			if (!data->env_vars)
+				return (1);
+			data->env_vars[env_count] = ft_strdup(varname_value);
+			if (!data->env_vars[env_count])
+				return (1);
+			data->env_vars[env_count + 1] = NULL;
+		}
+		free(varname);
 		arg++;
 	}
 	if (encountered_invalid_varname == 1)

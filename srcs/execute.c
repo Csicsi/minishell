@@ -47,26 +47,39 @@ int	execute_single_cmd(t_cmd *cmd, t_data *data)
 		dup2(fd_out, STDOUT_FILENO);
 		close(fd_out);
 	}
-	while (cmd->args[i] && *(cmd->args[i]) == '\0')
-		i++;
-	if (cmd->args[i] == NULL || *(cmd->args[i]) == '\0')
-	{
-		ft_fprintf(2, ": %s: command not found\n", cmd->args[i]);
-		cleanup_data(data, true);
-		return (127);
-	}
 	if (is_builtin(cmd->args[i]))
 		return (execute_builtin(cmd, data, false));
 	cmd_path = find_cmd_path(cmd->args + i, data);
 	if (!cmd_path)
 	{
-		ft_fprintf(2, ": %s: command not found\n", cmd->args[i]);
+		if (ft_strchr(cmd->args[i], '/'))
+			ft_fprintf(2, ": %s: No such file or directory\n", cmd->args[i]);
+		else
+			ft_fprintf(2, ": %s: command not found\n", cmd->args[i]);
 		cleanup_data(data, true);
 		return (127);
 	}
-	execve(cmd_path, cmd->args + i, data->env_vars);
-	if (!(*(cmd->args[i]) == '\0'))
-		perror("minishell");
+	if (update_last_command_env_var(data, cmd_path) == -1)
+	{
+		free(cmd_path);
+		cleanup_data(data, true);
+		return (1);
+	}
+	if (execve(cmd_path, cmd->args + i, data->env_vars) == -1)
+	{
+		if (ft_strchr(cmd->args[i], '/'))
+		{
+			ft_fprintf(2, ": %s: Is a directory\n", cmd->args[i]);
+			cleanup_data(data, true);
+			return (126);
+		}
+		else
+		{
+			ft_fprintf(2, ": %s: command not found\n", cmd->args[i]);
+			cleanup_data(data, true);
+			return (127);
+		}
+	}
 	free(cmd_path);
 	cleanup_data(data, true);
 	exit(EXIT_FAILURE);
@@ -83,13 +96,14 @@ int	execute_cmd_list(t_data *data)
 	pid_t		*child_pids;
 	int			i;
 	int			fd_out;
+	char		*output_dir;
 
 	num_children = 0;
 	num_commands = count_cmds(data->cmd_list);
 	child_pids = malloc(sizeof(pid_t) * num_commands);
 	if (!child_pids)
 	{
-		perror("minishell: malloc");
+		perror(": malloc");
 		return (1);
 	}
 	current = data->cmd_list;
@@ -105,6 +119,65 @@ int	execute_cmd_list(t_data *data)
 		data->last_exit_status = execute_builtin(current, data, false);
 	while (current != NULL)
 	{
+		t_token *input_token = NULL;
+		t_token *output_token = NULL;
+		if (current->input)
+		{
+			input_token = find_token_by_value(data->tokens, current->input);
+		}
+		if (current->output)
+		{
+			output_token = find_token_by_value(data->tokens, current->output);
+		}
+		if (input_token && output_token)
+		{
+			if (input_token->word < output_token->word)
+			{
+				if (access(current->input, F_OK) != 0)
+				{
+					ft_fprintf(2, ": %s: No such file or directory\n", current->input);
+					data->last_exit_status = 1;
+					current = current->next;
+					continue;
+				}
+			}
+			else
+			{
+				output_dir = get_directory_from_path(current->output);
+				if (output_dir && access(output_dir, F_OK) != 0)
+				{
+					ft_fprintf(2, ": %s: No such file or directory\n", current->output);
+					data->last_exit_status = 1;
+					free(output_dir);
+					current = current->next;
+					continue;
+				}
+				free(output_dir);
+			}
+		}
+		else if (input_token)
+		{
+			if (access(current->input, F_OK) != 0)
+			{
+				ft_fprintf(2, ": %s: No such file or directory\n", current->input);
+				data->last_exit_status = 1;
+				current = current->next;
+				continue;
+			}
+		}
+		else if (output_token)
+		{
+			output_dir = get_directory_from_path(current->output);
+			if (output_dir && access(output_dir, F_OK) != 0)
+			{
+				ft_fprintf(2, ": %s: No such file or directory\n", current->output);
+				data->last_exit_status = 1;
+				free(output_dir);
+				current = current->next;
+				continue;
+			}
+			free(output_dir);
+		}
 		if (current->next != NULL)
 			pipe(pipe_fd);
 		pid = fork();
@@ -177,7 +250,7 @@ int	execute_cmd_list(t_data *data)
 		}
 		else
 		{
-			perror("minishell: fork");
+			perror(": fork");
 			cleanup_data(data, true);
 			free(child_pids);
 			return (1);
@@ -197,158 +270,36 @@ int	execute_cmd_list(t_data *data)
 	return (data->last_exit_status);
 }
 
-/*
-t_cmd	*parse_tokens(t_data *data)
+void print_parsed_commands(t_command *cmd_list)
 {
-	t_cmd	*cmd;
-	t_cmd	*current_cmd;
-	int			arg_index;
-	int			words_count;
-	t_token		*tmp;
+	t_command *current_cmd;
+	int i;
 
-	cmd = malloc(sizeof(t_cmd));
-	if (!cmd)
-		return (NULL);
-	current_cmd = cmd;
-	arg_index = 0;
-	words_count = count_words(data->tokens);
-	current_cmd->args = ft_calloc(words_count + 1, sizeof(char *));
-	if (!current_cmd->args)
-		return (NULL);
-	current_cmd->input = NULL;
-	current_cmd->output = NULL;
-	current_cmd->append_output = 0;
-	current_cmd->exit_status = 0;
-	current_cmd->heredoc_delim = NULL;
-	current_cmd->is_heredoc = false;
-	current_cmd->next = NULL;
-	tmp = data->tokens;
-	while (data->tokens)
+	current_cmd = cmd_list;
+	while (current_cmd)
 	{
-		if (data->tokens->type == TOKEN_WORD)
-			current_cmd->args[arg_index++] = ft_strdup(data->tokens->value);
-		else if (data->tokens->type == TOKEN_OPERATOR)
-		{
-			if (ft_strcmp(data->tokens->value, "<<") == 0)
-			{
-				current_cmd->is_heredoc = true;
-				if (data->tokens->next != NULL)
-				{
-					current_cmd->heredoc_delim = ft_strdup(data->tokens->next->value);
-					data->tokens = data->tokens->next;
-				}
-				else
-				{
-					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
-					data->last_exit_status = 2;
-					return (NULL);
-				}
-			}
-			else if (ft_strcmp(data->tokens->value, ">") == 0)
-			{
-				if (data->tokens->next != NULL)
-				{
-					current_cmd->output = ft_strdup(data->tokens->next->value);
-					data->tokens = data->tokens->next;
-					if (data->tokens->next != NULL)
-					{
-						if ((arg_index == 0) && !current_cmd->args[0])
-						{
-							current_cmd->args[arg_index++] = ft_strdup(data->tokens->next->value);
-							data->tokens = data->tokens->next;
-						}
-					}
-					else
-					{
-						if ((arg_index == 0) && !current_cmd->args[0])
-							current_cmd->args[arg_index++] = ft_strdup("");
-					}
-				}
-				else
-				{
-					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
-					data->last_exit_status = 2;
-					return (NULL);
-				}
-			}
-			else if (ft_strcmp(data->tokens->value, ">>") == 0)
-			{
-				if (data->tokens->next != NULL)
-				{
-					current_cmd->output = ft_strdup(data->tokens->next->value);
-					current_cmd->append_output = 1;
-					data->tokens = data->tokens->next;
-				}
-				else
-				{
-					ft_fprintf(2, "minishell: syntax error near unexpected token newline\n");
-					data->last_exit_status = 2;
-					return (NULL);
-				}
-			}
-			else if (ft_strcmp(data->tokens->value, "<") == 0)
-			{
-				if (data->tokens->next != NULL)
-				{
-					if (access(data->tokens->next->value, F_OK) == 0)
-					{
-						current_cmd->input = ft_strdup(data->tokens->next->value);
-						data->tokens = data->tokens->next;
-						if (data->tokens->next == NULL || data->tokens->next->type == TOKEN_OPERATOR)
-						{
-							if (data->tokens->next)
-								ft_fprintf(2, "%s: command not found\n", data->tokens->next->value);
-							else
-								ft_fprintf(2, "command: command not found\n");
-							return (NULL);
-						}
-					}
-					else
-					{
-						ft_fprintf(2, ": %s: No such file or directory\n", data->tokens->next->value);
-						return (NULL);
-					}
-					while (data->tokens && ft_strcmp(data->tokens->value, "|") != 0)
-						data->tokens = data->tokens->next;
-				}
-				else
-				{
-					ft_fprintf(2, ": syntax error near unexpected token newline\n");
-					data->last_exit_status = 2;
-					return (NULL);
-				}
-			}
-			else if (ft_strcmp(data->tokens->value, "|") == 0)
-			{
-				current_cmd->args[arg_index] = NULL;
-				current_cmd->next = malloc(sizeof(t_cmd));
-				if (!current_cmd->next)
-					return (NULL);
-				current_cmd = current_cmd->next;
-				arg_index = 0;
-				words_count = count_words(data->tokens);
-				current_cmd->args = malloc(sizeof(char *) * (words_count + 1));
-				if (!current_cmd->args)
-					return (NULL);
-				current_cmd->input = NULL;
-				current_cmd->output = NULL;
-				current_cmd->append_output = 0;
-				current_cmd->exit_status = 0;
-				current_cmd->heredoc_delim = NULL;
-				current_cmd->is_heredoc = false;
-				current_cmd->next = NULL;
-				arg_index = 0;
-			}
-		}
-		if (data->tokens)
-			data->tokens = data->tokens->next;
+		printf("Command:\n");
+		for (i = 0; current_cmd->args[i]; i++)
+			printf("  Arg[%d]: %s\n", i, current_cmd->args[i]);
+		if (current_cmd->input)
+			printf("  Input: %s\n", current_cmd->input);
+		if (current_cmd->output)
+			printf("  Output: %s\n", current_cmd->output);
+		if (current_cmd->is_heredoc)
+			printf("  Heredoc Delim: %s\n", current_cmd->heredoc_delim);
+		current_cmd = current_cmd->next;
 	}
-	current_cmd->args[arg_index] = NULL;
-	data->tokens = tmp;
-	free_tokens(data);
-	return (cmd);
 }
-*/
+
+void print_env_vars(char **env_vars)
+{
+	int i = 0;
+	while (env_vars[i])
+	{
+		printf("%s\n", env_vars[i]);
+		i++;
+	}
+}
 
 int	main(int argc, char **argv, char **env_vars)
 {
@@ -358,10 +309,45 @@ int	main(int argc, char **argv, char **env_vars)
 		return (1);
 	while (1)
 	{
-		if (get_input_line(&data) == NULL)
-			return (cleanup_data(&data, true), data.last_exit_status);
-		if (lexer(data.input, &data, data.last_exit_status) == -1
-			|| check_commands_in_tokens(data.tokens, &data) == -1)
+		if (isatty(0))
+		{
+			data.input = readline("Don'tPanicShell> ");
+		}
+		else
+		{
+			data.input = get_next_line(0);
+			if (data.input == NULL)
+			{
+				cleanup_data(&data, true);
+				return (data.last_exit_status);
+			}
+			// Check if the last character is a newline and remove it
+			size_t len = ft_strlen(data.input);
+			if (len > 0 && data.input[len - 1] == '\n')
+				data.input[len - 1] = '\0';
+		}
+		if (data.input == NULL)
+		{
+			if (isatty(0))
+				ft_fprintf(2, "exit\n");
+			cleanup_data(&data, true);
+			return (data.last_exit_status);
+		}
+		if (isatty(0) && *data.input)
+			add_history(data.input);
+		in_quote = check_for_unclosed_quotes(data.input);
+		if (in_quote == 1)
+		{
+			ft_fprintf(2, "syntax error: unclosed quote\n");
+			cleanup_data(&data, true);
+			continue;
+		}
+		if (lexer(data.input, &data, data.last_exit_status) == -1)
+		{
+			cleanup_data(&data, true);
+			continue ;
+		}
+		if (check_commands_in_tokens(data.tokens, &data) == -1)
 		{
 			cleanup_data(&data, false);
 			continue ;

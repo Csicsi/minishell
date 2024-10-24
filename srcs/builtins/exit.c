@@ -1,8 +1,4 @@
-
-#include "../includes/minishell.h"
-
-#include <limits.h>
-#include <ctype.h>
+#include "../../includes/minishell.h"
 
 int	ft_strisnum(const char *str)
 {
