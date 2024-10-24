@@ -54,6 +54,7 @@ int	ft_fprintf(int fd, const char *format, ...)
 	int			i;
 	int			count;
 	const char	*str;
+	int			j;
 
 	i = 0;
 	count = 0;
@@ -64,7 +65,34 @@ int	ft_fprintf(int fd, const char *format, ...)
 		{
 			str = va_arg(args, const char *);
 			if (str)
-				count += write(fd, str, ft_strlen(str));
+			{
+				j = 0;
+				while (str[j])
+				{
+					if (str[j] == '\t')  // Detect tab characters
+					{
+						int tab_count = 0;
+
+						// Count consecutive tab characters
+						while (str[j] == '\t')
+						{
+							tab_count++;
+							j++;
+						}
+
+						// Write the appropriate number of tabs in one sequence
+						count += write(fd, "$'\\t", 4);  // Start the escape sequence
+						for (int k = 1; k < tab_count; k++)
+							count += write(fd, "\\t", 3);  // Add extra tabs
+						count += write(fd, "'", 1);  // Close the escape sequence
+					}
+					else
+					{
+						count += write(fd, &str[j], 1);  // Write normal characters
+						j++;
+					}
+				}
+			}
 			i += 2;
 		}
 		else

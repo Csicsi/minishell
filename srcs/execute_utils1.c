@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/24 08:44:06 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/24 18:58:32 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,12 @@ static void	handle_sigint(int sig)
 	rl_redisplay();
 }
 
-static char	**duplicate_env_vars(char **env_vars)
+char	**duplicate_env_vars(char **env_vars)
 {
 	int		i;
 	char	**new_env_vars;
+	char	*shlvl_str;
+	int		shlvl_value;
 
 	i = 0;
 	while (env_vars[i] != NULL)
@@ -35,7 +37,16 @@ static char	**duplicate_env_vars(char **env_vars)
 	i = 0;
 	while (env_vars[i] != NULL)
 	{
-		new_env_vars[i] = ft_strdup(env_vars[i]);
+		if (ft_strncmp(env_vars[i], "SHLVL=", 6) == 0)
+		{
+			shlvl_value = ft_atoi(env_vars[i] + 6);
+			shlvl_value++;
+			shlvl_str = ft_strjoin("SHLVL=", ft_itoa(shlvl_value));
+
+			new_env_vars[i] = shlvl_str;
+		}
+		else
+			new_env_vars[i] = ft_strdup(env_vars[i]);
 		if (!new_env_vars[i])
 		{
 			while (i-- > 0)

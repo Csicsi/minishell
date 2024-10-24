@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/21 09:21:16 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/24 19:00:15 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,12 @@ char	*find_cmd_path(char **cmd_args, t_data *data)
 	char	*path_env;
 	char	*path_for_execve;
 
+	if (ft_strchr(cmd_args[0], '/') != NULL)
+	{
+		if (access(cmd_args[0], F_OK | X_OK) != 0)
+			return (NULL);
+		return (ft_strdup(cmd_args[0]));
+	}
 	if (access(cmd_args[0], F_OK | X_OK) == 0)
 		return (ft_strdup(cmd_args[0]));
 	path_env = ft_getenv(ft_strdup("PATH"), data->env_vars);
