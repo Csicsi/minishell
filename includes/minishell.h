@@ -18,6 +18,13 @@
 # include <readline/history.h>
 # include "../libft/libft.h"
 
+typedef enum e_in_out_flag
+{
+	IO_NONE_OR_SINGLE,
+	IO_INPUT_FIRST,
+	IO_OUTPUT_FIRST
+}	t_in_out_flag;
+
 typedef struct s_cmd
 {
 	char			**args;
@@ -28,6 +35,8 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 	char			*heredoc_delim;
 	bool			is_heredoc;
+	bool			io_error;
+	t_in_out_flag	io_flag;
 }	t_cmd;
 
 typedef enum e_token_type
@@ -76,7 +85,7 @@ bool		initialize(t_data *data, char **env_vars, int argc, char **argv);
 char		*get_input_line(t_data *data);
 int			check_for_unclosed_quotes(char *cursor);
 /* execute_utils2.c */
-int			check_commands_in_tokens(t_token *tokens, t_data *data);
+int			validate_token_syntax(t_token *tokens, t_data *data);
 int			count_cmds(t_cmd *cmd_list);
 int			count_words(t_token *tokens);
 /* execute_utils3.c */

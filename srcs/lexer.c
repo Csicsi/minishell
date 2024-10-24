@@ -270,7 +270,8 @@ void	print_tokens(t_token *tokens)
 	current = tokens;
 	while (current)
 	{
-		printf("type: %d, value: %s, word: %d, is_expanded: %d\n", current->type, current->value, current->word, current->is_expanded);
+		const char *type_str = (current->type == 0) ? "WORD" : "OPERATOR";
+		printf("type: %s, value: %s, word: %d, is_expanded: %d\n", type_str, current->value, current->word, current->is_expanded);
 		current = current->next;
 	}
 }
@@ -417,7 +418,7 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 
 	cursor = input;
 	current = NULL;
-	word_index = 0;  // This tracks the position of tokens
+	word_index = 0;
 	in_heredoc = 0;
 	data->tokens = NULL;
 	while (*cursor != '\0')
@@ -514,14 +515,6 @@ int	lexer(char *input, t_data *data, int last_exit_status)
 	//print_tokens(data->tokens);
 	join_tokens_in_same_word(data);
 	//print_tokens(data->tokens);
-
-	// Check if the first token is a pipe
-	if (data->tokens && data->tokens->type == TOKEN_OPERATOR && strcmp(data->tokens->value, "|") == 0)
-	{
-		ft_fprintf(2, ": syntax error near unexpected token `%s'\n", data->tokens->value);
-		data->last_exit_status = 2;
-		return (-1);
-	}
 
 	return (0);
 }

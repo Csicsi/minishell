@@ -11,6 +11,5 @@
 		"minishell.h": "c",
 		"typeinfo": "c",
 		"cstdlib": "c"
-		"ctype.h": "c"
 	}
 }

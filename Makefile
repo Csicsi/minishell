@@ -13,7 +13,6 @@ SRCS = srcs/lexer.c \
 	   srcs/execute_utils3.c \
 	   srcs/execute_utils4.c \
 	   srcs/execute_parse_tokens_utils1.c \
-	   srcs/execute_parse_tokens_utils2.c \
 	   srcs/cleanup.c \
 	   srcs/builtins/echo.c \
 	   srcs/builtins/cd.c \
