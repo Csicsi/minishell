@@ -1,4 +1,3 @@
-
 #include "../../includes/minishell.h"
 
 int	ft_strisnum(const char *str)
@@ -56,7 +55,7 @@ int	ft_strisnum(const char *str)
 	return (1);
 }
 
-int	builtin_exit(t_command *cmd, t_data *data, bool print_exit)
+int	builtin_exit(t_cmd *cmd, t_data *data, bool print_exit)
 {
 	data->exit_flag = true;
 	if (isatty(STDIN_FILENO) && print_exit)

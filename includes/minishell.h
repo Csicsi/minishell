@@ -18,17 +18,17 @@
 # include <readline/history.h>
 # include "../libft/libft.h"
 
-typedef struct s_command
+typedef struct s_cmd
 {
-	char				**args;
-	char				*input;
-	char				*output;
-	int					append_output;
-	int					exit_status;
-	struct s_command	*next;
-	char				*heredoc_delim;
-	bool				is_heredoc;
-}	t_command;
+	char			**args;
+	char			*input;
+	char			*output;
+	int				append_output;
+	int				exit_status;
+	struct s_cmd	*next;
+	char			*heredoc_delim;
+	bool			is_heredoc;
+}	t_cmd;
 
 typedef enum e_token_type
 {
@@ -55,38 +55,79 @@ typedef struct s_data
 	char		*input;
 	char		**env_vars;
 	t_token		*tokens;
-	t_command	*cmd_list;
+	t_cmd	*cmd_list;
 }	t_data;
 
-/* functions pertaining to lexer.c */
+/* ********************************** */
+/* functions pertaining to lexer.c    */
+/* ********************************** */
 int			lexer(char *input, t_data *data, int last_exit_status);
 void		cleanup_data(t_data *data, bool free_env);
 void		free_tokens(t_data *data);
-t_command	*parse_tokens(t_data *data);
 int			count_tokens(t_token *tokens);
-//char		*expand_env_var(char *cursor, int last_exit_status);
-//char		*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status);
 char		*expand_env_var(char *cursor, int last_exit_status, t_data *data);
 char		*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *data);
-/* functions pertaining to lexer.c */
+
+/* ********************************** */
+/* functions pertaining to execute.c  */
+/* ********************************** */
+/* execute_utils1.c */
+bool		initialize(t_data *data, char **env_vars, int argc, char **argv);
+char		*get_input_line(t_data *data);
+/* execute_utils2.c */
+int			check_commands_in_tokens(t_token *tokens, t_data *data);
+int			count_cmds(t_cmd *cmd_list);
+int			count_words(t_token *tokens);
+/* execute_utils3.c */
+int			is_builtin(char *command_name);
+int			execute_builtin(t_cmd *cmd, t_data *data, bool print_exit);
+int			handle_heredoc(t_cmd *cmd);
+char		*find_cmd_path(char **cmd_args, t_data *data);
+/* execute_parse_tokens_utils1.c */
+t_cmd		*parse_tokens(t_data *data);
+/* execute_parse_tokens_utils2.c */
+int 		case_redirection(t_cmd *cur_cmd, int *arg_index, t_data *data);
+
+
+/* ********************************** */
 /* implementing the builtin functions */
-int			builtin_echo(t_command *cmd);
-int			builtin_cd(t_command *cmd, t_data *data);
-int			builtin_pwd(void);
-int			builtin_export(t_command *cmd, t_data *data);
-int			builtin_unset(t_command *cmd, t_data *data);
-int			builtin_env(t_data *data);
-int			builtin_exit(t_command *cmd, t_data *data, bool print_exit);
+/* ********************************** */
+/* echo.c         */
+int			builtin_echo(t_cmd *cmd);
+/* cd.c           */
+int			builtin_cd(t_cmd *cmd, t_data *data);
+/* cd_utils1.c    */
 char		*resolve_cdpath_if_needed(const char *path, t_data *data);
-int			update_directory_env(const char *cwd, t_data *data);
-char		*normalize_path(const char *path);
-/* pure utilities/ helper functions */
+/* cd_utils2.c    */
+int			ft_setenv(const char *varname, const char *value, t_data *data);
+/* cd_utils3.c    */
+//char		*ft_realpath(const char *path, char *resolved_path);
+/* pwd.c          */
+int			builtin_pwd(void);
+/* export.c       */
+int			builtin_export(t_cmd *cmd, t_data *data);
+/* export_utils.c */
+int			handle_export_wo_args(t_cmd *cmd, t_data *data);
+int			is_valid_env_var_name(const char *name);
+/* unset.c        */
+int			builtin_unset(t_cmd *cmd, t_data *data);
+/* env.c          */
+int			builtin_env(t_data *data);
+/* exit.c         */
+int			builtin_exit(t_cmd *cmd, t_data *data, bool print_exit);
+
+/* ********************************** */
+/* cleanup.c 						  */
+/* ********************************** */
+void		free_string_array(char **string_array);
+
+/* ********************************** */
+/* pure utilities/ helper functions   */
+/* ********************************** */
 int			ft_fprintf(int fd, const char *format, ...);
 char		*ft_strjoin_pipex(char *s1, char *s2);
-void		free_string_array(char **string_array);
 char		*free_null(char *str);
 char		*ft_getenv(char *look_for_match, char **envp);
-int			ft_setenv(const char *varname, const char *value, t_data *data);
 char		*ft_strndup(const char *s, size_t n);
 char		*ft_strcpy(char *dest, const char *src);
 void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);

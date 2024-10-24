@@ -1,140 +1,6 @@
 #include "../includes/minishell.h"
 
-int	is_builtin(char *command_name)
-{
-	if (!command_name)
-		return (0);
-	if (ft_strncmp(command_name, "cd", 3) == 0)
-		return (1);
-	else if (ft_strncmp(command_name, "echo", 5) == 0)
-		return (1);
-	else if (ft_strncmp(command_name, "exit", 5) == 0)
-		return (1);
-	else if (ft_strncmp(command_name, "env", 4) == 0)
-		return (1);
-	else if (ft_strncmp(command_name, "export", 7) == 0)
-		return (1);
-	else if (ft_strncmp(command_name, "unset", 6) == 0)
-		return (1);
-	else if (ft_strncmp(command_name, "pwd", 4) == 0)
-		return (1);
-	return (0);
-}
-
-int	execute_builtin(t_command *cmd, t_data *data, bool print_exit)
-{
-	if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
-		return (builtin_cd(cmd, data));
-	else if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
-		return (builtin_echo(cmd));
-	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
-		return (builtin_exit(cmd, data, print_exit));
-	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
-		return (builtin_env(data));
-	else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
-		return (builtin_export(cmd, data));
-	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
-		return (builtin_unset(cmd, data));
-	else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
-		return (builtin_pwd());
-	return (1);
-}
-
-char	*find_cmd_path(char **cmd_args, t_data *data)
-{
-	int		i;
-	char	**allpath;
-	char	*path_env;
-	char	*path_for_execve;
-
-	if (access(cmd_args[0], F_OK | X_OK) == 0)
-		return (ft_strdup(cmd_args[0]));
-	path_env = ft_getenv(ft_strdup("PATH"), data->env_vars);
-	if (!path_env)
-		return (NULL);
-	allpath = ft_split(path_env, ':');
-	i = -1;
-	while (allpath[++i])
-	{
-		path_for_execve = ft_strjoin_pipex(allpath[i], cmd_args[0]);
-		if (access(path_for_execve, F_OK | X_OK) == 0)
-			return (free_string_array(allpath), path_for_execve);
-		path_for_execve = free_null(path_for_execve);
-	}
-	return (free_string_array(allpath), NULL);
-}
-
-int	handle_heredoc(t_command *cmd)
-{
-	int		pipe_fd[2];
-	char	*line;
-
-	if (pipe(pipe_fd) == -1)
-	{
-		perror("pipe");
-		return (-1);
-	}
-
-	while (true)
-	{
-		if (isatty(0))
-			write(1, "> ", 2);
-		line = get_next_line(0);
-
-		if (line && line[ft_strlen(line) - 1] == '\n')
-			line[ft_strlen(line) - 1] = '\0';
-
-		if (!line || ft_strcmp(line, cmd->heredoc_delim) == 0)
-		{
-			free(line);
-			break ;
-		}
-
-		write(pipe_fd[1], line, ft_strlen(line));
-		write(pipe_fd[1], "\n", 1);
-		free(line);
-	}
-
-	close(pipe_fd[1]);
-
-	return (pipe_fd[0]);
-}
-
-int	update_last_command_env_var(t_data *data, char *cmd_path)
-{
-	int		i;
-	char	*new_var;
-	char	**new_env_vars;
-
-	i = 0;
-	new_var = ft_strjoin("_=", cmd_path);
-	while (data->env_vars[i])
-	{
-		if (ft_strncmp(data->env_vars[i], "_=", 2) == 0)
-		{
-			free(data->env_vars[i]);
-			data->env_vars[i] = new_var;
-			return (0);
-		}
-		i++;
-	}
-	new_env_vars = malloc(sizeof(char *) * (i + 2));
-	if (!new_env_vars)
-		return (-1);
-	i = 0;
-	while (data->env_vars[i])
-	{
-		new_env_vars[i] = data->env_vars[i];
-		i++;
-	}
-	new_env_vars[i] = new_var;
-	new_env_vars[i + 1] = NULL;
-	free(data->env_vars);
-	data->env_vars = new_env_vars;
-	return (0);
-}
-
-int	execute_single_cmd(t_command *cmd, t_data *data)
+int	execute_single_cmd(t_cmd *cmd, t_data *data)
 {
 	int		fd_in;
 	int		fd_out;
@@ -219,52 +85,9 @@ int	execute_single_cmd(t_command *cmd, t_data *data)
 	exit(EXIT_FAILURE);
 }
 
-int	count_commands(t_command *cmd_list)
-{
-	int	count;
-
-	count = 0;
-	while (cmd_list)
-	{
-		count++;
-		cmd_list = cmd_list->next;
-	}
-	return (count);
-}
-
-char	*get_directory_from_path(const char *path)
-{
-	int		i;
-	char	*dir;
-
-	i = ft_strlen(path) - 1;
-	while (i >= 0 && path[i] != '/')
-		i--;
-	if (i < 0)
-		return (NULL);
-	dir = ft_strndup(path, i);
-	if (!dir)
-		return (NULL);
-	return (dir);
-}
-
-t_token *find_token_by_value(t_token *tokens, const char *value)
-{
-    t_token *current = tokens;
-
-    while (current != NULL)
-    {
-        if (ft_strcmp(current->value, value) == 0)
-            return current;
-        current = current->next;
-    }
-
-    return NULL;
-}
-
 int	execute_cmd_list(t_data *data)
 {
-	t_command	*current;
+	t_cmd	*current;
 	int			pipe_fd[2];
 	int			prev_fd;
 	pid_t		pid;
@@ -276,7 +99,7 @@ int	execute_cmd_list(t_data *data)
 	char		*output_dir;
 
 	num_children = 0;
-	num_commands = count_commands(data->cmd_list);
+	num_commands = count_cmds(data->cmd_list);
 	child_pids = malloc(sizeof(pid_t) * num_commands);
 	if (!child_pids)
 	{
@@ -468,275 +291,6 @@ void print_parsed_commands(t_command *cmd_list)
 	}
 }
 
-t_command	*parse_tokens(t_data *data)
-{
-	t_command	*cmd;
-	t_command	*current_cmd;
-	int			arg_index;
-	int			words_count;
-	t_token		*tmp;
-	int			fd;
-	char		*output_dir;
-
-	cmd = malloc(sizeof(t_command));
-	if (!cmd)
-		return (NULL);
-	current_cmd = cmd;
-	arg_index = 0;
-	words_count = count_tokens(data->tokens);
-	current_cmd->args = ft_calloc(words_count + 1, sizeof(char *));
-	if (!current_cmd->args)
-		return (NULL);
-	current_cmd->input = NULL;
-	current_cmd->output = NULL;
-	current_cmd->append_output = 0;
-	current_cmd->exit_status = 0;
-	current_cmd->heredoc_delim = NULL;
-	current_cmd->is_heredoc = false;
-	current_cmd->next = NULL;
-	tmp = data->tokens;
-
-	while (data->tokens)
-	{
-		if (data->tokens->type == TOKEN_WORD)
-		{
-			current_cmd->args[arg_index++] = ft_strdup(data->tokens->value);
-		}
-		else if (data->tokens->type == TOKEN_OPERATOR)
-		{
-			if (ft_strcmp(data->tokens->value, "<<") == 0)
-			{
-				// Check for heredoc and skip over the next token (heredoc delimiter)
-				if (current_cmd->is_heredoc == false && data->tokens->next != NULL)
-				{
-					current_cmd->is_heredoc = true;
-					current_cmd->heredoc_delim = ft_strdup(data->tokens->next->value);
-					data->tokens = data->tokens->next;  // Skip over the delimiter
-				}
-				else
-				{
-					data->tokens = data->tokens->next;  // Skip operator and argument
-				}
-			}
-			else if (strcmp(data->tokens->value, ">") == 0)
-			{
-				output_dir = get_directory_from_path(data->tokens->next->value);
-				if (output_dir && access(output_dir, F_OK) != 0)
-				{
-					ft_fprintf(2, ": %s: No such file or directory\n", data->tokens->next->value);
-					data->last_exit_status = 1;
-					free(output_dir);
-					data->tokens = data->tokens->next;
-					continue;
-				}
-				free(output_dir);
-				fd = open(data->tokens->next->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
-				if (fd == -1)
-					return NULL;
-				close(fd);
-				if (data->tokens->next != NULL)
-				{
-					current_cmd->output = strdup(data->tokens->next->value);  // Set the output file name from the next token
-					data->tokens = data->tokens->next;
-				}
-				else
-				{
-					fprintf(stderr, ": syntax error near unexpected token `newline`\n");
-					return NULL;
-				}
-			}
-			else if (ft_strcmp(data->tokens->value, ">>") == 0)
-			{
-				// Skip if output is already set, otherwise set output and skip
-				if (current_cmd->output == NULL && data->tokens->next != NULL)
-				{
-					current_cmd->output = ft_strdup(data->tokens->next->value);
-					current_cmd->append_output = 1;
-					data->tokens = data->tokens->next;  // Skip over the output file
-				}
-				else
-				{
-					data->tokens = data->tokens->next;  // Skip operator and argument
-				}
-			}
-			else if (ft_strcmp(data->tokens->value, "<") == 0)
-			{
-				// Skip if input is already set, otherwise set input and skip
-				if (current_cmd->input == NULL && data->tokens->next != NULL)
-				{
-					current_cmd->input = ft_strdup(data->tokens->next->value);
-					data->tokens = data->tokens->next;  // Skip over the input file
-				}
-				else
-				{
-					data->tokens = data->tokens->next;  // Skip operator and argument
-				}
-			}
-			else if (ft_strcmp(data->tokens->value, "|") == 0)
-			{
-				// Start a new command when encountering a pipe
-				current_cmd->args[arg_index] = NULL;
-				current_cmd->next = malloc(sizeof(t_command));
-				if (!current_cmd->next)
-					return (NULL);
-				current_cmd = current_cmd->next;
-				arg_index = 0;
-				words_count = count_tokens(data->tokens);
-				current_cmd->args = malloc(sizeof(char *) * (words_count + 1));
-				if (!current_cmd->args)
-					return (NULL);
-				current_cmd->input = NULL;
-				current_cmd->output = NULL;
-				current_cmd->append_output = 0;
-				current_cmd->exit_status = 0;
-				current_cmd->heredoc_delim = NULL;
-				current_cmd->is_heredoc = false;
-				current_cmd->next = NULL;
-				arg_index = 0;
-			}
-		}
-		if (data->tokens)
-		{
-			data->tokens = data->tokens->next;
-		}
-	}
-	current_cmd->args[arg_index] = NULL;
-	data->tokens = tmp;
-	//print_parsed_commands(cmd);
-	return (cmd);
-}
-
-int	check_for_unclosed_quotes(char *cursor)
-{
-	int		in_quote;
-	char	quote_char;
-
-	in_quote = 0;
-	quote_char = '\0';
-	while (*cursor)
-	{
-		if ((*cursor == '"' || *cursor == '\'') && in_quote == 0)
-		{
-			in_quote = 1;
-			quote_char = *cursor;
-		}
-		else if (*cursor == quote_char && in_quote == 1)
-		{
-			in_quote = 0;
-		}
-		cursor++;
-	}
-	return (in_quote);
-}
-
-char	**duplicate_env_vars(char **env_vars)
-{
-	int		i;
-	char	**new_env_vars;
-	char	*shlvl_str;
-	int		shlvl_value;
-
-	// Count the number of environment variables
-	i = 0;
-	while (env_vars[i] != NULL)
-		i++;
-
-	// Allocate space for environment variables (i + 1 for NULL terminator)
-	new_env_vars = (char **)malloc((i + 1) * sizeof(char *));
-	if (!new_env_vars)
-		return (NULL);
-
-	// Copy the environment variables
-	i = 0;
-	while (env_vars[i] != NULL)
-	{
-		// Check if the variable is SHLVL
-		if (ft_strncmp(env_vars[i], "SHLVL=", 6) == 0)
-		{
-			// Extract the current SHLVL value, increment it by 1, and update the value
-			shlvl_value = ft_atoi(env_vars[i] + 6);  // Extract the numeric part of SHLVL
-			shlvl_value++;  // Increment SHLVL by 1
-			shlvl_str = ft_strjoin("SHLVL=", ft_itoa(shlvl_value));  // Create the new SHLVL string
-
-			new_env_vars[i] = shlvl_str;  // Store the updated SHLVL
-		}
-		else
-		{
-			new_env_vars[i] = ft_strdup(env_vars[i]);  // Copy the environment variable
-		}
-
-		if (!new_env_vars[i])  // Handle memory allocation failure
-		{
-			while (i-- > 0)
-				free(new_env_vars[i]);
-			free(new_env_vars);
-			return (NULL);
-		}
-		i++;
-	}
-
-	// Set the final NULL terminator
-	new_env_vars[i] = NULL;
-	return (new_env_vars);
-}
-
-void	handle_sigint(int sig)
-{
-	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-}
-
-int	check_commands_in_tokens(t_token *tokens, t_data *data)
-{
-	t_token	*current;
-
-	current = tokens;
-	if (!current || (current->type != TOKEN_WORD && current->type != TOKEN_OPERATOR))
-		return (-1);
-	while (current)
-	{
-		if (current->type == TOKEN_OPERATOR && ft_strcmp(current->value, "|") == 0)
-		{
-			// If there is no token after '|', the error should mention '|'
-			if (!current->next)
-			{
-				ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current->value);
-				data->last_exit_status = 2;
-				return (-1);
-			}
-			current = current->next;
-			// If the next token is not a word or valid operator after '|'
-			if (!current || (current->type != TOKEN_WORD && (ft_strcmp(current->value, ">") != 0 && ft_strcmp(current->value, "<") != 0)))
-			{
-				if (current)
-					ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current->value);
-				else
-					ft_fprintf(2, ": syntax error near unexpected token `newline'\n");
-				data->last_exit_status = 2;
-				return (-1);
-			}
-		}
-		else if (current->type == TOKEN_OPERATOR && (ft_strcmp(current->value, ">") == 0 || ft_strcmp(current->value, ">>") == 0 || ft_strcmp(current->value, "<<") == 0 || ft_strcmp(current->value, "<") == 0))
-		{
-			current = current->next;
-			if (!current || current->type != TOKEN_WORD)
-			{
-				if (current)
-					ft_fprintf(2, ": syntax error near unexpected token `%s'\n", current->value);
-				else
-					ft_fprintf(2, ": syntax error near unexpected token `newline'\n");
-				data->last_exit_status = 2;
-				return (-1);
-			}
-		}
-		current = current->next;
-	}
-	return (0);
-}
-
 void print_env_vars(char **env_vars)
 {
 	int i = 0;
@@ -746,30 +300,13 @@ void print_env_vars(char **env_vars)
 		i++;
 	}
 }
+
 int	main(int argc, char **argv, char **env_vars)
 {
-	int		in_quote;
 	t_data	data;
 
-	(void)argc;
-	(void)argv;
-	signal(SIGINT, handle_sigint);
-	data.exit_flag = false;
-	data.last_exit_status = 0;
-	data.token_count = 0;
-	data.input = NULL;
-	data.env_vars = NULL;
-	data.tokens = NULL;
-	data.cmd_list = NULL;
-	data.env_vars = duplicate_env_vars(env_vars);
-	if (!data.env_vars)
-	{
-		printf("Error allocating memory for env_vars");
+ 	if (initialize(&data, env_vars, argc, argv))
 		return (1);
-	}
-	/*printf("#######################################################\n");
-	print_env_vars(data.env_vars);
-	printf("#######################################################\n");*/
 	while (1)
 	{
 		if (isatty(0))
@@ -823,11 +360,7 @@ int	main(int argc, char **argv, char **env_vars)
 		}
 		data.last_exit_status = execute_cmd_list(&data);
 		if (data.exit_flag == true)
-		{
-			cleanup_data(&data, true);
-			return (data.last_exit_status);
-		}
+			return (cleanup_data(&data, true), data.last_exit_status);
 	}
-	cleanup_data(&data, true);
-	return (0);
+	return (cleanup_data(&data, true), 0);
 }
