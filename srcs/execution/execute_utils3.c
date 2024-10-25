@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/24 19:00:15 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/10/25 15:11:51 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,13 +78,34 @@ int	handle_heredoc(t_cmd *cmd)
 	return (pipe_fd[0]);
 }
 
-char	*find_cmd_path(char **cmd_args, t_data *data)
+static char	*find_in_path(char *cmd, t_data *data)
 {
 	int		i;
 	char	**allpath;
 	char	*path_env;
 	char	*path_for_execve;
 
+	path_env = ft_getenv(ft_strdup("PATH"), data->env_vars);
+	if (!path_env)
+		return (NULL);
+	allpath = ft_split(path_env, ':');
+	i = -1;
+	while (allpath[++i])
+	{
+		path_for_execve = ft_strjoin_pipex(allpath[i], cmd);
+		if (access(path_for_execve, F_OK | X_OK) == 0)
+		{
+			free_string_array(allpath);
+			return (path_for_execve);
+		}
+		path_for_execve = free_null(path_for_execve);
+	}
+	free_string_array(allpath);
+	return (NULL);
+}
+
+char	*find_cmd_path(char **cmd_args, t_data *data)
+{
 	if (ft_strchr(cmd_args[0], '/') != NULL)
 	{
 		if (access(cmd_args[0], F_OK | X_OK) != 0)
@@ -93,17 +114,5 @@ char	*find_cmd_path(char **cmd_args, t_data *data)
 	}
 	if (access(cmd_args[0], F_OK | X_OK) == 0)
 		return (ft_strdup(cmd_args[0]));
-	path_env = ft_getenv(ft_strdup("PATH"), data->env_vars);
-	if (!path_env)
-		return (NULL);
-	allpath = ft_split(path_env, ':');
-	i = -1;
-	while (allpath[++i])
-	{
-		path_for_execve = ft_strjoin_pipex(allpath[i], cmd_args[0]);
-		if (access(path_for_execve, F_OK | X_OK) == 0)
-			return (free_string_array(allpath), path_for_execve);
-		path_for_execve = free_null(path_for_execve);
-	}
-	return (free_string_array(allpath), NULL);
+	return (find_in_path(cmd_args[0], data));
 }

@@ -6,27 +6,39 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/24 18:58:32 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/10/25 15:06:08 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static void	handle_sigint(int sig)
+char	*increment_shlvl(const char *shlvl_var)
 {
-	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+	int		shlvl_value;
+	char	*shlvl_value_str;
+	char	*shlvl_str;
+
+	shlvl_value = ft_atoi(shlvl_var + 6);
+	shlvl_value++;
+	shlvl_value_str = ft_itoa(shlvl_value);
+	if (!shlvl_value_str)
+		return (NULL);
+	shlvl_str = ft_strjoin("SHLVL=", shlvl_value_str);
+	free(shlvl_value_str);
+	return (shlvl_str);
+}
+
+char	*duplicate_env_var(char *env_var)
+{
+	if (ft_strncmp(env_var, "SHLVL=", 6) == 0)
+		return (increment_shlvl(env_var));
+	return (ft_strdup(env_var));
 }
 
 char	**duplicate_env_vars(char **env_vars)
 {
 	int		i;
 	char	**new_env_vars;
-	char	*shlvl_str;
-	int		shlvl_value;
 
 	i = 0;
 	while (env_vars[i] != NULL)
@@ -37,22 +49,12 @@ char	**duplicate_env_vars(char **env_vars)
 	i = 0;
 	while (env_vars[i] != NULL)
 	{
-		if (ft_strncmp(env_vars[i], "SHLVL=", 6) == 0)
-		{
-			shlvl_value = ft_atoi(env_vars[i] + 6);
-			shlvl_value++;
-			shlvl_str = ft_strjoin("SHLVL=", ft_itoa(shlvl_value));
-
-			new_env_vars[i] = shlvl_str;
-		}
-		else
-			new_env_vars[i] = ft_strdup(env_vars[i]);
+		new_env_vars[i] = duplicate_env_var(env_vars[i]);
 		if (!new_env_vars[i])
 		{
 			while (i-- > 0)
 				free(new_env_vars[i]);
-			free(new_env_vars);
-			return (NULL);
+			return (free(new_env_vars), NULL);
 		}
 		i++;
 	}
@@ -81,11 +83,13 @@ bool	initialize(t_data *data, char **env_vars, int argc, char **argv)
 	return (data->exit_flag);
 }
 
-int	check_for_unclosed_quotes(char *cursor)
+int	check_for_unclosed_quotes(t_data *data)
 {
 	int		in_quote;
 	char	quote_char;
+	char	*cursor;
 
+	cursor = data->input;
 	in_quote = 0;
 	quote_char = '\0';
 	while (*cursor)
@@ -102,25 +106,4 @@ int	check_for_unclosed_quotes(char *cursor)
 		cursor++;
 	}
 	return (in_quote);
-}
-
-char	*get_input_line(t_data *data)
-{
-	int		in_quote;
-	char	*input;
-
-	input = readline("Don'tPanicShell> ");
-	if (input == NULL)
-		return (NULL);
-	if (*input)
-		add_history(input);
-	in_quote = check_for_unclosed_quotes(input);
-	if (in_quote == 1)
-	{
-		ft_fprintf(2, "syntax error: unclosed quote\n");
-		free(input);
-		return (NULL);
-	}
-	data->input = input;
-	return (input);
 }

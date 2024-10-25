@@ -1,19 +1,34 @@
 #include "../../includes/minishell.h"
 
+int	ft_str_to_num(const char *str, unsigned long long max_value)
+{
+	unsigned long long	num;
+
+	num = 0;
+	while (*str && ft_isdigit((unsigned char)*str))
+	{
+		if (num > (max_value / 10))
+			return (0);
+		if (num == (max_value / 10)
+			&& (unsigned long long)(*str - '0') > (max_value % 10))
+			return (0);
+		num = num * 10 + (*str - '0');
+		str++;
+	}
+	while (*str && ft_isspace((unsigned char)*str))
+		str++;
+	return (*str == '\0');
+}
+
 int	ft_strisnum(const char *str)
 {
 	int					sign;
-	unsigned long long	num;
 	unsigned long long	max_value;
 
 	if (!str || !*str)
 		return (0);
-
-	// Skip leading whitespace
-	while (*str && isspace((unsigned char)*str))
+	while (*str && ft_isspace((unsigned char)*str))
 		str++;
-
-	// Handle sign
 	sign = 1;
 	if (*str == '+' || *str == '-')
 	{
@@ -21,38 +36,13 @@ int	ft_strisnum(const char *str)
 			sign = -1;
 		str++;
 	}
-
-	// Check if the string is empty after skipping sign
-	if (!*str || !isdigit((unsigned char)*str))
+	if (!*str || !ft_isdigit((unsigned char)*str))
 		return (0);
-
-	// Set max value depending on sign
 	if (sign == -1)
 		max_value = -(unsigned long long)LLONG_MIN;
 	else
 		max_value = LLONG_MAX;
-
-	num = 0;
-	while (*str && isdigit((unsigned char)*str))
-	{
-		if (num > (max_value / 10))
-			return (0);
-		if (num == (max_value / 10) && (unsigned long long)(*str - '0') > (max_value % 10))
-			return (0);
-
-		num = num * 10 + (*str - '0');
-		str++;
-	}
-
-	// Skip trailing whitespace
-	while (*str && isspace((unsigned char)*str))
-		str++;
-
-	// Ensure no extra characters are left after trailing spaces
-	if (*str != '\0')
-		return (0);
-
-	return (1);
+	return (ft_str_to_num(str, max_value));
 }
 
 int	builtin_exit(t_cmd *cmd, t_data *data, bool print_exit)

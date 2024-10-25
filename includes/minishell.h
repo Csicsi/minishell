@@ -63,27 +63,67 @@ typedef struct s_data
 	int			token_count;
 	char		*input;
 	char		**env_vars;
+	int			word_index;
+	bool		in_heredoc;
 	t_token		*tokens;
-	t_cmd	*cmd_list;
+	t_cmd		*cmd_list;
 }	t_data;
+
+typedef struct s_parse_context
+{
+	int		arg_index;
+	bool	has_input;
+	bool	has_output;
+}	t_parse_context;
+
+typedef struct s_exec_data
+{
+	int		*prev_fd;
+	int		pipe_fd[2];
+	int		*num_children;
+}	t_exec_data;
 
 /* ********************************** */
 /* functions pertaining to lexer.c    */
 /* ********************************** */
-int			lexer(char *input, t_data *data, int last_exit_status);
+int			lexer(t_data *data);
 void		cleanup_data(t_data *data, bool free_env);
 void		free_tokens(t_data *data);
 int			count_tokens(t_token *tokens);
+t_cmd		*initialize_cmd(void);
 char		*expand_env_var(char *cursor, int last_exit_status, t_data *data);
-char		*expand_env_var_in_str(char **ptr_to_cursor, int last_exit_status, t_data *data);
+char		*expand_env_var_in_str(char **ptr_to_cursor,
+				int last_exit_status, t_data *data);
+char		*extract_single_quoted_word(char *cursor, t_token *token);
+char		*extract_double_quoted_word(char *cursor,
+				t_token *token, t_data *data, int in_heredoc);
+int			calculate_expanded_length(char *cursor,
+				int last_exit_status, t_data *data);
+void		handle_expanded_tokens(t_data *data);
+void		join_tokens_in_same_word(t_data *data);
+t_token		*create_token(int type, int word_index);
+char		*check_operator(char *cursor, t_token *token);
+char		*create_and_add_token(char *cursor,
+				t_token **token_list, t_data *data);
+char		*handle_operator_or_quote(char *cursor,
+				t_token *new_token, t_data *data);
+char		*extract_unquoted_word(char *cursor, t_token *new_token);
+int			handle_env_variables(t_token *new_token, t_data *data);
 
 /* ********************************** */
 /* functions pertaining to execute.c  */
 /* ********************************** */
+
+/* execute.c */
+int			execute_cmd_list(t_data *data);
+int			validate_cmd_list(t_data *data);
+int			validate_syntax(t_data *data);
+int			check_for_brackets(t_data *data);
+int			execute_single_cmd(t_cmd *cmd, t_data *data);
 /* execute_utils1.c */
 bool		initialize(t_data *data, char **env_vars, int argc, char **argv);
 char		*get_input_line(t_data *data);
-int			check_for_unclosed_quotes(char *cursor);
+int			check_for_unclosed_quotes(t_data *data);
 /* execute_utils2.c */
 int			validate_token_syntax(t_token *tokens, t_data *data);
 int			count_cmds(t_cmd *cmd_list);
@@ -99,9 +139,10 @@ char		*get_directory_from_path(const char *path);
 t_token		*find_token_by_value(t_token *tokens, const char *value);
 /* execute_parse_tokens_utils1.c */
 t_cmd		*parse_tokens(t_data *data);
+bool		parse_single_token(t_data *data,
+				t_cmd **current_cmd, t_parse_context *context);
 /* execute_parse_tokens_utils2.c */
-int 		case_redirection(t_cmd *cur_cmd, int *arg_index, t_data *data);
-
+int			case_redirection(t_cmd *cur_cmd, int *arg_index, t_data *data);
 
 /* ********************************** */
 /* implementing the builtin functions */
@@ -145,5 +186,12 @@ char		*ft_getenv(char *look_for_match, char **envp);
 char		*ft_strndup(const char *s, size_t n);
 char		*ft_strcpy(char *dest, const char *src);
 void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);
+char		*skip_spaces(char *cursor);
+bool		is_all_spaces(char *str);
+
+/* ********************************** */
+/* signals.c 						  */
+/* ********************************** */
+void		handle_sigint(int sig);
 
 #endif

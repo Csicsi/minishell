@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/24 14:40:11 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/25 14:26:34 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,13 @@ static int	resolve_special_paths(t_cmd *cmd,
 {
 	char	*curpath;
 
-	(void)data;
 	curpath = NULL;
 	if (cmd->args[1] == NULL || (cmd->args[1]
 			&& ft_strncmp(cmd->args[1], "~", 2) == 0))
 	{
 		curpath = ft_getenv(ft_strdup("HOME"), data->env_vars);
 		if (curpath == NULL || *curpath == '\0')
-			return (ft_putstr_fd(": cd: HOME not set\n",
-					STDERR_FILENO), 1);
+			return (ft_putstr_fd(": cd: HOME not set\n", STDERR_FILENO), 1);
 	}
 	else if (cmd->args[1] && ft_strncmp(cmd->args[1], "-", 2) == 0)
 	{

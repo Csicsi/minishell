@@ -12,7 +12,7 @@ static void	ft_free(void **ptr)
 static void	free_cmd_list(t_cmd *cmd_list)
 {
 	t_cmd	*tmp;
-	int			i;
+	int		i;
 
 	while (cmd_list)
 	{
