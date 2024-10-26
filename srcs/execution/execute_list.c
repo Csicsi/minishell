@@ -33,6 +33,8 @@ int execute_cmd_list(t_data *data)
 									  ft_strcmp(current->args[0], "cd") == 0) && current->next == NULL))
 	{
 		data->last_exit_status = execute_builtin(current, data, false);
+		cleanup_data(data, true);
+		free(child_pids);
 		return data->last_exit_status;
 	}
 

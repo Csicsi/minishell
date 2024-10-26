@@ -9,7 +9,10 @@ char	*handle_unquoted_word(char *cursor,
 	if (!*in_heredoc && ft_strchr(new_token->value, '$'))
 	{
 		if (!handle_env_variables(new_token, data))
+		{
+			free(new_token->value);
 			return (NULL);
+		}
 	}
 	new_token->type = TOKEN_WORD;
 	if (*in_heredoc)
@@ -41,7 +44,7 @@ char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
 		return (NULL);
 	cursor = process_token(cursor, new_token, data);
 	if (!cursor)
-		return (free(new_token), NULL);
+		return (free(new_token->value), free(new_token), NULL);
 	if (!*token_list)
 		*token_list = new_token;
 	else
@@ -55,6 +58,7 @@ char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
 		data->word_index++;
 	return (cursor);
 }
+
 
 int	lexer(t_data *data)
 {

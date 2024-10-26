@@ -90,10 +90,10 @@ int	handle_env_variables(t_token *new_token, t_data *data)
 	if (!expanded)
 	{
 		free(new_token->value);
-		free(new_token);
 		return (0);
 	}
 	new_token->is_expanded = true;
+	free(new_token->value);
 	new_token->value = expanded;
 	return (1);
 }

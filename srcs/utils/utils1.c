@@ -36,10 +36,10 @@ char	*ft_getenv(char *env_var_name, char **envp)
 	char	*look_for_match;
 
 	look_for_match = ft_strjoin(env_var_name, "=");
-	free(env_var_name);
+	free_null(env_var_name);
 	len_match = ft_strlen(look_for_match);
 	i = 0;
-	while (envp[i] != NULL)
+	while (envp && envp[i] != NULL)
 	{
 		if (ft_strncmp(envp[i], look_for_match, len_match) == 0)
 			return (free(look_for_match), envp[i] + len_match);
