@@ -29,6 +29,7 @@ static void	free_cmd_list(t_cmd *cmd_list)
 		}
 		ft_free((void **)&cmd_list->input);
 		ft_free((void **)&cmd_list->output);
+		ft_free((void **)&cmd_list->heredoc_delim);
 		cmd_list = cmd_list->next;
 		ft_free((void **)&tmp);
 	}

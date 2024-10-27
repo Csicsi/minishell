@@ -5,7 +5,7 @@ static int	update_existing_env_var(char **env_vars, char *new_var)
 	int	i;
 
 	i = 0;
-	while (env_vars[i])
+	while (env_vars && env_vars[i])
 	{
 		if (ft_strncmp(env_vars[i], "_=", 2) == 0)
 		{
@@ -24,13 +24,13 @@ static int	add_new_env_var(t_data *data, char *new_var)
 	char	**new_env_vars;
 
 	i = 0;
-	while (data->env_vars[i])
+	while (data->env_vars && data->env_vars[i])
 		i++;
 	new_env_vars = malloc(sizeof(char *) * (i + 2));
 	if (!new_env_vars)
 		return (-1);
 	i = 0;
-	while (data->env_vars[i])
+	while (data->env_vars && data->env_vars[i])
 	{
 		new_env_vars[i] = data->env_vars[i];
 		i++;

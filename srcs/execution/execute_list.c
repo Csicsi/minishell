@@ -33,9 +33,9 @@ int execute_cmd_list(t_data *data)
 									  ft_strcmp(current->args[0], "cd") == 0) && current->next == NULL))
 	{
 		data->last_exit_status = execute_builtin(current, data, false);
-		cleanup_data(data, true);
+		cleanup_data(data, false);
 		free(child_pids);
-		return data->last_exit_status;
+		return (data->last_exit_status);
 	}
 
 	while (current != NULL)
@@ -76,6 +76,8 @@ int execute_cmd_list(t_data *data)
 				if (fd_out < 0)
 				{
 					ft_fprintf(2, "%s: Permission denied\n", current->output);
+					cleanup_data(data, true);
+					free(child_pids);
 					exit(1);
 				}
 				dup2(fd_out, STDOUT_FILENO);
@@ -107,7 +109,7 @@ int execute_cmd_list(t_data *data)
 		else
 		{
 			perror(": fork");
-			cleanup_data(data, true);
+			cleanup_data(data, false);
 			free(child_pids);
 			return (1);
 		}

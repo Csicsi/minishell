@@ -8,7 +8,7 @@ static int	find_and_update_var(char **env_vars,
 
 	varname_len = ft_strlen(varname);
 	i = 0;
-	while (env_vars[i] != NULL)
+	while (env_vars && env_vars[i] != NULL)
 	{
 		if (ft_strncmp(env_vars[i], varname, varname_len) == 0
 			&& (env_vars[i][varname_len] == '='
@@ -33,6 +33,12 @@ static int	add_new_var(char ***env_vars, const char *varname_value)
 	int		env_count;
 	char	**new_env_vars;
 
+	if (*env_vars == NULL)
+	{
+		*env_vars = ft_calloc(1, sizeof(char *));
+		if (!*env_vars)
+			return (1);
+	}
 	env_count = 0;
 	while ((*env_vars)[env_count] != NULL)
 		env_count++;
@@ -43,7 +49,7 @@ static int	add_new_var(char ***env_vars, const char *varname_value)
 		return (1);
 	new_env_vars[env_count] = ft_strdup(varname_value);
 	if (!new_env_vars[env_count])
-		return (1);
+		return (free(new_env_vars), 1);
 	new_env_vars[env_count + 1] = NULL;
 	*env_vars = new_env_vars;
 	return (0);
@@ -88,7 +94,7 @@ int	builtin_export(t_cmd *cmd, t_data *data)
 	if (cmd->args[1] == NULL)
 		return (handle_export_wo_args(cmd, data));
 	arg = 1;
-	while (cmd->args[arg] != NULL)
+	while (cmd->args && cmd->args[arg] != NULL)
 	{
 		if (process_export_argument(cmd->args[arg], data))
 			encountered_invalid_varname = 1;

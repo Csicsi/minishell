@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:55:16 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/20 11:09:57 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/10/26 08:18:44 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	find_env_var_index(const char *varname, t_data *data)
 	int	i;
 
 	i = 0;
-	while (data->env_vars[i] != NULL)
+	while (data->env_vars && data->env_vars[i] != NULL)
 	{
 		if (ft_strncmp(data->env_vars[i], varname, ft_strlen(varname)) == 0
 			&& (data->env_vars[i][ft_strlen(varname)] == '='
@@ -59,7 +59,7 @@ static int	add_new_env_var(char *varname_value, t_data *data)
 	int	env_count;
 
 	env_count = 0;
-	while (data->env_vars[env_count] != NULL)
+	while (data->env_vars && data->env_vars[env_count] != NULL)
 		env_count++;
 	data->env_vars = ft_realloc(data->env_vars,
 			(env_count + 1) * sizeof(char *), (env_count + 2) * sizeof(char *));

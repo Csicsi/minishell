@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/25 15:11:51 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/10/26 07:24:50 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ static char	*find_in_path(char *cmd, t_data *data)
 	while (allpath[++i])
 	{
 		path_for_execve = ft_strjoin_pipex(allpath[i], cmd);
+		if (!path_for_execve)
+			return (free_string_array(allpath), NULL);
 		if (access(path_for_execve, F_OK | X_OK) == 0)
 		{
 			free_string_array(allpath);
@@ -106,6 +108,8 @@ static char	*find_in_path(char *cmd, t_data *data)
 
 char	*find_cmd_path(char **cmd_args, t_data *data)
 {
+	if (!cmd_args || !cmd_args[0])
+		return (NULL);
 	if (ft_strchr(cmd_args[0], '/') != NULL)
 	{
 		if (access(cmd_args[0], F_OK | X_OK) != 0)

@@ -9,7 +9,7 @@ int	ft_write_formatted_str(int fd, const char *str)
 
 	count = 0;
 	j = 0;
-	while (str[j])
+	while (str && str[j])
 	{
 		if (str[j] == '\t')
 		{
@@ -38,7 +38,7 @@ int	ft_fprintf(int fd, const char *format, ...)
 	i = 0;
 	count = 0;
 	va_start(args, format);
-	while (format[i])
+	while (format && format[i])
 	{
 		if (format[i] == '%' && format[i + 1] == 's')
 		{
