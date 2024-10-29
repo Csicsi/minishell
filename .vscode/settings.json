@@ -10,6 +10,7 @@
 		"utility": "c",
 		"minishell.h": "c",
 		"typeinfo": "c",
-		"cstdlib": "c"
+		"cstdlib": "c",
+		"libft.h": "c"
 	}
 }

@@ -59,7 +59,6 @@ char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
 	return (cursor);
 }
 
-
 int	lexer(t_data *data)
 {
 	char	*cursor;

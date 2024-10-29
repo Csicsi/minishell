@@ -32,6 +32,22 @@ int	count_tokens(t_token *tokens)
 	return (count);
 }
 
+int	count_output_files(t_token *tokens)
+{
+	int	count;
+
+	count = 0;
+	while (tokens)
+	{
+		if (ft_strcmp(tokens->value, ">") == 0
+			|| ft_strcmp(tokens->value, ">>") == 0)
+			count++;
+		tokens = tokens->next;
+	}
+	printf("count_output_files: %d\n", count);
+	return (count);
+}
+
 t_cmd	*parse_tokens(t_data *data)
 {
 	int				words_count;

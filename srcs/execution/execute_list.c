@@ -12,6 +12,7 @@ int execute_cmd_list(t_data *data)
 	int i;
 	int io_error_status = 0;
 
+	handle_heredoc(data->cmd_list);
 	child_pids = malloc(sizeof(pid_t) * num_commands);
 	if (!child_pids)
 	{
@@ -75,7 +76,10 @@ int execute_cmd_list(t_data *data)
 					fd_out = open(current->output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				if (fd_out < 0)
 				{
-					ft_fprintf(2, "%s: Permission denied\n", current->output);
+					if (ft_strchr(current->output, '/') != NULL)
+						ft_fprintf(2, "%s: Is a directory\n", current->output);
+					else
+						ft_fprintf(2, "%s: Permission denied\n", current->output);
 					cleanup_data(data, true);
 					free(child_pids);
 					exit(1);

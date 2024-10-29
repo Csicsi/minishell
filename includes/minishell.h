@@ -36,6 +36,7 @@ typedef struct s_cmd
 	char			*heredoc_delim;
 	bool			is_heredoc;
 	bool			io_error;
+	char			*heredoc_tempfile;
 	t_in_out_flag	io_flag;
 }	t_cmd;
 
@@ -131,7 +132,7 @@ int			count_words(t_token *tokens);
 /* execute_utils3.c */
 int			is_builtin(char *command_name);
 int			execute_builtin(t_cmd *cmd, t_data *data, bool print_exit);
-int			handle_heredoc(t_cmd *cmd);
+void		handle_heredoc(t_cmd *cmd_list);
 char		*find_cmd_path(char **cmd_args, t_data *data);
 /* execute_utils4.c */
 int			update_last_command_env_var(t_data *data, char *cmd_path);

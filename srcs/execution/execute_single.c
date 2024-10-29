@@ -1,27 +1,46 @@
 #include "../includes/minishell.h"
 
-int	handle_input_redirection(t_cmd *cmd, t_data *data)
+int	handle_file_input_redirection(t_cmd *cmd, t_data *data)
 {
 	int	fd_in;
 
+	fd_in = open(cmd->input, O_RDONLY);
+	if (fd_in < 0)
+	{
+		ft_fprintf(2, ": %s: No such file or directory\n", cmd->input);
+		data->last_exit_status = 1;
+		return (-1);
+	}
+	dup2(fd_in, STDIN_FILENO);
+	close(fd_in);
+	return (0);
+}
+
+int	handle_heredoc_input_redirection(t_cmd *cmd, t_data *data)
+{
+	int	fd_in;
+
+	fd_in = open(cmd->heredoc_tempfile, O_RDONLY);
+	if (fd_in < 0)
+	{
+		perror("open");
+		data->last_exit_status = 1;
+		return (-1);
+	}
+	dup2(fd_in, STDIN_FILENO);
+	close(fd_in);
+	unlink(cmd->heredoc_tempfile);
+	free(cmd->heredoc_tempfile);
+	cmd->heredoc_tempfile = NULL;
+	return (0);
+}
+
+int	handle_input_redirection(t_cmd *cmd, t_data *data)
+{
 	if (cmd->input)
-	{
-		fd_in = open(cmd->input, O_RDONLY);
-		if (fd_in < 0)
-		{
-			ft_fprintf(2, ": %s: No such file or directory\n", cmd->input);
-			data->last_exit_status = 1;
-			return (-1);
-		}
-		dup2(fd_in, STDIN_FILENO);
-		close(fd_in);
-	}
-	else if (cmd->is_heredoc)
-	{
-		fd_in = handle_heredoc(cmd);
-		dup2(fd_in, STDIN_FILENO);
-		close(fd_in);
-	}
+		return (handle_file_input_redirection(cmd, data));
+	else if (cmd->is_heredoc && cmd->heredoc_tempfile)
+		return (handle_heredoc_input_redirection(cmd, data));
 	return (0);
 }
 
@@ -49,11 +68,13 @@ int	handle_output_redirection(t_cmd *cmd, t_data *data)
 
 int	handle_command_not_found(t_cmd *cmd, t_data *data)
 {
+	data->last_exit_status = 127;
+	if (cmd->args[0] == NULL && cmd->output)
+		return (data->last_exit_status);
 	if (ft_strchr(cmd->args[0], '/'))
 		ft_fprintf(2, ": %s: No such file or directory\n", cmd->args[0]);
 	else
 		ft_fprintf(2, ": %s: command not found\n", cmd->args[0]);
-	data->last_exit_status = 127;
 	return (data->last_exit_status);
 }
 

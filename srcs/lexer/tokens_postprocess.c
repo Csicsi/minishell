@@ -1,63 +1,96 @@
 #include "../includes/minishell.h"
 
-static void	remove_all_space_token(t_data *data,
+void	remove_empty_or_space_tokens(t_data *data,
 	t_token **current, t_token **prev)
 {
 	t_token	*next_token;
 
-	next_token = (*current)->next;
-	if (*prev)
-		(*prev)->next = next_token;
-	else
-		data->tokens = next_token;
-	free((*current)->value);
-	free(*current);
-	*current = next_token;
-	if (next_token)
-		next_token->word++;
-}
-
-static void	add_split_tokens(t_token **current,
-	char **split_words, int *word_index)
-{
-	int		i;
-	t_token	*new_token;
-
-	i = 1;
-	while (split_words[i])
+	if (ft_strcmp((*current)->value, "") == 0
+		|| is_all_spaces((*current)->value))
 	{
-		new_token = create_token(TOKEN_WORD, ++(*word_index));
-		new_token->value = ft_strdup(split_words[i]);
-		new_token->next = (*current)->next;
-		(*current)->next = new_token;
-		*current = new_token;
-		i++;
+		next_token = (*current)->next;
+		if (*prev)
+			(*prev)->next = next_token;
+		else
+			data->tokens = next_token;
+		if (ft_strcmp((*current)->value, "") != 0
+			&& is_all_spaces((*current)->value) && next_token)
+			next_token->word++;
+		free((*current)->value);
+		free(*current);
+		*current = next_token;
 	}
 }
 
-static void	split_expanded_token(t_token **current)
+void	split_expanded_token(t_token *current, int *original_word)
 {
 	char	**split_words;
-	int		word_index;
+	t_token	*new_token;
+	t_token	*next_token;
 	int		i;
+	int		increment;
+	int		word_index;
+	bool	ends_with_space;
+	bool	starts_with_space;
 
-	split_words = ft_split((*current)->value, ' ');
+	i = 1;
+	word_index = *original_word;
+	ends_with_space = (current->value[ft_strlen(current->value) - 1] == ' ');
+	starts_with_space = (current->value[0] == ' ');
+	split_words = ft_split(current->value, ' ');
 	if (!split_words)
 		return ;
-	free((*current)->value);
-	(*current)->value = ft_strdup(split_words[0]);
-	word_index = (*current)->word;
-	add_split_tokens(current, split_words, &word_index);
+	free(current->value);
+	current->value = ft_strdup(split_words[0]);
+	if (!current->value)
+		return ;
+	if (starts_with_space)
+	{
+		word_index++;
+		current->word = word_index;
+	}
+	while (split_words[i])
+	{
+		new_token = malloc(sizeof(t_token));
+		if (!new_token)
+			return ;
+		new_token->value = ft_strdup(split_words[i]);
+		if (!new_token->value)
+		{
+			free(new_token);
+			return ;
+		}
+		new_token->type = TOKEN_WORD;
+		new_token->word = ++word_index;
+		new_token->is_expanded = false;
+		new_token->next = current->next;
+		current->next = new_token;
+		current = new_token;
+		i++;
+	}
 	i = 0;
 	while (split_words[i])
-		free(split_words[i++]);
+	{
+		free(split_words[i]);
+		i++;
+	}
 	free(split_words);
+	increment = word_index - *original_word;
+	if (ends_with_space)
+		increment++;
+	next_token = current->next;
+	while (next_token)
+	{
+		next_token->word += increment;
+		next_token = next_token->next;
+	}
 }
 
 void	handle_expanded_tokens(t_data *data)
 {
 	t_token	*current;
 	t_token	*prev;
+	int		original_word;
 
 	current = data->tokens;
 	prev = NULL;
@@ -65,12 +98,11 @@ void	handle_expanded_tokens(t_data *data)
 	{
 		if (current->is_expanded)
 		{
-			if (is_all_spaces(current->value))
-			{
-				remove_all_space_token(data, &current, &prev);
+			remove_empty_or_space_tokens(data, &current, &prev);
+			if (!current)
 				continue ;
-			}
-			split_expanded_token(&current);
+			original_word = current->word;
+			split_expanded_token(current, &original_word);
 		}
 		prev = current;
 		current = current->next;

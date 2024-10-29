@@ -14,6 +14,17 @@ char	*extract_single_quoted_word(char *cursor, t_token *token)
 	return (cursor);
 }
 
+static int	contains_dollar_space(const char *str)
+{
+	while (*str)
+	{
+		if (*str == '$' && *(str + 1) == ' ')
+			return (1);
+		str++;
+	}
+	return (0);
+}
+
 char	*extract_double_quoted_word(char *cursor,
 	t_token *token, t_data *data, int in_heredoc)
 {
@@ -33,7 +44,7 @@ char	*extract_double_quoted_word(char *cursor,
 	}
 	temp = ft_strndup(cursor + 1, len);
 	cursor += len + 2;
-	if (in_heredoc)
+	if (in_heredoc || contains_dollar_space(temp))
 		expanded = ft_strdup(temp);
 	else
 		expanded = expand_env_var(temp, data->last_exit_status, data);

@@ -30,8 +30,8 @@ static int	expand_var_into_buffer(char *result,
 	return (len);
 }
 
-static void	expand_env_vars_into_buffer(char *result,
-	char *cursor, t_data *data)
+static void	expand_env_vars_into_buffer(char
+	*result, char *cursor, t_data *data)
 {
 	int	i;
 	int	skip_len;
@@ -39,7 +39,12 @@ static void	expand_env_vars_into_buffer(char *result,
 	i = 0;
 	while (*cursor)
 	{
-		if (*cursor == '$' && *(cursor + 1))
+		if (*cursor == '$' && *(cursor + 1) == '/')
+		{
+			result[i++] = *cursor++;
+			result[i++] = *cursor++;
+		}
+		else if (*cursor == '$' && *(cursor + 1))
 		{
 			cursor++;
 			skip_len = expand_var_into_buffer(result, &i, cursor, data);
@@ -47,9 +52,7 @@ static void	expand_env_vars_into_buffer(char *result,
 		}
 		else
 		{
-			result[i] = *cursor;
-			i++;
-			cursor++;
+			result[i++] = *cursor++;
 		}
 	}
 	result[i] = '\0';

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/26 07:24:50 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/29 16:05:20 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,30 +52,59 @@ int	execute_builtin(t_cmd *cmd, t_data *data, bool print_exit)
 	return (1);
 }
 
-int	handle_heredoc(t_cmd *cmd)
+void handle_heredoc(t_cmd *cmd_list)
 {
-	int		pipe_fd[2];
+	const char *preset_filenames[] = {
+		"heredoc_1.tmp",
+		"heredoc_2.tmp",
+		"heredoc_3.tmp",
+		"heredoc_4.tmp",
+		"heredoc_5.tmp"
+	};
+	int preset_count = sizeof(preset_filenames) / sizeof(preset_filenames[0]);
+	int current_preset_index = 0;
+	t_cmd	*current;
 	char	*line;
+	int		fd, len;
 
-	if (pipe(pipe_fd) == -1)
+	current = cmd_list;
+	while (current)
 	{
-		perror("pipe");
-		return (-1);
-	}
-	while (true)
-	{
-		line = readline("> ");
-		if (!line || ft_strcmp(line, cmd->heredoc_delim) == 0)
+		if (current->is_heredoc)
 		{
-			free(line);
-			break ;
+			current->heredoc_tempfile = malloc(20);
+			if (!current->heredoc_tempfile)
+			{
+				perror("malloc");
+				exit(1);
+			}
+			snprintf(current->heredoc_tempfile, 20, "%s", preset_filenames[current_preset_index]);
+			current_preset_index = (current_preset_index + 1) % preset_count;
+			fd = open(current->heredoc_tempfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd == -1)
+			{
+				perror("open");
+				free(current->heredoc_tempfile);
+				return;
+			}
+			len = ft_strlen(current->heredoc_delim);
+			while (1)
+			{
+				if (isatty(STDIN_FILENO))
+					write(STDOUT_FILENO, "> ", 2);
+				line = get_next_line(STDIN_FILENO);
+				if (!line || (ft_strncmp(line, current->heredoc_delim, len) == 0 && line[len] == '\n'))
+				{
+					free(line);
+					break;
+				}
+				write(fd, line, ft_strlen(line));
+				free(line);
+			}
+			close(fd);
 		}
-		write(pipe_fd[1], line, ft_strlen(line));
-		write(pipe_fd[1], "\n", 1);
-		free(line);
+		current = current->next;
 	}
-	close(pipe_fd[1]);
-	return (pipe_fd[0]);
 }
 
 static char	*find_in_path(char *cmd, t_data *data)
