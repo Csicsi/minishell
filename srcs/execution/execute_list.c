@@ -6,11 +6,10 @@ int execute_cmd_list(t_data *data)
 	int pipe_fd[2];
 	int prev_fd = -1;
 	pid_t pid;
-	int num_children = 0;
 	int num_commands = count_cmds(data->cmd_list);
 	pid_t *child_pids;
-	int i;
 	int io_error_status = 0;
+	t_cmd_type	last_cmd_type = CMD_NORMAL;
 
 	handle_heredoc(data->cmd_list);
 	child_pids = malloc(sizeof(pid_t) * num_commands);
@@ -41,6 +40,13 @@ int execute_cmd_list(t_data *data)
 
 	while (current != NULL)
 	{
+		if ((last_cmd_type == CMD_AND && data->last_exit_status != 0) ||
+			(last_cmd_type == CMD_OR && data->last_exit_status == 0))
+		{
+			last_cmd_type = current->type;
+			current = current->next;
+			continue;
+		}
 		if (current->io_error)
 		{
 			io_error_status = 1;
@@ -49,9 +55,16 @@ int execute_cmd_list(t_data *data)
 		}
 		else
 			io_error_status = 0;
-		if (current->next != NULL)
-			pipe(pipe_fd);
-
+		if (current->next != NULL && current->type == CMD_NORMAL)
+		{
+			if (pipe(pipe_fd) < 0)
+			{
+				perror("pipe");
+				cleanup_data(data, false);
+				free(child_pids);
+				return (1);
+			}
+		}
 		pid = fork();
 		if (pid == 0)
 		{
@@ -60,7 +73,7 @@ int execute_cmd_list(t_data *data)
 				dup2(prev_fd, STDIN_FILENO);
 				close(prev_fd);
 			}
-			if (current->next != NULL)
+			if (current->next != NULL && current->type == CMD_NORMAL)
 			{
 				dup2(pipe_fd[1], STDOUT_FILENO);
 				close(pipe_fd[0]);
@@ -99,10 +112,14 @@ int execute_cmd_list(t_data *data)
 		}
 		else if (pid > 0)
 		{
-			child_pids[num_children++] = pid;
+			int	child_status;
+			waitpid(pid, &child_status, 0);
+			if (WIFEXITED(child_status))
+				data->last_exit_status = WEXITSTATUS(child_status);
+
 			if (prev_fd != -1)
 				close(prev_fd);
-			if (current->next != NULL)
+			if (current->next != NULL && current->type == CMD_NORMAL)
 			{
 				close(pipe_fd[1]);
 				prev_fd = pipe_fd[0];
@@ -117,17 +134,8 @@ int execute_cmd_list(t_data *data)
 			free(child_pids);
 			return (1);
 		}
-
+		last_cmd_type = current->type;
 		current = current->next;
-	}
-
-	i = 0;
-	while (i < num_children)
-	{
-		waitpid(child_pids[i], &data->last_exit_status, 0);
-		if (WIFEXITED(data->last_exit_status))
-			data->last_exit_status = WEXITSTATUS(data->last_exit_status);
-		i++;
 	}
 
 	cleanup_data(data, false);
