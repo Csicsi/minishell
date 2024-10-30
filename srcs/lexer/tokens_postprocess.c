@@ -96,6 +96,15 @@ void	handle_expanded_tokens(t_data *data)
 	prev = NULL;
 	while (current)
 	{
+		if (current->is_wildcard)
+		{
+			if (!expand_wildcard(current))
+			{
+				remove_empty_or_space_tokens(data, &current, &prev);
+				current = current->next;
+				continue ;
+			}
+		}
 		if (current->is_expanded)
 		{
 			remove_empty_or_space_tokens(data, &current, &prev);

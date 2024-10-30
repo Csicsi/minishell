@@ -91,6 +91,24 @@ bool	parse_single_token(t_data *data,
 			context->has_input = false;
 			context->has_output = false;
 		}
+		else if (ft_strcmp(data->tokens->value, "&&") == 0)
+		{
+			(*current_cmd)->type = CMD_AND;
+			*current_cmd = handle_pipe(*current_cmd, &context->arg_index, data->tokens);
+			if (!*current_cmd)
+				return (false);
+			context->has_input = false;
+			context->has_output = false;
+		}
+		else if (ft_strcmp(data->tokens->value, "||") == 0)
+		{
+			(*current_cmd)->type = CMD_OR;
+			*current_cmd = handle_pipe(*current_cmd, &context->arg_index, data->tokens);
+			if (!*current_cmd)
+				return (false);
+			context->has_input = false;
+			context->has_output = false;
+		}
 	}
 	return (true);
 }

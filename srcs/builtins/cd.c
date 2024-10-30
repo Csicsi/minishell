@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/26 05:00:25 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/10/30 08:15:18 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ static int	change_directory(const char *curpath, t_data *data)
 		return (perror(": cd: setenv OLDPWD"), free(normalized_path), 1);
 	if (chdir(normalized_path) != 0)
 	{
-		ft_fprintf(STDERR_FILENO, "cd: %s: Not a directory\n", curpath);
+		ft_fprintf(2, "cd: %s: Not a directory\n", curpath);
 		free(normalized_path);
 		return (1);
 	}

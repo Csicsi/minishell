@@ -14,6 +14,7 @@
 # include <stdbool.h>
 # include <signal.h>
 # include <limits.h>
+# include <dirent.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../libft/libft.h"
@@ -24,6 +25,13 @@ typedef enum e_in_out_flag
 	IO_INPUT_FIRST,
 	IO_OUTPUT_FIRST
 }	t_in_out_flag;
+
+typedef enum e_cmd_type
+{
+	CMD_NORMAL,
+	CMD_AND,
+	CMD_OR
+}	t_cmd_type;
 
 typedef struct s_cmd
 {
@@ -37,6 +45,7 @@ typedef struct s_cmd
 	bool			is_heredoc;
 	bool			io_error;
 	char			*heredoc_tempfile;
+	t_cmd_type		type;
 	t_in_out_flag	io_flag;
 }	t_cmd;
 
@@ -54,6 +63,7 @@ typedef struct s_token
 	char			*value;
 	int				word;
 	bool			is_expanded;
+	bool			is_wildcard;
 	struct s_token	*next;
 }	t_token;
 
@@ -194,5 +204,7 @@ bool		is_all_spaces(char *str);
 /* signals.c 						  */
 /* ********************************** */
 void		handle_sigint(int sig);
+
+int			expand_wildcard(t_token *token);
 
 #endif

@@ -11,6 +11,7 @@ t_token	*create_token(int type, int word_index)
 	new_token->word = word_index;
 	new_token->value = NULL;
 	new_token->is_expanded = false;
+	new_token->is_wildcard = false;
 	new_token->next = NULL;
 	return (new_token);
 }
@@ -75,6 +76,8 @@ char	*extract_unquoted_word(char *cursor, t_token *new_token)
 		&& *cursor != '>' && *cursor != '<' && *cursor != '\0'
 		&& *cursor != '"' && *cursor != '\'')
 	{
+		if (*cursor == '*')
+			new_token->is_wildcard = true;
 		length++;
 		cursor++;
 	}

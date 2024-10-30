@@ -13,6 +13,7 @@ SRCS =	srcs/minishell.c \
 		srcs/lexer/var_len.c \
 		srcs/lexer/quotes.c \
 		srcs/lexer/tokens_postprocess.c \
+		srcs/lexer/wildcards.c \
 		srcs/execution/execute_list.c \
 		srcs/execution/execute_single.c \
 		srcs/execution/execute_utils1.c \
