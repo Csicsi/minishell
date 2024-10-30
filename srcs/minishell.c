@@ -26,8 +26,6 @@ int	process_and_validate_input(t_data *data)
 {
 	if (process_step(data, check_for_unclosed_quotes))
 		return (1);
-	if (process_step(data, check_for_brackets))
-		return (1);
 	if (process_step(data, lexer))
 		return (1);
 	if (process_step(data, validate_syntax))

@@ -2,32 +2,36 @@
 
 int filename_matches_pattern(const char *filename, const char *pattern)
 {
-	size_t filename_len = strlen(filename);
-	size_t pattern_len = strlen(pattern);
-	char *star_pos = strchr(pattern, '*');
+	size_t	filename_len;
+	size_t	pattern_len;
+	char	*star_pos;
+	int		result;
 
+	filename_len = strlen(filename);
+	pattern_len = strlen(pattern);
+	star_pos = strchr(pattern, '*');
 	if (!star_pos)
 	{
-		int result = strcmp(filename, pattern) == 0;
-		return result;
+		result = strcmp(filename, pattern) == 0;
+		return (result);
 	}
 	if (star_pos == pattern)
 	{
-		int result = strcmp(filename + filename_len - (pattern_len - 1), star_pos + 1) == 0;
-		return result;
+		result = strcmp(filename + filename_len - (pattern_len - 1), star_pos + 1) == 0;
+		return (result);
 	}
 	else if (star_pos == pattern + pattern_len - 1)
 	{
-		int result = strncmp(filename, pattern, pattern_len - 1) == 0;
-		return result;
+		result = strncmp(filename, pattern, pattern_len - 1) == 0;
+		return (result);
 	}
 	else
 	{
 		size_t prefix_len = star_pos - pattern;
 		size_t suffix_len = pattern_len - prefix_len - 1;
-		int result = strncmp(filename, pattern, prefix_len) == 0 &&
-					 strcmp(filename + filename_len - suffix_len, star_pos + 1) == 0;
-		return result;
+		result = strncmp(filename, pattern, prefix_len) == 0 &&
+				 strcmp(filename + filename_len - suffix_len, star_pos + 1) == 0;
+		return (result);
 	}
 }
 
@@ -72,11 +76,12 @@ char **get_matching_files(const char *pattern)
 
 int expand_wildcard(t_token *token)
 {
-	char	**matches = get_matching_files(token->value);
+	char	**matches;
 	t_token	*new_token;
 	t_token	*current;
 	int		i;
 
+	matches = get_matching_files(token->value);
 	if (!matches || !matches[0])
 		return (0);
 	free(token->value);

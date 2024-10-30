@@ -18,12 +18,13 @@ t_token	*create_token(int type, int word_index)
 
 char	*check_operator(char *cursor, t_token *token)
 {
-	static const char	*operators[] = {">>", "<<", "&&", "||",
-		">", "<", "|"};
+	static const char	*operators[] = {">>", "<<", "&&",
+			"||", ">", "<", "|", "(", ")"};
+
 	int					i;
 
 	i = 0;
-	while (i < 7)
+	while (i < 9)
 	{
 		if (!ft_strncmp(cursor, operators[i], ft_strlen(operators[i])))
 		{
@@ -74,7 +75,7 @@ char	*extract_unquoted_word(char *cursor, t_token *new_token)
 	length = 0;
 	while (!isspace(*cursor) && *cursor != '|' && *cursor != '&'
 		&& *cursor != '>' && *cursor != '<' && *cursor != '\0'
-		&& *cursor != '"' && *cursor != '\'')
+		&& *cursor != '"' && *cursor != '\'' && *cursor != ')')
 	{
 		if (*cursor == '*')
 			new_token->is_wildcard = true;

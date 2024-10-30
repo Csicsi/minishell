@@ -127,7 +127,7 @@ void	join_tokens_in_same_word(t_data *data)
 	current = data->tokens;
 	while (current && current->next)
 	{
-		if (current->word == current->next->word)
+		if (current->word == current->next->word && current->type == TOKEN_WORD && current->next->type == TOKEN_WORD)
 		{
 			next_token = current->next;
 			new_value = ft_strjoin(current->value, next_token->value);

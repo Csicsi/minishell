@@ -25,11 +25,11 @@ char	*process_token(char *cursor, t_token *new_token, t_data *data)
 	if (*cursor == '<' && *(cursor + 1) == '<')
 		cursor = handle_operator_or_quote(cursor, new_token, data);
 	else if (*cursor == '"' || *cursor == '\'' || *cursor == '>'
-		|| *cursor == '<' || *cursor == '|' || *cursor == '&')
+		|| *cursor == '<' || *cursor == '|' || *cursor == '&'
+		|| *cursor == '(' || *cursor == ')')
 		cursor = handle_operator_or_quote(cursor, new_token, data);
 	else
-		cursor = handle_unquoted_word(cursor,
-				new_token, &data->in_heredoc, data);
+		cursor = handle_unquoted_word(cursor, new_token, &data->in_heredoc, data);
 	return (cursor);
 }
 
@@ -59,23 +59,6 @@ char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
 	return (cursor);
 }
 
-void	print_tokens(t_token *token_list)
-{
-	t_token	*current = token_list;
-
-	while (current)
-	{
-		printf("Token:\n");
-		printf("  Type: %d\n", current->type);
-		printf("  Value: %s\n", current->value ? current->value : "(null)");
-		printf("  Word Index: %d\n", current->word);
-		printf("  Is Expanded: %s\n", current->is_expanded ? "true" : "false");
-		printf("  Is Wildcard: %s\n", current->is_wildcard ? "true" : "false");
-		printf("  Next: %s\n\n", current->next ? "Exists" : "NULL");
-		current = current->next;
-	}
-}
-
 int	lexer(t_data *data)
 {
 	char	*cursor;
@@ -94,10 +77,7 @@ int	lexer(t_data *data)
 			return (1);
 		cursor = skip_spaces(cursor);
 	}
-	//print_tokens(data->tokens);
 	handle_expanded_tokens(data);
-	//print_tokens(data->tokens);
 	join_tokens_in_same_word(data);
-	//print_tokens(data->tokens);
 	return (0);
 }

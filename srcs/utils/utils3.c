@@ -36,19 +36,3 @@ int	ft_isdigit_str(const char *str)
 	}
 	return (1);
 }
-
-int	check_for_brackets(t_data *data)
-{
-	int		i;
-	char	*input;
-
-	i = 0;
-	input = data->input;
-	while (input[i])
-	{
-		if (input[i] == '(' || input[i] == ')')
-			return (1);
-		i++;
-	}
-	return (0);
-}
