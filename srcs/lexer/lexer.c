@@ -23,7 +23,7 @@ char	*handle_unquoted_word(char *cursor,
 char	*process_token(char *cursor, t_token *new_token, t_data *data)
 {
 	char	*temp;
-	
+
 	if (*cursor == '<' && *(cursor + 1) == '<')
 	{
 		cursor = handle_operator_or_quote(cursor, new_token, data);
@@ -41,7 +41,6 @@ char	*process_token(char *cursor, t_token *new_token, t_data *data)
 				new_token, &data->in_heredoc, data);
 	return (cursor);
 }
-
 
 char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
 {
@@ -67,6 +66,30 @@ char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
 		|| *cursor == '>' || *cursor == '<')
 		data->word_index++;
 	return (cursor);
+}
+
+void	join_tokens_in_same_word(t_data *data)
+{
+	t_token	*current;
+	t_token	*next_token;
+	char	*new_value;
+
+	current = data->tokens;
+	while (current && current->next)
+	{
+		if (current->word == current->next->word)
+		{
+			next_token = current->next;
+			new_value = ft_strjoin(current->value, next_token->value);
+			free(current->value);
+			current->value = new_value;
+			current->next = next_token->next;
+			free(next_token->value);
+			free(next_token);
+		}
+		else
+			current = current->next;
+	}
 }
 
 int	lexer(t_data *data)

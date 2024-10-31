@@ -55,15 +55,15 @@ char	*ft_strtrim(const char *str, const char *set)
 	if (!str || !set)
 		return (NULL);
 	start = 0;
-	while (str[start] && strchr(set, str[start]))
+	while (str[start] && ft_strchr(set, str[start]))
 		start++;
-	end = strlen(str);
-	while (end > start && strchr(set, str[end - 1]))
+	end = ft_strlen(str);
+	while (end > start && ft_strchr(set, str[end - 1]))
 		end--;
 	trimmed = (char *)malloc(sizeof(char) * (end - start + 1));
 	if (!trimmed)
 		return (NULL);
-	strncpy(trimmed, str + start, end - start);
+	ft_strlcpy(trimmed, str + start, end - start + 1);
 	trimmed[end - start] = '\0';
 	return (trimmed);
 }

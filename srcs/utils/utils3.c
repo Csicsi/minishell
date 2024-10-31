@@ -61,9 +61,18 @@ bool	check_for_heredoc(t_token *tokens)
 	while (current)
 	{
 		if (current->type == TOKEN_OPERATOR
-			&& strcmp(current->value, "<<") == 0)
+			&& ft_strcmp(current->value, "<<") == 0)
 			return (true);
 		current = current->next;
 	}
 	return (false);
+}
+
+void	ft_free(void **ptr)
+{
+	if (*ptr)
+	{
+		free(*ptr);
+		*ptr = NULL;
+	}
 }

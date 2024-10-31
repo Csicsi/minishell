@@ -78,12 +78,15 @@ typedef struct s_parse_context
 	bool	has_output;
 }	t_parse_context;
 
-typedef struct s_exec_data
+typedef struct s_exec_context
 {
-	int		*prev_fd;
+	t_data	*data;
+	int		prev_fd;
 	int		pipe_fd[2];
-	int		*num_children;
-}	t_exec_data;
+	int		num_children;
+	int		io_error_status;
+	pid_t	*child_pids;
+}	t_exec_context;
 
 /* ********************************** */
 /* functions pertaining to lexer.c    */
@@ -146,6 +149,13 @@ bool		parse_single_token(t_data *data,
 				t_cmd **current_cmd, t_parse_context *context);
 /* execute_parse_tokens_utils2.c */
 int			case_redirection(t_cmd *cur_cmd, int *arg_index, t_data *data);
+int			open_heredoc_file(t_cmd *cmd);
+void		read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd);
+
+int			handle_file_input_redirection(t_cmd *cmd, t_data *data);
+int			handle_heredoc_input_redirection(t_cmd *cmd, t_data *data);
+int			handle_input_redirection(t_cmd *cmd, t_data *data);
+int			handle_output_redirection(t_cmd *cmd, t_data *data);
 
 /* ********************************** */
 /* implementing the builtin functions */
@@ -191,6 +201,7 @@ char		*ft_strcpy(char *dest, const char *src);
 void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 char		*skip_spaces(char *cursor);
 bool		is_all_spaces(char *str);
+void		ft_free(void **ptr);
 
 /* ********************************** */
 /* signals.c 						  */

@@ -15,10 +15,17 @@ static bool	process_heredoc(t_cmd *cmd, t_token **tokens)
 static bool	handle_output(t_cmd *cmd,
 	t_token **tokens, bool *has_input, bool *has_output)
 {
-	if (!cmd->output && (*tokens)->next)
+	int	fd_out;
+
+	if ((*tokens)->next)
 	{
 		cmd->output = ft_strdup((*tokens)->next->value);
 		cmd->append_output = (ft_strcmp((*tokens)->value, ">>") == 0);
+		if (cmd->append_output)
+			fd_out = open(cmd->output, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		else
+			fd_out = open(cmd->output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		close(fd_out);
 		*tokens = (*tokens)->next;
 		*has_output = true;
 		if (*has_input)

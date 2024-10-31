@@ -1,14 +1,5 @@
 #include "../includes/minishell.h"
 
-static void	ft_free(void **ptr)
-{
-	if (*ptr)
-	{
-		free(*ptr);
-		*ptr = NULL;
-	}
-}
-
 static void	free_cmd_list(t_cmd *cmd_list)
 {
 	t_cmd	*tmp;
@@ -71,9 +62,9 @@ void	free_string_array(char **string_array)
 	string_array = NULL;
 }
 
-void cleanup_data(t_data *data, bool free_env)
+void	cleanup_cmd_list(t_data *data)
 {
-	t_cmd *current_cmd;
+	t_cmd	*current_cmd;
 
 	if (data->cmd_list)
 	{
@@ -95,6 +86,11 @@ void cleanup_data(t_data *data, bool free_env)
 		free_cmd_list(data->cmd_list);
 		data->cmd_list = NULL;
 	}
+}
+
+void	cleanup_data(t_data *data, bool free_env)
+{
+	cleanup_cmd_list(data);
 	if (data->tokens)
 	{
 		free_tokens(data);

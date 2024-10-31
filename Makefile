@@ -15,12 +15,15 @@ SRCS =	srcs/minishell.c \
 		srcs/lexer/tokens_postprocess.c \
 		srcs/execution/execute_list.c \
 		srcs/execution/execute_single.c \
+		srcs/execution/redirs.c \
 		srcs/execution/execute_utils1.c \
 		srcs/execution/execute_utils2.c \
 		srcs/execution/execute_utils3.c \
 		srcs/execution/execute_utils4.c \
 		srcs/execution/validate_grammar.c \
 		srcs/execution/validate_syntax.c \
+		srcs/execution/heredoc.c \
+		srcs/execution/heredoc_utils.c \
 		srcs/parser/parser.c \
 		srcs/parser/token_handlers.c \
 		srcs/builtins/echo.c \
