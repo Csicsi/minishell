@@ -52,3 +52,18 @@ int	check_for_brackets(t_data *data)
 	}
 	return (0);
 }
+
+bool	check_for_heredoc(t_token *tokens)
+{
+	t_token	*current;
+
+	current = tokens;
+	while (current)
+	{
+		if (current->type == TOKEN_OPERATOR
+			&& strcmp(current->value, "<<") == 0)
+			return (true);
+		current = current->next;
+	}
+	return (false);
+}

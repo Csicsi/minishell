@@ -121,6 +121,7 @@ int			execute_cmd_list(t_data *data);
 int			validate_cmd_list(t_data *data);
 int			validate_syntax(t_data *data);
 int			check_for_brackets(t_data *data);
+bool		check_for_heredoc(t_token *tokens);
 int			execute_single_cmd(t_cmd *cmd, t_data *data);
 /* execute_utils1.c */
 bool		initialize(t_data *data, char **env_vars, int argc, char **argv);
