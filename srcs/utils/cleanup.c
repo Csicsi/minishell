@@ -71,10 +71,27 @@ void	free_string_array(char **string_array)
 	string_array = NULL;
 }
 
-void	cleanup_data(t_data *data, bool free_env)
+void cleanup_data(t_data *data, bool free_env)
 {
+	t_cmd *current_cmd;
+
 	if (data->cmd_list)
 	{
+		current_cmd = data->cmd_list;
+		while (current_cmd)
+		{
+			if (current_cmd->heredoc_tempfile)
+			{
+				if (access(current_cmd->heredoc_tempfile, F_OK) == 0)
+				{
+					if (unlink(current_cmd->heredoc_tempfile) != 0)
+						perror("unlink");
+				}
+				free(current_cmd->heredoc_tempfile);
+				current_cmd->heredoc_tempfile = NULL;
+			}
+			current_cmd = current_cmd->next;
+		}
 		free_cmd_list(data->cmd_list);
 		data->cmd_list = NULL;
 	}

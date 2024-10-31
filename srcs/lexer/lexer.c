@@ -22,8 +22,17 @@ char	*handle_unquoted_word(char *cursor,
 
 char	*process_token(char *cursor, t_token *new_token, t_data *data)
 {
+	char	*temp;
+	
 	if (*cursor == '<' && *(cursor + 1) == '<')
+	{
 		cursor = handle_operator_or_quote(cursor, new_token, data);
+		temp = cursor;
+		while (*temp == ' ')
+			temp++;
+		if (*temp == '\'')
+			data->heredoc_single_quote = true;
+	}
 	else if (*cursor == '"' || *cursor == '\'' || *cursor == '>'
 		|| *cursor == '<' || *cursor == '|' || *cursor == '&')
 		cursor = handle_operator_or_quote(cursor, new_token, data);
@@ -32,6 +41,7 @@ char	*process_token(char *cursor, t_token *new_token, t_data *data)
 				new_token, &data->in_heredoc, data);
 	return (cursor);
 }
+
 
 char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
 {

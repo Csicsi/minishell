@@ -12,7 +12,7 @@ int execute_cmd_list(t_data *data)
 	int i;
 	int io_error_status = 0;
 
-	handle_heredoc(data->cmd_list);
+	handle_heredoc(data->cmd_list, data);
 	child_pids = malloc(sizeof(pid_t) * num_commands);
 	if (!child_pids)
 	{

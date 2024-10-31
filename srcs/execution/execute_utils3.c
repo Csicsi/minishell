@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/29 16:05:20 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/10/31 13:40:11 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,34 +52,66 @@ int	execute_builtin(t_cmd *cmd, t_data *data, bool print_exit)
 	return (1);
 }
 
-void handle_heredoc(t_cmd *cmd_list)
+char *generate_random_filename()
 {
-	const char *preset_filenames[] = {
-		"heredoc_1.tmp",
-		"heredoc_2.tmp",
-		"heredoc_3.tmp",
-		"heredoc_4.tmp",
-		"heredoc_5.tmp"
-	};
-	int preset_count = sizeof(preset_filenames) / sizeof(preset_filenames[0]);
-	int current_preset_index = 0;
-	t_cmd	*current;
-	char	*line;
-	int		fd, len;
+	unsigned char	random_bytes[20];
+	const char		charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	int				urandom_fd;
+	char			*filename;
+	int				i;
+
+	urandom_fd = open("/dev/urandom", O_RDONLY);
+	if (urandom_fd < 0)
+	{
+		perror("open /dev/urandom");
+		exit(1);
+	}
+	filename = malloc(20);
+	if (!filename)
+	{
+		perror("malloc");
+		close(urandom_fd);
+		exit(1);
+	}
+	if (read(urandom_fd, random_bytes, 19) != 19)
+	{
+		perror("read /dev/urandom");
+		free(filename);
+		close(urandom_fd);
+		exit(1);
+	}
+	i = 0;
+	while (i < 19)
+	{
+		filename[i] = charset[random_bytes[i] % (sizeof(charset) - 1)];
+		i++;
+	}
+	filename[19] = '\0';
+	close(urandom_fd);
+
+	return filename;
+}
+
+void handle_heredoc(t_cmd *cmd_list, t_data *data)
+{
+	t_cmd *current;
+	char *line;
+	char *expanded_line;
+	int fd, len;
+	bool has_heredoc = false;
 
 	current = cmd_list;
 	while (current)
 	{
 		if (current->is_heredoc)
 		{
-			current->heredoc_tempfile = malloc(20);
+			has_heredoc = true;
+			current->heredoc_tempfile = generate_random_filename();
 			if (!current->heredoc_tempfile)
 			{
-				perror("malloc");
+				perror("generate_random_filename");
 				exit(1);
 			}
-			snprintf(current->heredoc_tempfile, 20, "%s", preset_filenames[current_preset_index]);
-			current_preset_index = (current_preset_index + 1) % preset_count;
 			fd = open(current->heredoc_tempfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
 			{
@@ -98,13 +130,28 @@ void handle_heredoc(t_cmd *cmd_list)
 					free(line);
 					break;
 				}
-				write(fd, line, ft_strlen(line));
-				free(line);
+				if (!data->heredoc_single_quote)
+				{
+					expanded_line = expand_env_var_in_str(&line, data->last_exit_status, data);
+					if (!expanded_line)
+					{
+						perror("expand_env_var_in_str");
+						free(line);
+						close(fd);
+						return;
+					}
+					write(fd, expanded_line, ft_strlen(expanded_line));
+					free(expanded_line);
+				}
+				else
+					write(fd, line, ft_strlen(line));
 			}
 			close(fd);
 		}
 		current = current->next;
 	}
+	if (has_heredoc)
+		validate_cmd_list(data);
 }
 
 static char	*find_in_path(char *cmd, t_data *data)

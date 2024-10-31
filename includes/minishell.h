@@ -66,6 +66,7 @@ typedef struct s_data
 	char		**env_vars;
 	int			word_index;
 	bool		in_heredoc;
+	bool		heredoc_single_quote;
 	t_token		*tokens;
 	t_cmd		*cmd_list;
 }	t_data;
@@ -132,7 +133,7 @@ int			count_words(t_token *tokens);
 /* execute_utils3.c */
 int			is_builtin(char *command_name);
 int			execute_builtin(t_cmd *cmd, t_data *data, bool print_exit);
-void		handle_heredoc(t_cmd *cmd_list);
+void		handle_heredoc(t_cmd *cmd_list, t_data *data);
 char		*find_cmd_path(char **cmd_args, t_data *data);
 /* execute_utils4.c */
 int			update_last_command_env_var(t_data *data, char *cmd_path);
