@@ -22,6 +22,31 @@ int	handle_null_input(t_data *data)
 	return (0);
 }
 
+int	check_for_unclosed_quotes(t_data *data)
+{
+	int		in_quote;
+	char	quote_char;
+	char	*cursor;
+
+	cursor = data->input;
+	in_quote = 0;
+	quote_char = '\0';
+	while (*cursor)
+	{
+		if ((*cursor == '"' || *cursor == '\'') && in_quote == 0)
+		{
+			in_quote = 1;
+			quote_char = *cursor;
+		}
+		else if (*cursor == quote_char && in_quote == 1)
+		{
+			in_quote = 0;
+		}
+		cursor++;
+	}
+	return (in_quote);
+}
+
 int	process_and_validate_input(t_data *data)
 {
 	if (process_step(data, check_for_unclosed_quotes))
@@ -44,28 +69,6 @@ int	process_and_validate_input(t_data *data)
 		return (1);
 	}
 	return (0);
-}
-
-char	*ft_strtrim(const char *str, const char *set)
-{
-	size_t	start;
-	size_t	end;
-	char	*trimmed;
-
-	if (!str || !set)
-		return (NULL);
-	start = 0;
-	while (str[start] && ft_strchr(set, str[start]))
-		start++;
-	end = ft_strlen(str);
-	while (end > start && ft_strchr(set, str[end - 1]))
-		end--;
-	trimmed = (char *)malloc(sizeof(char) * (end - start + 1));
-	if (!trimmed)
-		return (NULL);
-	ft_strlcpy(trimmed, str + start, end - start + 1);
-	trimmed[end - start] = '\0';
-	return (trimmed);
 }
 
 int	main(int argc, char **argv, char **env_vars)

@@ -7,6 +7,7 @@ LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS =	srcs/minishell.c \
+		srcs/initialize.c \
 		srcs/lexer/lexer.c \
 		srcs/lexer/lexer_utils.c \
 		srcs/lexer/expansion.c \
@@ -18,8 +19,6 @@ SRCS =	srcs/minishell.c \
 		srcs/execution/redirs.c \
 		srcs/execution/execute_utils1.c \
 		srcs/execution/execute_utils2.c \
-		srcs/execution/execute_utils3.c \
-		srcs/execution/execute_utils4.c \
 		srcs/execution/validate_grammar.c \
 		srcs/execution/validate_syntax.c \
 		srcs/execution/heredoc.c \
@@ -39,6 +38,7 @@ SRCS =	srcs/minishell.c \
 		srcs/utils/utils1.c \
 		srcs/utils/utils2.c \
 		srcs/utils/utils3.c \
+		srcs/utils/utils4.c \
 		srcs/utils/cleanup.c \
 		srcs/signals/signals.c
 

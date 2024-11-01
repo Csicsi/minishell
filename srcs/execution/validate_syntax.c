@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-int	print_syntax_error(t_data *data, int error_flag, const char *token)
+static int	print_syntax_error(t_data *data, int error_flag, const char *token)
 {
 	if (error_flag == 1)
 		ft_fprintf(2, "syntax error near unexpected token `%s'\n", token);
@@ -12,7 +12,7 @@ int	print_syntax_error(t_data *data, int error_flag, const char *token)
 	return (-1);
 }
 
-int	is_redir(t_token *token)
+static int	is_redir(t_token *token)
 {
 	if (!token)
 		return (0);

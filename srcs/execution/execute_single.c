@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-int	handle_command_not_found(t_cmd *cmd, t_data *data)
+static int	handle_command_not_found(t_cmd *cmd, t_data *data)
 {
 	data->last_exit_status = 127;
 	if (cmd->args[0] == NULL && cmd->output)
@@ -12,7 +12,7 @@ int	handle_command_not_found(t_cmd *cmd, t_data *data)
 	return (data->last_exit_status);
 }
 
-int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
+static int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
 {
 	if (handle_input_redirection(cmd, data) < 0)
 		return (data->last_exit_status);

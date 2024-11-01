@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-char	*handle_unquoted_word(char *cursor,
+static char	*handle_unquoted_word(char *cursor,
 	t_token *new_token, bool *in_heredoc, t_data *data)
 {
 	cursor = extract_unquoted_word(cursor, new_token);
@@ -20,7 +20,7 @@ char	*handle_unquoted_word(char *cursor,
 	return (cursor);
 }
 
-char	*process_token(char *cursor, t_token *new_token, t_data *data)
+static char	*process_token(char *cursor, t_token *new_token, t_data *data)
 {
 	char	*temp;
 
@@ -42,7 +42,7 @@ char	*process_token(char *cursor, t_token *new_token, t_data *data)
 	return (cursor);
 }
 
-char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
+static char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
 {
 	t_token	*new_token;
 	t_token	*current;
@@ -68,7 +68,7 @@ char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
 	return (cursor);
 }
 
-void	join_tokens_in_same_word(t_data *data)
+static void	join_tokens_in_same_word(t_data *data)
 {
 	t_token	*current;
 	t_token	*next_token;

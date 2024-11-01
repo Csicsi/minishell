@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-int	ft_write_formatted_str(int fd, const char *str)
+static int	ft_write_formatted_str(int fd, const char *str)
 {
 	int	count;
 	int	j;

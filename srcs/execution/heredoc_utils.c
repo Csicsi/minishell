@@ -2,7 +2,7 @@
 
 #define FILENAME_LENGTH 20
 
-void	generate_random_bytes(unsigned char *buffer, ssize_t length)
+static void	generate_random_bytes(unsigned char *buffer, ssize_t length)
 {
 	int	urandom_fd;
 

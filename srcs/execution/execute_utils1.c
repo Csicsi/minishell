@@ -1,109 +1,109 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execute_utils1.c                                   :+:      :+:    :+:   */
+/*   execute_utils3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/25 15:06:08 by csicsi           ###   ########.fr       */
+/*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
+/*   Updated: 2024/11/01 14:21:45 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*increment_shlvl(const char *shlvl_var)
+int	is_builtin(char *command_name)
 {
-	int		shlvl_value;
-	char	*shlvl_value_str;
-	char	*shlvl_str;
-
-	shlvl_value = ft_atoi(shlvl_var + 6);
-	shlvl_value++;
-	shlvl_value_str = ft_itoa(shlvl_value);
-	if (!shlvl_value_str)
-		return (NULL);
-	shlvl_str = ft_strjoin("SHLVL=", shlvl_value_str);
-	free(shlvl_value_str);
-	return (shlvl_str);
+	if (!command_name)
+		return (0);
+	if (ft_strncmp(command_name, "cd", 3) == 0)
+		return (1);
+	else if (ft_strncmp(command_name, "echo", 5) == 0)
+		return (1);
+	else if (ft_strncmp(command_name, "exit", 5) == 0)
+		return (1);
+	else if (ft_strncmp(command_name, "env", 4) == 0)
+		return (1);
+	else if (ft_strncmp(command_name, "export", 7) == 0)
+		return (1);
+	else if (ft_strncmp(command_name, "unset", 6) == 0)
+		return (1);
+	else if (ft_strncmp(command_name, "pwd", 4) == 0)
+		return (1);
+	return (0);
 }
 
-char	*duplicate_env_var(char *env_var)
+int	execute_builtin(t_cmd *cmd, t_data *data, bool print_exit)
 {
-	if (ft_strncmp(env_var, "SHLVL=", 6) == 0)
-		return (increment_shlvl(env_var));
-	return (ft_strdup(env_var));
+	if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
+		return (builtin_cd(cmd, data));
+	else if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
+		return (builtin_echo(cmd));
+	else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
+		return (builtin_exit(cmd, data, print_exit));
+	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
+		return (builtin_env(data));
+	else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
+		return (builtin_export(cmd, data));
+	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
+		return (builtin_unset(cmd, data));
+	else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
+		return (builtin_pwd());
+	return (1);
 }
 
-char	**duplicate_env_vars(char **env_vars)
+static char	*find_in_path(char *cmd, t_data *data)
 {
 	int		i;
-	char	**new_env_vars;
+	char	**allpath;
+	char	*path_env;
+	char	*path_for_execve;
 
-	i = 0;
-	while (env_vars[i] != NULL)
-		i++;
-	new_env_vars = (char **)malloc((i + 1) * sizeof(char *));
-	if (!new_env_vars)
+	path_env = ft_getenv(ft_strdup("PATH"), data->env_vars);
+	if (!path_env)
 		return (NULL);
-	i = 0;
-	while (env_vars[i] != NULL)
+	allpath = ft_split(path_env, ':');
+	i = -1;
+	while (allpath[++i])
 	{
-		new_env_vars[i] = duplicate_env_var(env_vars[i]);
-		if (!new_env_vars[i])
+		path_for_execve = ft_strjoin_pipex(allpath[i], cmd);
+		if (!path_for_execve)
+			return (free_string_array(allpath), NULL);
+		if (access(path_for_execve, F_OK | X_OK) == 0)
 		{
-			while (i-- > 0)
-				free(new_env_vars[i]);
-			return (free(new_env_vars), NULL);
+			free_string_array(allpath);
+			return (path_for_execve);
 		}
-		i++;
+		path_for_execve = free_null(path_for_execve);
 	}
-	new_env_vars[i] = NULL;
-	return (new_env_vars);
+	free_string_array(allpath);
+	return (NULL);
 }
 
-bool	initialize(t_data *data, char **env_vars, int argc, char **argv)
+char	*find_cmd_path(char **cmd_args, t_data *data)
 {
-	(void)argc;
-	(void)argv;
-	signal(SIGINT, handle_sigint);
-	data->exit_flag = false;
-	data->last_exit_status = 0;
-	data->token_count = 0;
-	data->input = NULL;
-	data->env_vars = NULL;
-	data->tokens = NULL;
-	data->cmd_list = NULL;
-	data->env_vars = duplicate_env_vars(env_vars);
-	if (!data->env_vars)
+	if (!cmd_args || !cmd_args[0])
+		return (NULL);
+	if (ft_strchr(cmd_args[0], '/') != NULL)
 	{
-		printf("Error allocating memory for env_vars\n");
-		data->exit_flag = true;
+		if (access(cmd_args[0], F_OK | X_OK) != 0)
+			return (NULL);
+		return (ft_strdup(cmd_args[0]));
 	}
-	return (data->exit_flag);
+	if (access(cmd_args[0], F_OK | X_OK) == 0)
+		return (ft_strdup(cmd_args[0]));
+	return (find_in_path(cmd_args[0], data));
 }
 
-int	check_for_unclosed_quotes(t_data *data)
+int	count_cmds(t_cmd *cmd_list)
 {
-	int		in_quote;
-	char	quote_char;
-	char	*cursor;
+	int	count;
 
-	cursor = data->input;
-	in_quote = 0;
-	quote_char = '\0';
-	while (*cursor)
+	count = 0;
+	while (cmd_list)
 	{
-		if ((*cursor == '"' || *cursor == '\'') && in_quote == 0)
-		{
-			in_quote = 1;
-			quote_char = *cursor;
-		}
-		else if (*cursor == quote_char && in_quote == 1)
-		{
-			in_quote = 0;
-		}
-		cursor++;
+		count++;
+		cmd_list = cmd_list->next;
 	}
-	return (in_quote);
+	return (count);
 }

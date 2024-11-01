@@ -1,88 +1,83 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   execute_utils2.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/20 13:28:03 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/10/25 15:10:37 by csicsi           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/minishell.h"
 
-static int	check_syntax_error(t_token *cur, t_data *data, int check_type)
+static int	update_existing_env_var(char **env_vars, char *new_var)
 {
-	cur = cur->next;
-	if (check_type == 1
-		&& (!cur || (cur->type != TOKEN_WORD && ft_strcmp(cur->value, ">") != 0
-				&& ft_strcmp(cur->value, "<") != 0)))
+	int	i;
+
+	i = 0;
+	while (env_vars && env_vars[i])
 	{
-		if (cur)
-			ft_fprintf(2, ": syntax error near unexpected token `%s'\n",
-				cur->value);
-		else
-			ft_fprintf(2, ": syntax error near unexpected token `newline'\n");
-		data->last_exit_status = 2;
-		return (-1);
-	}
-	else if (check_type == 2 && (!cur || cur->type != TOKEN_WORD))
-	{
-		if (cur)
-			ft_fprintf(2, ": syntax error near unexpected token `%s'\n",
-				cur->value);
-		else
-			ft_fprintf(2, ": syntax error near unexpected token `newline'\n");
-		data->last_exit_status = 2;
-		return (-1);
-	}
-	return (0);
-}
-
-static int	check_optype(const char *cur_value)
-{
-	if (ft_strcmp(cur_value, ">") == 0
-		|| ft_strcmp(cur_value, ">>") == 0
-		|| ft_strcmp(cur_value, "<") == 0
-		|| ft_strcmp(cur_value, "<<") == 0)
-		return (1);
-	return (0);
-}
-
-int	count_cmds(t_cmd *cmd_list)
-{
-	int	count;
-
-	count = 0;
-	while (cmd_list)
-	{
-		count++;
-		cmd_list = cmd_list->next;
-	}
-	return (count);
-}
-
-int	validate_token_syntax(t_token *tokens, t_data *data)
-{
-	t_token	*cur;
-
-	cur = tokens;
-	if (!cur || (cur->type != TOKEN_WORD && cur->type != TOKEN_OPERATOR))
-		return (-1);
-	while (cur)
-	{
-		if (cur->type == TOKEN_OPERATOR && ft_strcmp(cur->value, "|") == 0)
+		if (ft_strncmp(env_vars[i], "_=", 2) == 0)
 		{
-			if (check_syntax_error(cur, data, 1) == -1)
-				return (-1);
+			free(env_vars[i]);
+			env_vars[i] = new_var;
+			return (1);
 		}
-		else if (cur->type == TOKEN_OPERATOR && check_optype(cur->value))
-		{
-			if (check_syntax_error(cur, data, 2) == -1)
-				return (-1);
-		}
-		cur = cur->next;
+		i++;
 	}
 	return (0);
+}
+
+static int	add_new_env_var(t_data *data, char *new_var)
+{
+	int		i;
+	char	**new_env_vars;
+
+	i = 0;
+	while (data->env_vars && data->env_vars[i])
+		i++;
+	new_env_vars = malloc(sizeof(char *) * (i + 2));
+	if (!new_env_vars)
+		return (-1);
+	i = 0;
+	while (data->env_vars && data->env_vars[i])
+	{
+		new_env_vars[i] = data->env_vars[i];
+		i++;
+	}
+	new_env_vars[i] = new_var;
+	new_env_vars[i + 1] = NULL;
+	free(data->env_vars);
+	data->env_vars = new_env_vars;
+	return (0);
+}
+
+int	update_last_command_env_var(t_data *data, char *cmd_path)
+{
+	char	*new_var;
+
+	new_var = ft_strjoin("_=", cmd_path);
+	if (update_existing_env_var(data->env_vars, new_var))
+		return (0);
+	return (add_new_env_var(data, new_var));
+}
+
+char	*get_directory_from_path(const char *path)
+{
+	int		i;
+	char	*dir;
+
+	i = ft_strlen(path) - 1;
+	while (i >= 0 && path[i] != '/')
+		i--;
+	if (i < 0)
+		return (NULL);
+	dir = ft_strndup(path, i);
+	if (!dir)
+		return (NULL);
+	return (dir);
+}
+
+t_token	*find_token_by_value(t_token *tokens, const char *value)
+{
+	t_token	*current;
+
+	current = tokens;
+	while (current != NULL)
+	{
+		if (ft_strcmp(current->value, value) == 0)
+			return (current);
+		current = current->next;
+	}
+	return (NULL);
 }

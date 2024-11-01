@@ -15,7 +15,7 @@ t_token	*create_token(int type, int word_index)
 	return (new_token);
 }
 
-char	*check_operator(char *cursor, t_token *token)
+static char	*check_operator(char *cursor, t_token *token)
 {
 	static const char	*operators[] = {">>", "<<", "&&", "||",
 		">", "<", "|"};

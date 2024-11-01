@@ -62,7 +62,7 @@ void	free_string_array(char **string_array)
 	string_array = NULL;
 }
 
-void	cleanup_cmd_list(t_data *data)
+static void	cleanup_cmd_list(t_data *data)
 {
 	t_cmd	*current_cmd;
 

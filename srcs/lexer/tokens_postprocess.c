@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-void	remove_empty_or_space_tokens(t_data *data,
+static void	remove_empty_or_space_tokens(t_data *data,
 	t_token **current, t_token **prev)
 {
 	t_token	*next_token;
@@ -22,7 +22,7 @@ void	remove_empty_or_space_tokens(t_data *data,
 	}
 }
 
-void	create_new_tokens(t_token **current,
+static void	create_new_tokens(t_token **current,
 	char **split_words, int *word_index)
 {
 	t_token	*new_token;
@@ -51,7 +51,7 @@ void	create_new_tokens(t_token **current,
 	free(split_words);
 }
 
-void	initialize_split_token(t_token *current,
+static void	initialize_split_token(t_token *current,
 	int *original_word, int *increment)
 {
 	char	**split_words;
@@ -76,7 +76,7 @@ void	initialize_split_token(t_token *current,
 	*increment = word_index - *original_word;
 }
 
-void	split_expanded_token(t_token *current, int *original_word)
+static void	split_expanded_token(t_token *current, int *original_word)
 {
 	t_token	*next_token;
 	int		increment;
