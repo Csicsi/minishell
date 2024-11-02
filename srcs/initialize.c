@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/01 14:39:08 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/02 11:25:50 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ bool	initialize(t_data *data, char **env_vars, int argc, char **argv)
 	data->env_vars = duplicate_env_vars(env_vars);
 	if (!data->env_vars)
 	{
-		printf("Error allocating memory for env_vars\n");
+		ft_fprintf(2, "Error allocating memory for env_vars\n");
 		data->exit_flag = true;
 	}
 	return (data->exit_flag);

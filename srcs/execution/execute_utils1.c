@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execute_utils3.c                                   :+:      :+:    :+:   */
+/*   execute_utils1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/01 14:21:45 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/02 16:33:22 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ static char	*find_in_path(char *cmd, t_data *data)
 	char	*path_for_execve;
 
 	path_env = ft_getenv(ft_strdup("PATH"), data->env_vars);
-	if (!path_env)
-		return (NULL);
+	if (!path_env || *path_env == '\0')
+		return (path_env);
 	allpath = ft_split(path_env, ':');
 	i = -1;
 	while (allpath[++i])
