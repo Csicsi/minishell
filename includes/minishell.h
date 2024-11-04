@@ -192,6 +192,7 @@ int			builtin_exit(t_cmd *cmd, t_data *data, bool print_exit);
 
 // signals.c
 void		handle_sigint(int sig);
+void		setup_signal_handlers(void);
 
 /* ************** */
 /* Initialization */

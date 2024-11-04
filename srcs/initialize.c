@@ -6,7 +6,7 @@
 /*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/02 11:25:50 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/11/04 15:00:08 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ bool	initialize(t_data *data, char **env_vars, int argc, char **argv)
 {
 	(void)argc;
 	(void)argv;
-	signal(SIGINT, handle_sigint);
+	setup_signal_handlers();
 	data->exit_flag = false;
 	data->last_exit_status = 0;
 	data->token_count = 0;
