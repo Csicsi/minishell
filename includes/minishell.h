@@ -126,6 +126,7 @@ int			execute_single_cmd(t_cmd *cmd, t_data *data);
 // execute_utils1.c
 int			is_builtin(char *command_name);
 int			execute_builtin(t_cmd *cmd, t_data *data, bool print_exit);
+//char		*find_cmd_path(char **cmd_args, t_data *data, int *err_flag);
 char		*find_cmd_path(char **cmd_args, t_data *data);
 int			count_cmds(t_cmd *cmd_list);
 // execute_utils2.c
