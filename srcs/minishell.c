@@ -63,11 +63,6 @@ int	process_and_validate_input(t_data *data)
 		cleanup_data(data, false);
 		return (1);
 	}
-	if (!check_for_heredoc(data->tokens) && validate_cmd_list(data))
-	{
-		cleanup_data(data, false);
-		return (1);
-	}
 	return (0);
 }
 
@@ -80,7 +75,23 @@ int	main(int argc, char **argv, char **env_vars)
 		return (1);
 	while (1)
 	{
-		data.input = readline("Don'tPanicShell> ");
+		//data.input = readline("Don'tPanicShell> ");
+		if (isatty(0))
+		{
+			data.input = readline("Don'tPanicShell> ");
+		}
+		else
+		{
+			data.input = get_next_line(0);
+			if (data.input == NULL)
+			{
+				cleanup_data(&data, true);
+				return (data.last_exit_status);
+			}
+			size_t len = ft_strlen(data.input);
+			if (len > 0 && data.input[len - 1] == '\n')
+				data.input[len - 1] = '\0';
+		}
 		if (handle_null_input(&data))
 			return (data.last_exit_status);
 		trimmed_input = ft_strtrim(data.input, " \t\n");

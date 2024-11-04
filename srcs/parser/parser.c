@@ -44,7 +44,7 @@ t_cmd	*parse_tokens(t_data *data)
 	if (!cmd)
 		return (NULL);
 	current_cmd = cmd;
-	context = (t_parse_context){0, false, false};
+	context = (t_parse_context){0, false, false, false};
 	words_count = count_tokens(data->tokens);
 	current_cmd->args = ft_calloc(words_count + 1, sizeof(char *));
 	if (!current_cmd->args)
@@ -52,6 +52,12 @@ t_cmd	*parse_tokens(t_data *data)
 	tmp = data->tokens;
 	while (data->tokens)
 	{
+		if (context.skip_to_pipe && !(data->tokens->type == TOKEN_OPERATOR
+			&& ft_strcmp(data->tokens->value, "|") == 0))
+		{
+			data->tokens = data->tokens->next;
+			continue;
+		}
 		if (!parse_single_token(data, &current_cmd, &context))
 			return (NULL);
 		data->tokens = data->tokens->next;

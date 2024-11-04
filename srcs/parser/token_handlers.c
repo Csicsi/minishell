@@ -13,7 +13,7 @@ static bool	process_heredoc(t_cmd *cmd, t_token **tokens)
 }
 
 static bool	handle_output(t_cmd *cmd,
-	t_token **tokens, bool *has_input, bool *has_output)
+	t_token **tokens, bool *has_output, t_data *data)
 {
 	int	fd_out;
 
@@ -26,36 +26,30 @@ static bool	handle_output(t_cmd *cmd,
 		else
 			fd_out = open(cmd->output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		close(fd_out);
+		if (check_output_error(cmd, data))
+			return (false);
 		*tokens = (*tokens)->next;
 		*has_output = true;
-		if (*has_input)
-			cmd->io_flag = IO_INPUT_FIRST;
-		else
-			cmd->io_flag = IO_OUTPUT_FIRST;
 		return (true);
 	}
 	return (false);
 }
 
-static bool	handle_input(t_cmd *cmd,
-	t_token **tokens, bool *has_input, bool *has_output)
+static bool	handle_input(t_cmd *cmd, t_token **tokens, bool *has_input, t_data *data)
 {
 	if (!cmd->input && (*tokens)->next)
 	{
 		cmd->input = ft_strdup((*tokens)->next->value);
+		if (check_input_error(cmd, data))
+			return (false);
 		*tokens = (*tokens)->next;
 		*has_input = true;
-		if (*has_output)
-			cmd->io_flag = IO_OUTPUT_FIRST;
-		else
-			cmd->io_flag = IO_INPUT_FIRST;
 		return (true);
 	}
 	return (false);
 }
 
-static t_cmd	*handle_pipe(t_cmd *current_cmd,
-	int *arg_index, t_token *tokens)
+static t_cmd	*handle_pipe(t_cmd *current_cmd, int *arg_index, t_token *tokens)
 {
 	int	words_count;
 
@@ -72,8 +66,7 @@ static t_cmd	*handle_pipe(t_cmd *current_cmd,
 		return (NULL);
 }
 
-bool	parse_single_token(t_data *data,
-	t_cmd **current_cmd, t_parse_context *context)
+bool	parse_single_token(t_data *data, t_cmd **current_cmd, t_parse_context *context)
 {
 	if (data->tokens->type == TOKEN_WORD)
 		(*current_cmd)->args[context->arg_index++]
@@ -84,20 +77,31 @@ bool	parse_single_token(t_data *data,
 			process_heredoc(*current_cmd, &data->tokens);
 		else if (ft_strcmp(data->tokens->value, ">") == 0
 			|| ft_strcmp(data->tokens->value, ">>") == 0)
-			handle_output(*current_cmd, &data->tokens,
-				&context->has_input, &context->has_output);
+		{
+			if (!handle_output(*current_cmd, &data->tokens, &context->has_output, data))
+			{
+				context->skip_to_pipe = true;
+				return (true);
+			}
+		}
 		else if (ft_strcmp(data->tokens->value, "<") == 0)
-			handle_input(*current_cmd, &data->tokens,
-				&context->has_input, &context->has_output);
+		{
+			if (!handle_input(*current_cmd, &data->tokens, &context->has_input, data))
+			{
+				context->skip_to_pipe = true;
+				return (true);
+			}
+		}
 		else if (ft_strcmp(data->tokens->value, "|") == 0)
 		{
-			*current_cmd = handle_pipe(*current_cmd,
-					&context->arg_index, data->tokens);
+			*current_cmd = handle_pipe(*current_cmd, &context->arg_index, data->tokens);
 			if (!*current_cmd)
 				return (false);
 			context->has_input = false;
 			context->has_output = false;
+			context->skip_to_pipe = false;
 		}
 	}
 	return (true);
 }
+
