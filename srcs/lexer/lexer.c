@@ -62,7 +62,7 @@ static char	*create_and_add_token(char *cursor, t_token **token_list, t_data *da
 			current = current->next;
 		current->next = new_token;
 	}
-	if (isspace(*cursor) || *cursor == '|' || *cursor == '&'
+	if (ft_isspace(*cursor) || *cursor == '|' || *cursor == '&'
 		|| *cursor == '>' || *cursor == '<')
 		data->word_index++;
 	return (cursor);
