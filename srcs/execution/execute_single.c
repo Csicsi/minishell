@@ -12,7 +12,7 @@ static int	handle_command_not_found(t_cmd *cmd, t_data *data, char **cmd_path)
 		ft_fprintf(2, ": %s: Permission denied\n", cmd->args[0]);
 		return (data->last_exit_status);
 	}
-	if (ft_strchr(cmd->args[0], '/') 
+	if (ft_strchr(cmd->args[0], '/')
 		|| (*cmd_path && **cmd_path == '\0'))
 		ft_fprintf(2, ": %s: No such file or directory\n", cmd->args[0]);
 	else
@@ -22,7 +22,7 @@ static int	handle_command_not_found(t_cmd *cmd, t_data *data, char **cmd_path)
 
 static int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
 {
-	int err_flag ; 
+	int err_flag ;
 
 	err_flag  = 0;
 	if (handle_input_redirection(cmd, data) < 0)
@@ -57,7 +57,7 @@ static int	handle_command_not_found(t_cmd *cmd, t_data *data, char **cmd_path)
 	//	return (data->last_exit_status);
 	if (cmd->args[0] == NULL)
 		return (data->last_exit_status);
-	if (ft_strchr(cmd->args[0], '/') 
+	if (ft_strchr(cmd->args[0], '/')
 		|| (*cmd_path && **cmd_path == '\0'))
 		ft_fprintf(2, ": %s: No such file or directory\n", cmd->args[0]);
 	else
@@ -95,18 +95,21 @@ int	execute_single_cmd(t_cmd *cmd, t_data *data)
 	cmd_path = NULL;
 	if (setup_command_execution(cmd, data, &cmd_path) != 0)
 		return (data->last_exit_status);
-	if (execve(cmd_path, cmd->args, data->env_vars) == -1)
+	if (!cmd->skip_execution)
 	{
-		if (ft_strchr(cmd->args[0], '/'))
-			ft_fprintf(2, ": %s: Is a directory\n", cmd->args[0]);
-		else
-			ft_fprintf(2, ": %s: command not found\n", cmd->args[0]);
-		if (ft_strchr(cmd->args[0], '/'))
-			data->last_exit_status = 126;
-		else
-			data->last_exit_status = 127;
-		free(cmd_path);
-		return (data->last_exit_status);
+		if (execve(cmd_path, cmd->args, data->env_vars) == -1)
+		{
+			if (ft_strchr(cmd->args[0], '/'))
+				ft_fprintf(2, ": %s: Is a directory\n", cmd->args[0]);
+			else
+				ft_fprintf(2, ": %s: command not found\n", cmd->args[0]);
+			if (ft_strchr(cmd->args[0], '/'))
+				data->last_exit_status = 126;
+			else
+				data->last_exit_status = 127;
+			free(cmd_path);
+			return (data->last_exit_status);
+		}
 	}
 	free(cmd_path);
 	return (0);

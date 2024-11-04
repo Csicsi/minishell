@@ -21,6 +21,4 @@ void	handle_heredoc(t_cmd *cmd_list, t_data *data)
 		}
 		current = current->next;
 	}
-	if (has_heredoc)
-		validate_cmd_list(data);
 }

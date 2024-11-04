@@ -8,14 +8,14 @@ t_cmd	*initialize_cmd(void)
 	if (!new_cmd)
 		return (NULL);
 	new_cmd->args = NULL;
-	new_cmd->input = NULL;
-	new_cmd->output = NULL;
+	new_cmd->input_files = NULL;
+	new_cmd->output_files = NULL;
 	new_cmd->append_output = false;
 	new_cmd->exit_status = 0;
 	new_cmd->heredoc_delim = NULL;
 	new_cmd->is_heredoc = false;
-	new_cmd->io_flag = IO_NONE_OR_SINGLE;
 	new_cmd->next = NULL;
+	new_cmd->skip_execution = false;
 	return (new_cmd);
 }
 
@@ -44,7 +44,7 @@ t_cmd	*parse_tokens(t_data *data)
 	if (!cmd)
 		return (NULL);
 	current_cmd = cmd;
-	context = (t_parse_context){0, false, false, false};
+	context = (t_parse_context){0, false, false};
 	words_count = count_tokens(data->tokens);
 	current_cmd->args = ft_calloc(words_count + 1, sizeof(char *));
 	if (!current_cmd->args)
@@ -52,12 +52,6 @@ t_cmd	*parse_tokens(t_data *data)
 	tmp = data->tokens;
 	while (data->tokens)
 	{
-		if (context.skip_to_pipe && !(data->tokens->type == TOKEN_OPERATOR
-			&& ft_strcmp(data->tokens->value, "|") == 0))
-		{
-			data->tokens = data->tokens->next;
-			continue;
-		}
 		if (!parse_single_token(data, &current_cmd, &context))
 			return (NULL);
 		data->tokens = data->tokens->next;

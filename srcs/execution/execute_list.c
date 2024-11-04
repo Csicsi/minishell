@@ -1,7 +1,7 @@
 #include "../includes/minishell.h"
 
-static void	execute_child_command(t_cmd *current, t_data *data,
-	t_exec_context *ctx)
+static void	execute_child_command(t_cmd *current,
+	t_data *data, t_exec_context *ctx)
 {
 	if (ctx->prev_fd != -1)
 	{
@@ -14,8 +14,10 @@ static void	execute_child_command(t_cmd *current, t_data *data,
 		close(ctx->pipe_fd[0]);
 		close(ctx->pipe_fd[1]);
 	}
-	if (current->output != NULL)
-		redirect_output(current, data, ctx);
+	if (handle_input_redirection(current, data) < 0)
+		exit(data->last_exit_status);
+	if (handle_output_redirection(current, data) < 0)
+		exit(data->last_exit_status);
 	if (is_builtin(current->args[0]))
 		data->last_exit_status = execute_builtin(current, data, false);
 	else

@@ -70,16 +70,14 @@ int	main(int argc, char **argv, char **env_vars)
 {
 	t_data	data;
 	char	*trimmed_input;
+	size_t	len;
 
 	if (initialize(&data, env_vars, argc, argv))
 		return (1);
 	while (1)
 	{
-		//data.input = readline("Don'tPanicShell> ");
 		if (isatty(0))
-		{
 			data.input = readline("Don'tPanicShell> ");
-		}
 		else
 		{
 			data.input = get_next_line(0);
@@ -88,7 +86,7 @@ int	main(int argc, char **argv, char **env_vars)
 				cleanup_data(&data, true);
 				return (data.last_exit_status);
 			}
-			size_t len = ft_strlen(data.input);
+			len = ft_strlen(data.input);
 			if (len > 0 && data.input[len - 1] == '\n')
 				data.input[len - 1] = '\0';
 		}

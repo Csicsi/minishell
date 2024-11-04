@@ -42,7 +42,8 @@ static char	*process_token(char *cursor, t_token *new_token, t_data *data)
 	return (cursor);
 }
 
-static char	*create_and_add_token(char *cursor, t_token **token_list, t_data *data)
+static char	*create_and_add_token(char *cursor, t_token **token_list,
+	t_data *data)
 {
 	t_token	*new_token;
 	t_token	*current;

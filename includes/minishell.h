@@ -19,13 +19,6 @@
 # include "../libft/libft.h"
 # include "utils.h"
 
-typedef enum e_in_out_flag
-{
-	IO_NONE_OR_SINGLE,
-	IO_INPUT_FIRST,
-	IO_OUTPUT_FIRST
-}	t_in_out_flag;
-
 typedef enum e_token_type
 {
 	TOKEN_WORD,
@@ -34,11 +27,18 @@ typedef enum e_token_type
 	TOKEN_END
 }	t_token_type;
 
+typedef struct s_file
+{
+	char			*filename;
+	bool			append;
+	struct s_file	*next;
+}	t_file;
+
 typedef struct s_cmd
 {
 	char			**args;
-	char			*input;
-	char			*output;
+	t_file			*input_files;
+	t_file			*output_files;
 	int				append_output;
 	int				exit_status;
 	struct s_cmd	*next;
@@ -46,7 +46,7 @@ typedef struct s_cmd
 	bool			is_heredoc;
 	bool			io_error;
 	char			*heredoc_tempfile;
-	t_in_out_flag	io_flag;
+	bool			skip_execution;
 }	t_cmd;
 
 typedef struct s_token
@@ -77,7 +77,6 @@ typedef struct s_parse_context
 	int		arg_index;
 	bool	has_input;
 	bool	has_output;
-	bool	skip_to_pipe;
 }	t_parse_context;
 
 typedef struct s_exec_context
@@ -142,11 +141,10 @@ void		handle_heredoc(t_cmd *cmd_list, t_data *data);
 // redirs.c
 int			handle_input_redirection(t_cmd *cmd, t_data *data);
 int			handle_output_redirection(t_cmd *cmd, t_data *data);
-int			redirect_output(t_cmd *current, t_data *data, t_exec_context *ctx);
 // validate_grammar.c
 int			validate_cmd_list(t_data *data);
-bool		check_output_error(t_cmd *cmd, t_data *data);
-bool		check_input_error(t_cmd *cmd, t_data *data);
+bool		check_input_error(t_file *input_file, t_cmd *cmd, t_data *data);
+bool		check_output_error(t_file *output_file, t_cmd *cmd, t_data *data);
 // validate_syntax.c
 int			validate_syntax(t_data *data);
 
@@ -161,7 +159,6 @@ int			count_tokens(t_token *tokens);
 // token_handlers.c
 bool		parse_single_token(t_data *data,
 				t_cmd **current_cmd, t_parse_context *context);
-bool		check_output_error(t_cmd *cmd, t_data *data);
 
 /* ******** */
 /* Builtins */

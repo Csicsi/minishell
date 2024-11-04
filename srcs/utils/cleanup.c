@@ -1,5 +1,18 @@
 #include "../includes/minishell.h"
 
+static void	free_file_list(t_file *file_list)
+{
+	t_file	*temp;
+
+	while (file_list)
+	{
+		temp = file_list;
+		file_list = file_list->next;
+		ft_free((void **)&temp->filename);
+		ft_free((void **)&temp);
+	}
+}
+
 static void	free_cmd_list(t_cmd *cmd_list)
 {
 	t_cmd	*tmp;
@@ -18,8 +31,8 @@ static void	free_cmd_list(t_cmd *cmd_list)
 			}
 			ft_free((void **)&cmd_list->args);
 		}
-		ft_free((void **)&cmd_list->input);
-		ft_free((void **)&cmd_list->output);
+		free_file_list(cmd_list->input_files);
+		free_file_list(cmd_list->output_files);
 		ft_free((void **)&cmd_list->heredoc_delim);
 		cmd_list = cmd_list->next;
 		ft_free((void **)&tmp);

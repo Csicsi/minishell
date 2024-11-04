@@ -1,13 +1,14 @@
 #include "../includes/minishell.h"
 
-static int	handle_file_input_redirection(t_cmd *cmd, t_data *data)
+static int	handle_file_input_redirection(t_file *input_file, t_data *data)
 {
 	int	fd_in;
 
-	fd_in = open(cmd->input, O_RDONLY);
+	fd_in = open(input_file->filename, O_RDONLY);
 	if (fd_in < 0)
 	{
-		ft_fprintf(2, ": %s: No such file or directory\n", cmd->input);
+		ft_fprintf(2, ": %s: No such file or directory\n",
+			input_file->filename);
 		data->last_exit_status = 1;
 		return (-1);
 	}
@@ -37,54 +38,55 @@ static int	handle_heredoc_input_redirection(t_cmd *cmd, t_data *data)
 
 int	handle_input_redirection(t_cmd *cmd, t_data *data)
 {
-	if (cmd->input)
-		return (handle_file_input_redirection(cmd, data));
-	else if (cmd->is_heredoc && cmd->heredoc_tempfile)
+	t_file	*input_file;
+
+	input_file = cmd->input_files;
+	while (input_file)
+	{
+		if (check_input_error(input_file, cmd, data))
+			return (-1);
+		if (handle_file_input_redirection(input_file, data) < 0)
+			return (-1);
+		input_file = input_file->next;
+	}
+	if (cmd->is_heredoc && cmd->heredoc_tempfile)
 		return (handle_heredoc_input_redirection(cmd, data));
+	return (0);
+}
+
+static int	handle_file_output_redirection(t_file *output_file, t_data *data)
+{
+	int	fd_out;
+
+	if (output_file->append)
+		fd_out = open(output_file->filename,
+				O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		fd_out = open(output_file->filename,
+				O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd_out < 0)
+	{
+		ft_fprintf(2, ": %s: Cannot open file\n", output_file->filename);
+		data->last_exit_status = 1;
+		return (-1);
+	}
+	dup2(fd_out, STDOUT_FILENO);
+	close(fd_out);
 	return (0);
 }
 
 int	handle_output_redirection(t_cmd *cmd, t_data *data)
 {
-	int	fd_out;
+	t_file	*output_file;
 
-	if (cmd->output)
+	output_file = cmd->output_files;
+	while (output_file)
 	{
-		if (cmd->append_output)
-			fd_out = open(cmd->output, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		else
-			fd_out = open(cmd->output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fd_out < 0)
-		{
-			ft_fprintf(2, ": %s: Cannot open file\n", cmd->output);
-			data->last_exit_status = 1;
+		if (check_output_error(output_file, cmd, data))
 			return (-1);
-		}
-		dup2(fd_out, STDOUT_FILENO);
-		close(fd_out);
+		if (handle_file_output_redirection(output_file, data) < 0)
+			return (-1);
+		output_file = output_file->next;
 	}
-	return (0);
-}
-
-int	redirect_output(t_cmd *current, t_data *data, t_exec_context *ctx)
-{
-	int	fd_out;
-
-	if (current->append_output)
-		fd_out = open(current->output, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else
-		fd_out = open(current->output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd_out < 0)
-	{
-		if (ft_strchr(current->output, '/') != NULL)
-			ft_fprintf(2, "%s: Is a directory\n", current->output);
-		else
-			ft_fprintf(2, "%s: Permission denied\n", current->output);
-		cleanup_data(data, true);
-		free(ctx->child_pids);
-		exit(1);
-	}
-	dup2(fd_out, STDOUT_FILENO);
-	close(fd_out);
 	return (0);
 }

@@ -12,22 +12,29 @@ static bool	process_heredoc(t_cmd *cmd, t_token **tokens)
 	return (false);
 }
 
-static bool	handle_output(t_cmd *cmd,
-	t_token **tokens, bool *has_output, t_data *data)
+static bool	handle_output(t_cmd *cmd, t_token **tokens,
+	bool *has_output)
 {
-	int	fd_out;
+	t_file	*new_output;
+	t_file	*last;
 
 	if ((*tokens)->next)
 	{
-		cmd->output = ft_strdup((*tokens)->next->value);
-		cmd->append_output = (ft_strcmp((*tokens)->value, ">>") == 0);
-		if (cmd->append_output)
-			fd_out = open(cmd->output, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		else
-			fd_out = open(cmd->output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		close(fd_out);
-		if (check_output_error(cmd, data))
+		new_output = malloc(sizeof(t_file));
+		if (!new_output)
 			return (false);
+		new_output->filename = ft_strdup((*tokens)->next->value);
+		new_output->append = (ft_strcmp((*tokens)->value, ">>") == 0);
+		new_output->next = NULL;
+		if (cmd->output_files == NULL)
+			cmd->output_files = new_output;
+		else
+		{
+			last = cmd->output_files;
+			while (last->next)
+				last = last->next;
+			last->next = new_output;
+		}
 		*tokens = (*tokens)->next;
 		*has_output = true;
 		return (true);
@@ -35,13 +42,29 @@ static bool	handle_output(t_cmd *cmd,
 	return (false);
 }
 
-static bool	handle_input(t_cmd *cmd, t_token **tokens, bool *has_input, t_data *data)
+static bool	handle_input(t_cmd *cmd, t_token **tokens,
+	bool *has_input)
 {
-	if (!cmd->input && (*tokens)->next)
+	t_file	*new_input;
+	t_file	*last;
+
+	if ((*tokens)->next)
 	{
-		cmd->input = ft_strdup((*tokens)->next->value);
-		if (check_input_error(cmd, data))
+		new_input = malloc(sizeof(t_file));
+		if (!new_input)
 			return (false);
+		new_input->filename = ft_strdup((*tokens)->next->value);
+		new_input->append = false;
+		new_input->next = NULL;
+		if (cmd->input_files == NULL)
+			cmd->input_files = new_input;
+		else
+		{
+			last = cmd->input_files;
+			while (last->next)
+				last = last->next;
+			last->next = new_input;
+		}
 		*tokens = (*tokens)->next;
 		*has_input = true;
 		return (true);
@@ -49,7 +72,8 @@ static bool	handle_input(t_cmd *cmd, t_token **tokens, bool *has_input, t_data *
 	return (false);
 }
 
-static t_cmd	*handle_pipe(t_cmd *current_cmd, int *arg_index, t_token *tokens)
+static t_cmd	*handle_pipe(t_cmd *current_cmd,
+	int *arg_index, t_token *tokens)
 {
 	int	words_count;
 
@@ -66,7 +90,8 @@ static t_cmd	*handle_pipe(t_cmd *current_cmd, int *arg_index, t_token *tokens)
 		return (NULL);
 }
 
-bool	parse_single_token(t_data *data, t_cmd **current_cmd, t_parse_context *context)
+bool	parse_single_token(t_data *data,
+	t_cmd **current_cmd, t_parse_context *context)
 {
 	if (data->tokens->type == TOKEN_WORD)
 		(*current_cmd)->args[context->arg_index++]
@@ -77,31 +102,20 @@ bool	parse_single_token(t_data *data, t_cmd **current_cmd, t_parse_context *cont
 			process_heredoc(*current_cmd, &data->tokens);
 		else if (ft_strcmp(data->tokens->value, ">") == 0
 			|| ft_strcmp(data->tokens->value, ">>") == 0)
-		{
-			if (!handle_output(*current_cmd, &data->tokens, &context->has_output, data))
-			{
-				context->skip_to_pipe = true;
-				return (true);
-			}
-		}
+			handle_output(*current_cmd, &data->tokens,
+				&context->has_output);
 		else if (ft_strcmp(data->tokens->value, "<") == 0)
-		{
-			if (!handle_input(*current_cmd, &data->tokens, &context->has_input, data))
-			{
-				context->skip_to_pipe = true;
-				return (true);
-			}
-		}
+			handle_input(*current_cmd, &data->tokens,
+				&context->has_input);
 		else if (ft_strcmp(data->tokens->value, "|") == 0)
 		{
-			*current_cmd = handle_pipe(*current_cmd, &context->arg_index, data->tokens);
+			*current_cmd = handle_pipe(*current_cmd,
+					&context->arg_index, data->tokens);
 			if (!*current_cmd)
 				return (false);
 			context->has_input = false;
 			context->has_output = false;
-			context->skip_to_pipe = false;
 		}
 	}
 	return (true);
 }
-
