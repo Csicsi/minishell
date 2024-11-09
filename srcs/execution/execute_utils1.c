@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/03 17:34:16 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/11/09 17:05:49 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,10 @@ char	*find_cmd_path(char **cmd_args, t_data *data, int *err_flag)
 	if (ft_strchr(cmd_args[0], '/') != NULL)
 	{
 		//if (access(cmd_args[0], F_OK) == 0 && access(cmd_args[0], X_OK) != 0)
-		//	*err_flag = -1;			
+		//	*err_flag = -1;
 		if (access(cmd_args[0], F_OK | X_OK) != 0)
 		{
-			*err_flag = -1;	
+			*err_flag = -1;
 			return (NULL);
 		}
 		return (ft_strdup(cmd_args[0]));
@@ -116,7 +116,7 @@ static char	*find_in_path(char *cmd, t_data *data)
 
 	path_env = ft_getenv(ft_strdup("PATH"), data->env_vars);
 	if (!path_env || *path_env == '\0')
-		return (path_env);
+		return (NULL);
 	allpath = ft_split(path_env, ':');
 	i = -1;
 	while (allpath[++i])

@@ -113,5 +113,7 @@ int	lexer(t_data *data)
 	}
 	handle_expanded_tokens(data);
 	join_tokens_in_same_word(data);
+	if (data->tokens == NULL)
+		return (1);
 	return (0);
 }

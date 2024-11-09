@@ -66,7 +66,7 @@ static int	handle_file_output_redirection(t_file *output_file, t_data *data)
 				O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd_out < 0)
 	{
-		ft_fprintf(2, ": %s: Cannot open file\n", output_file->filename);
+		ft_fprintf(2, ": %s: Permission denied\n", output_file->filename);
 		data->last_exit_status = 1;
 		return (-1);
 	}
