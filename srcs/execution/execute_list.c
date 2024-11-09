@@ -27,11 +27,10 @@ static void	execute_child_command(t_cmd *current,
 	exit(data->last_exit_status);
 }
 
-static int execute_command_in_list(t_cmd *current, t_data *data,
+static int	execute_command_in_list(t_cmd *current, t_data *data,
 	t_exec_context *ctx)
 {
-	pid_t pid;
-	int status;
+	pid_t	pid;
 
 	if (current->next != NULL)
 		pipe(ctx->pipe_fd);
@@ -40,6 +39,7 @@ static int execute_command_in_list(t_cmd *current, t_data *data,
 		execute_child_command(current, data, ctx);
 	else if (pid > 0)
 	{
+		ctx->child_pids[ctx->num_children++] = pid;
 		if (ctx->prev_fd != -1)
 			close(ctx->prev_fd);
 		if (current->next != NULL)
@@ -49,11 +49,6 @@ static int execute_command_in_list(t_cmd *current, t_data *data,
 		}
 		else
 			ctx->prev_fd = -1;
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			data->last_exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			data->last_exit_status = 128 + WTERMSIG(status);
 	}
 	else
 		return (perror(": fork"), 1);
@@ -127,6 +122,7 @@ int	execute_cmd_list(t_data *data)
 		return (builtin_status);
 	if (execute_all_commands_in_list(current, data, &ctx) == 1)
 		return (cleanup_data(data, false), free(ctx.child_pids), 1);
+	wait_for_children(ctx, data);
 	cleanup_data(data, false);
 	free(ctx.child_pids);
 	if (ctx.io_error_status && data->last_exit_status == 0)

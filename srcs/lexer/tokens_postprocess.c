@@ -15,7 +15,9 @@ static void	remove_empty_or_space_tokens(t_data *data,
 			data->tokens = next_token;
 		if (ft_strcmp((*current)->value, "") != 0
 			&& is_all_spaces((*current)->value) && next_token)
+		{
 			next_token->word++;
+		}
 		free((*current)->value);
 		free(*current);
 		*current = next_token;
@@ -76,17 +78,23 @@ static void	initialize_split_token(t_token *current,
 	*increment = word_index - *original_word;
 }
 
-static void	split_expanded_token(t_token *current, int *original_word)
+static void	split_expanded_token(t_token *current, int *original_word,
+	bool ends_with_space)
 {
 	t_token	*next_token;
 	int		increment;
-	bool	ends_with_space;
+	int		i;
 
 	initialize_split_token(current, original_word, &increment);
-	ends_with_space = (current->value[ft_strlen(current->value) - 1] == ' ');
+	i = 0;
+	while (i < increment && current)
+	{
+		current = current->next;
+		i++;
+	}
+	next_token = current;
 	if (ends_with_space)
 		increment++;
-	next_token = current->next;
 	while (next_token)
 	{
 		next_token->word += increment;
@@ -99,6 +107,7 @@ void	handle_expanded_tokens(t_data *data)
 	t_token	*current;
 	t_token	*prev;
 	int		original_word;
+	bool	ends_with_space;
 
 	current = data->tokens;
 	prev = NULL;
@@ -106,11 +115,13 @@ void	handle_expanded_tokens(t_data *data)
 	{
 		if (current->is_expanded)
 		{
+			ends_with_space
+				= (current->value[ft_strlen(current->value) - 1] == ' ');
 			remove_empty_or_space_tokens(data, &current, &prev);
 			if (!current)
 				continue ;
 			original_word = current->word;
-			split_expanded_token(current, &original_word);
+			split_expanded_token(current, &original_word, ends_with_space);
 		}
 		prev = current;
 		current = current->next;
