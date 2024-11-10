@@ -71,6 +71,13 @@ static int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
 		return (data->last_exit_status);
 	if (handle_output_redirection(cmd, data) < 0)
 		return (data->last_exit_status);
+	if (cmd->skip_execution)
+		return (1);
+	if (!cmd->args[0] && cmd->is_heredoc)
+	{
+		data->last_exit_status = 0;
+		return (1);
+	}
 	if (is_builtin(cmd->args[0]))
 	{
 		data->last_exit_status = execute_builtin(cmd, data, false);

@@ -30,8 +30,15 @@ static char	*process_token(char *cursor, t_token *new_token, t_data *data)
 		temp = cursor;
 		while (*temp == ' ')
 			temp++;
-		if (*temp == '\'')
-			data->heredoc_single_quote = true;
+		while (*temp && !ft_isspace(*temp) && *temp != '>' && *temp != '<' && *temp != '|' && *temp != '&')
+		{
+			if (*temp == '\'')
+			{
+				data->heredoc_single_quote = true;
+				break ;
+			}
+			temp++;
+		}
 	}
 	else if (*cursor == '"' || *cursor == '\'' || *cursor == '>'
 		|| *cursor == '<' || *cursor == '|' || *cursor == '&')
@@ -113,7 +120,5 @@ int	lexer(t_data *data)
 	}
 	handle_expanded_tokens(data);
 	join_tokens_in_same_word(data);
-	if (data->tokens == NULL)
-		return (1);
 	return (0);
 }

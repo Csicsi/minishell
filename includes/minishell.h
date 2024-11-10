@@ -24,6 +24,7 @@ typedef enum e_token_type
 	TOKEN_WORD,
 	TOKEN_OPERATOR,
 	TOKEN_UNKNOWN,
+	TOKEN_EMPTY,
 	TOKEN_END
 }	t_token_type;
 

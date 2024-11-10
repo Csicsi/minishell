@@ -115,13 +115,18 @@ void	handle_expanded_tokens(t_data *data)
 	{
 		if (current->is_expanded)
 		{
-			ends_with_space
-				= (current->value[ft_strlen(current->value) - 1] == ' ');
-			remove_empty_or_space_tokens(data, &current, &prev);
-			if (!current)
-				continue ;
-			original_word = current->word;
-			split_expanded_token(current, &original_word, ends_with_space);
+			if (ft_strlen(current->value) == 0)
+				current->type = TOKEN_EMPTY;
+			else
+			{
+				ends_with_space
+					= (current->value[ft_strlen(current->value) - 1] == ' ');
+				remove_empty_or_space_tokens(data, &current, &prev);
+				if (!current)
+					continue ;
+				original_word = current->word;
+				split_expanded_token(current, &original_word, ends_with_space);
+			}
 		}
 		prev = current;
 		current = current->next;

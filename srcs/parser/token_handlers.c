@@ -94,8 +94,13 @@ bool	parse_single_token(t_data *data,
 	t_cmd **current_cmd, t_parse_context *context)
 {
 	if (data->tokens->type == TOKEN_WORD)
+	{
+		(*current_cmd)->skip_execution = false;
 		(*current_cmd)->args[context->arg_index++]
 			= ft_strdup(data->tokens->value);
+	}
+	else if (data->tokens->type == TOKEN_EMPTY && !(*current_cmd)->args[0])
+		(*current_cmd)->skip_execution = true;
 	else if (data->tokens->type == TOKEN_OPERATOR)
 	{
 		if (ft_strcmp(data->tokens->value, "<<") == 0)
