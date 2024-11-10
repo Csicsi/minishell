@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/10 09:43:11 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/10 14:52:38 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,10 @@ static int	change_directory(const char *curpath, t_data *data)
 		return (perror(": cd: setenv OLDPWD"), free(normalized_path), 1);
 	if (chdir(normalized_path) != 0)
 	{
-		ft_fprintf(STDERR_FILENO, "cd: %s: Not a directory\n", curpath);
+		if (access(normalized_path, F_OK) == 0)
+			ft_fprintf(STDERR_FILENO, "cd: %s: Not a directory\n", curpath);
+		else
+			ft_fprintf(STDERR_FILENO, "cd: %s: Permission denied\n", curpath);
 		free(normalized_path);
 		return (1);
 	}

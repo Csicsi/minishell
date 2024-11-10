@@ -62,6 +62,7 @@ typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;
+	//char			*old_value;
 	int				word;
 	bool			is_expanded;
 	struct s_token	*next;
