@@ -17,16 +17,32 @@ static void	execute_child_command(t_cmd *current,
 	if (current->redirection_order == OUTPUT_FIRST)
 	{
 		if (handle_output_redirection(current, data) < 0)
+		{
+			cleanup_data(data, true);
+			free(ctx->child_pids);
 			exit(data->last_exit_status);
+		}
 		if (handle_input_redirection(current, data) < 0)
+		{
+			cleanup_data(data, true);
+			free(ctx->child_pids);
 			exit(data->last_exit_status);
+		}
 	}
 	else
 	{
 		if (handle_input_redirection(current, data) < 0)
+		{
+			cleanup_data(data, true);
+			free(ctx->child_pids);
 			exit(data->last_exit_status);
+		}
 		if (handle_output_redirection(current, data) < 0)
+		{
+			cleanup_data(data, true);
+			free(ctx->child_pids);
 			exit(data->last_exit_status);
+		}
 	}
 	if (is_builtin(current->args[0]))
 		data->last_exit_status = execute_builtin(current, data, false);
