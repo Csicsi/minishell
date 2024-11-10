@@ -14,10 +14,20 @@ static void	execute_child_command(t_cmd *current,
 		close(ctx->pipe_fd[0]);
 		close(ctx->pipe_fd[1]);
 	}
-	if (handle_input_redirection(current, data) < 0)
-		exit(data->last_exit_status);
-	if (handle_output_redirection(current, data) < 0)
-		exit(data->last_exit_status);
+	if (current->redirection_order == OUTPUT_FIRST)
+	{
+		if (handle_output_redirection(current, data) < 0)
+			exit(data->last_exit_status);
+		if (handle_input_redirection(current, data) < 0)
+			exit(data->last_exit_status);
+	}
+	else
+	{
+		if (handle_input_redirection(current, data) < 0)
+			exit(data->last_exit_status);
+		if (handle_output_redirection(current, data) < 0)
+			exit(data->last_exit_status);
+	}
 	if (is_builtin(current->args[0]))
 		data->last_exit_status = execute_builtin(current, data, false);
 	else

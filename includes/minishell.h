@@ -35,19 +35,27 @@ typedef struct s_file
 	struct s_file	*next;
 }	t_file;
 
+typedef enum e_redirection_order
+{
+	NO_REDIRECTION,
+	INPUT_FIRST,
+	OUTPUT_FIRST
+}	t_redirection_order;
+
 typedef struct s_cmd
 {
-	char			**args;
-	t_file			*input_files;
-	t_file			*output_files;
-	int				append_output;
-	int				exit_status;
-	struct s_cmd	*next;
-	char			*heredoc_delim;
-	bool			is_heredoc;
-	bool			io_error;
-	char			*heredoc_tempfile;
-	bool			skip_execution;
+	char				**args;
+	t_file				*input_files;
+	t_file				*output_files;
+	int					append_output;
+	int					exit_status;
+	struct s_cmd		*next;
+	char				*heredoc_delim;
+	bool				is_heredoc;
+	bool				io_error;
+	char				*heredoc_tempfile;
+	t_redirection_order	redirection_order;
+	bool				skip_execution;
 }	t_cmd;
 
 typedef struct s_token

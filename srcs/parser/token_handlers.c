@@ -37,6 +37,8 @@ static bool	handle_output(t_cmd *cmd, t_token **tokens,
 		}
 		*tokens = (*tokens)->next;
 		*has_output = true;
+		if (cmd->redirection_order == NO_REDIRECTION)
+			cmd->redirection_order = OUTPUT_FIRST;
 		return (true);
 	}
 	return (false);
@@ -67,6 +69,8 @@ static bool	handle_input(t_cmd *cmd, t_token **tokens,
 		}
 		*tokens = (*tokens)->next;
 		*has_input = true;
+		if (cmd->redirection_order == NO_REDIRECTION)
+			cmd->redirection_order = INPUT_FIRST;
 		return (true);
 	}
 	return (false);
