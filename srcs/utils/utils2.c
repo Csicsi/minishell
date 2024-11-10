@@ -1,42 +1,82 @@
 #include "../includes/minishell.h"
 
-static int	ft_write_formatted_str(int fd, const char *str)
+static int	ft_calculate_formatted_str_len(const char *str)
 {
-	int	count;
-	int	j;
+	int	total_len;
 	int	tab_count;
-	int	k;
+	int	j;
 
-	count = 0;
+	total_len = 0;
 	j = 0;
 	while (str && str[j])
 	{
 		if (str[j] == '\t')
 		{
 			tab_count = 0;
-			while (str[j++] == '\t')
+			while (str[j] == '\t')
+			{
 				tab_count++;
-			count += write(fd, "$'\\t", 4);
-			k = 1;
-			while (k++ < tab_count)
-				count += write(fd, "\\t", 2);
-			count += write(fd, "'", 1);
+				j++;
+			}
+			j--;
+			total_len += 4 + (2 * (tab_count - 1)) + 1;
 		}
 		else
-			count += write(fd, &str[j++], 1);
+			total_len++;
+		j++;
 	}
-	return (count);
+	return (total_len);
 }
 
-int	ft_fprintf(int fd, const char *format, ...)
+static void	ft_write_formatted_str_to_buffer(char *buffer, const char *str)
 {
-	va_list		args;
-	int			i;
-	int			count;
-	const char	*str;
+	int	i;
+	int	tab_count;
+	int	j;
 
 	i = 0;
-	count = 0;
+	j = 0;
+	while (str && str[j])
+	{
+		if (str[j] == '\t')
+		{
+			tab_count = 0;
+			buffer[i++] = '$';
+			buffer[i++] = '\'';
+			buffer[i++] = '\\';
+			buffer[i++] = 't';
+			while (str[j] == '\t')
+			{
+				tab_count++;
+				j++;
+			}
+			j--;
+			while (--tab_count > 0)
+			{
+				buffer[i++] = '\\';
+				buffer[i++] = 't';
+			}
+			buffer[i++] = '\'';
+		}
+		else
+			buffer[i++] = str[j];
+		j++;
+	}
+	buffer[i] = '\0';
+}
+
+void	ft_fprintf(int fd, const char *format, ...)
+{
+	va_list		args;
+	int			total_len;
+	const char	*str;
+	char		*buffer;
+	int			i;
+	int			pos;
+
+	total_len = 0;
+	i = 0;
+	pos = 0;
 	va_start(args, format);
 	while (format && format[i])
 	{
@@ -44,14 +84,38 @@ int	ft_fprintf(int fd, const char *format, ...)
 		{
 			str = va_arg(args, const char *);
 			if (str)
-				count += ft_write_formatted_str(fd, str);
+				total_len += ft_calculate_formatted_str_len(str);
 			i += 2;
 		}
 		else
-			count += write(fd, &format[i++], 1);
+		{
+			total_len++;
+			i++;
+		}
 	}
 	va_end(args);
-	return (count);
+	buffer = malloc(total_len + 1);
+	if (!buffer)
+		return ;
+	va_start(args, format);
+	i = 0;
+	while (format && format[i])
+	{
+		if (format[i] == '%' && format[i + 1] == 's')
+		{
+			str = va_arg(args, const char *);
+			if (str)
+				ft_write_formatted_str_to_buffer(buffer + pos, str);
+			pos += ft_calculate_formatted_str_len(str);
+			i += 2;
+		}
+		else
+			buffer[pos++] = format[i++];
+	}
+	buffer[pos] = '\0';
+	va_end(args);
+	write(fd, buffer, pos);
+	free(buffer);
 }
 
 char	*ft_strncpy(char *dest, const char *src, size_t n)

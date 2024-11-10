@@ -19,7 +19,7 @@ bool	is_all_spaces(char *str);
 char	*skip_spaces(char *str);
 
 //utils2.c
-int		ft_fprintf(int fd, const char *format, ...);
+void	ft_fprintf(int fd, const char *format, ...);
 char	*ft_strncpy(char *dest, const char *src, size_t n);
 char	*ft_strndup(const char *s, size_t n);
 char	*ft_strcpy(char *dest, const char *src);
