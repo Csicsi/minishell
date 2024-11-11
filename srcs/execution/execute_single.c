@@ -67,7 +67,7 @@ static int	handle_command_not_found(t_cmd *cmd, t_data *data, char **cmd_path)
 
 static int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
 {
-	if (cmd->skip_execution)
+	if (cmd->skip_execution || cmd->empty_redir)
 		return (1);
 	if (!cmd->args[0] && cmd->is_heredoc)
 	{
@@ -98,7 +98,7 @@ int	execute_single_cmd(t_cmd *cmd, t_data *data)
 	cmd_path = NULL;
 	if (setup_command_execution(cmd, data, &cmd_path) != 0)
 		return (data->last_exit_status);
-	if (!cmd->skip_execution)
+	if (!cmd->skip_execution && !cmd->empty_redir)
 	{
 		if (execve(cmd_path, cmd->args, data->env_vars) == -1)
 		{

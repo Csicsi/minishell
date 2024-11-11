@@ -10,6 +10,7 @@ t_token	*create_token(int type, int word_index)
 	new_token->type = type;
 	new_token->word = word_index;
 	new_token->value = NULL;
+	new_token->old_value = NULL;
 	new_token->is_expanded = false;
 	new_token->next = NULL;
 	return (new_token);
@@ -86,6 +87,7 @@ int	handle_env_variables(t_token *new_token, t_data *data)
 {
 	char	*expanded;
 
+	new_token->old_value = ft_strdup(new_token->value);
 	expanded = expand_env_var(new_token->value, data->last_exit_status, data);
 	if (!expanded)
 	{

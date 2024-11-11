@@ -16,6 +16,8 @@ t_cmd	*initialize_cmd(void)
 	new_cmd->is_heredoc = false;
 	new_cmd->next = NULL;
 	new_cmd->skip_execution = false;
+	new_cmd->io_error = false;
+	new_cmd->empty_redir = false;
 	new_cmd->redirection_order = NO_REDIRECTION;
 	return (new_cmd);
 }

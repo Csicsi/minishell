@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/11 11:21:23 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/11 14:13:07 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int	is_builtin(char *command_name)
 
 int	execute_builtin(t_cmd *cmd, t_data *data, bool print_exit)
 {
+	if (cmd->empty_redir)
+		return (1);
 	if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
 		return (builtin_cd(cmd, data));
 	else if (ft_strncmp(cmd->args[0], "echo", 5) == 0)

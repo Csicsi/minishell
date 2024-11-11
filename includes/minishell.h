@@ -54,6 +54,7 @@ typedef struct s_cmd
 	char				*heredoc_delim;
 	bool				is_heredoc;
 	bool				io_error;
+	bool				empty_redir;
 	char				*heredoc_tempfile;
 	t_redirection_order	redirection_order;
 	bool				skip_execution;
@@ -63,7 +64,7 @@ typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;
-	//char			*old_value;
+	char			*old_value;
 	int				word;
 	bool			is_expanded;
 	struct s_token	*next;

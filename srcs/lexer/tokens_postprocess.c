@@ -53,7 +53,7 @@ static void	create_new_tokens(t_token **current,
 	free(split_words);
 }
 
-static void	initialize_split_token(t_token *current,
+static bool	initialize_split_token(t_token *current,
 	int *original_word, int *increment)
 {
 	char	**split_words;
@@ -64,11 +64,11 @@ static void	initialize_split_token(t_token *current,
 	starts_with_space = (current->value[0] == ' ');
 	split_words = ft_split(current->value, ' ');
 	if (!split_words)
-		return ;
+		return (starts_with_space);
 	free(current->value);
 	current->value = ft_strdup(split_words[0]);
 	if (!current->value)
-		return ;
+		return (starts_with_space);
 	if (starts_with_space)
 	{
 		word_index++;
@@ -76,6 +76,7 @@ static void	initialize_split_token(t_token *current,
 	}
 	create_new_tokens(&current, split_words, &word_index);
 	*increment = word_index - *original_word;
+	return (starts_with_space);
 }
 
 static void	split_expanded_token(t_token *current, int *original_word,
@@ -84,10 +85,14 @@ static void	split_expanded_token(t_token *current, int *original_word,
 	t_token	*next_token;
 	int		increment;
 	int		i;
+	bool	starts_with_space;
 
-	initialize_split_token(current, original_word, &increment);
-	i = 0;
-	while (i < increment && current)
+	starts_with_space = initialize_split_token(current, original_word, &increment);
+	if (starts_with_space)
+		i = 1;
+	else
+		i = 0;
+	while (i < increment + 1 && current)
 	{
 		current = current->next;
 		i++;

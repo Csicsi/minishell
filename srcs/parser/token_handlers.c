@@ -20,6 +20,12 @@ static bool	handle_output(t_cmd *cmd, t_token **tokens,
 
 	if ((*tokens)->next)
 	{
+		if ((*tokens)->next->type == TOKEN_EMPTY)
+		{
+			ft_fprintf(2, "%s: ambiguous redirect\n", (*tokens)->next->old_value);
+			cmd->empty_redir = true;
+			return (false);
+		}
 		new_output = malloc(sizeof(t_file));
 		if (!new_output)
 			return (false);
@@ -52,6 +58,12 @@ static bool	handle_input(t_cmd *cmd, t_token **tokens,
 
 	if ((*tokens)->next)
 	{
+		if ((*tokens)->next->type == TOKEN_EMPTY)
+		{
+			ft_fprintf(2, "%s: ambiguous redirect\n", (*tokens)->next->old_value);
+			cmd->empty_redir = true;
+			return (false);
+		}
 		new_input = malloc(sizeof(t_file));
 		if (!new_input)
 			return (false);

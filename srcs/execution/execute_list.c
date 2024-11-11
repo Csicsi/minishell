@@ -86,6 +86,8 @@ static int	execute_single_builtin_if_needed(t_cmd *current,
 {
 	if (data->syntax_error)
 		return (2);
+	if (current->empty_redir)
+		return(1);
 	if (current->args[0] && ft_strcmp(current->args[0], "exit") == 0
 		&& current->next == NULL)
 	{
