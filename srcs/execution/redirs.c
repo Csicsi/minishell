@@ -58,6 +58,15 @@ static int	handle_file_output_redirection(t_file *output_file, t_data *data)
 {
 	int	fd_out;
 
+	int dir_fd = open(output_file->filename, O_DIRECTORY);
+	if (dir_fd >= 0)
+	{
+		close(dir_fd);
+		write(2, output_file->filename, strlen(output_file->filename));
+		write(2, ": Is a directory\n", 17);
+		data->last_exit_status = 1;
+		return (-1);
+	}
 	if (output_file->append)
 		fd_out = open(output_file->filename,
 				O_WRONLY | O_CREAT | O_APPEND, 0644);
