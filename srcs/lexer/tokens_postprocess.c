@@ -39,6 +39,7 @@ static void	create_new_tokens(t_token **current,
 		new_token->value = ft_strdup(split_words[i]);
 		if (!new_token->value)
 			return (free(new_token));
+		new_token->old_value = NULL;
 		new_token->type = TOKEN_WORD;
 		new_token->word = ++(*word_index);
 		new_token->is_expanded = false;

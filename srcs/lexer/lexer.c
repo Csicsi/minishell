@@ -93,6 +93,7 @@ static void	join_tokens_in_same_word(t_data *data)
 			current->value = new_value;
 			current->next = next_token->next;
 			free(next_token->value);
+			free(next_token->old_value);
 			free(next_token);
 			if (ft_strlen(current->value) > 0)
 				current->type = TOKEN_WORD;

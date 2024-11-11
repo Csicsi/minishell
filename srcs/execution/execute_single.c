@@ -65,7 +65,8 @@ static int	handle_command_not_found(t_cmd *cmd, t_data *data, char **cmd_path)
 	return (data->last_exit_status);
 }
 
-static int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
+static int	setup_command_execution(t_cmd *cmd,
+	t_data *data, t_exec_context *ctx, char **cmd_path)
 {
 	if (cmd->skip_execution || cmd->empty_redir)
 		return (1);
@@ -76,7 +77,7 @@ static int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
 	}
 	if (is_builtin(cmd->args[0]))
 	{
-		data->last_exit_status = execute_builtin(cmd, data, false);
+		data->last_exit_status = execute_builtin(cmd, data, ctx, false);
 		return (data->last_exit_status);
 	}
 	*cmd_path = find_cmd_path(cmd->args, data);
@@ -91,12 +92,12 @@ static int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
 	return (0);
 }
 
-int	execute_single_cmd(t_cmd *cmd, t_data *data)
+int	execute_single_cmd(t_cmd *cmd, t_data *data, t_exec_context *ctx)
 {
 	char	*cmd_path;
 
 	cmd_path = NULL;
-	if (setup_command_execution(cmd, data, &cmd_path) != 0)
+	if (setup_command_execution(cmd, data, ctx, &cmd_path) != 0)
 		return (data->last_exit_status);
 	if (!cmd->skip_execution && !cmd->empty_redir)
 	{

@@ -134,10 +134,12 @@ int			calculate_expanded_length(char *cursor,
 // execute_list.c
 int			execute_cmd_list(t_data *data);
 // execute_single.c
-int			execute_single_cmd(t_cmd *cmd, t_data *data);
+int			execute_single_cmd(t_cmd *cmd, t_data *data,
+				t_exec_context *ctx);
 // execute_utils1.c
 int			is_builtin(char *command_name);
-int			execute_builtin(t_cmd *cmd, t_data *data, bool print_exit);
+int			execute_builtin(t_cmd *cmd, t_data *data,
+				t_exec_context *ctx, bool print_exit);
 //char		*find_cmd_path(char **cmd_args, t_data *data, int *err_flag);
 char		*find_cmd_path(char **cmd_args, t_data *data);
 int			count_cmds(t_cmd *cmd_list);

@@ -52,6 +52,11 @@ void	free_tokens(t_data *data)
 			free(temp->value);
 			temp->value = NULL;
 		}
+		if (temp->old_value)
+		{
+			free(temp->old_value);
+			temp->old_value = NULL;
+		}
 		free(temp);
 		temp = NULL;
 	}

@@ -45,9 +45,9 @@ static void	execute_child_command(t_cmd *current,
 		}
 	}
 	if (is_builtin(current->args[0]))
-		data->last_exit_status = execute_builtin(current, data, false);
+		data->last_exit_status = execute_builtin(current, data, ctx, false);
 	else
-		data->last_exit_status = execute_single_cmd(current, data);
+		data->last_exit_status = execute_single_cmd(current, data, ctx);
 	cleanup_data(data, true);
 	free(ctx->child_pids);
 	exit(data->last_exit_status);
@@ -85,13 +85,21 @@ static int	execute_single_builtin_if_needed(t_cmd *current,
 	t_data *data, t_exec_context *ctx)
 {
 	if (data->syntax_error)
+	{
+		cleanup_data(data, false);
+		free(ctx->child_pids);
 		return (2);
+	}
 	if (current->empty_redir)
-		return(1);
+	{
+		cleanup_data(data, false);
+		free(ctx->child_pids);
+		return (1);
+	}
 	if (current->args[0] && ft_strcmp(current->args[0], "exit") == 0
 		&& current->next == NULL)
 	{
-		data->last_exit_status = execute_builtin(current, data, true);
+		data->last_exit_status = execute_builtin(current, data, ctx, true);
 		cleanup_data(data, true);
 		free(ctx->child_pids);
 		return (data->last_exit_status);
@@ -101,7 +109,7 @@ static int	execute_single_builtin_if_needed(t_cmd *current,
 				|| ft_strcmp(current->args[0], "cd") == 0)
 			&& current->next == NULL))
 	{
-		data->last_exit_status = execute_builtin(current, data, false);
+		data->last_exit_status = execute_builtin(current, data, ctx, false);
 		cleanup_data(data, false);
 		free(ctx->child_pids);
 		return (data->last_exit_status);
