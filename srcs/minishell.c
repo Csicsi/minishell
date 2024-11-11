@@ -47,16 +47,37 @@ int	check_for_unclosed_quotes(t_data *data)
 	return (in_quote);
 }
 
+void	mark_error_on_pipe(t_token *tokens)
+{
+	t_token	*last_pipe;
+
+	last_pipe = tokens;
+	while (tokens)
+	{
+		if (tokens->type == TOKEN_OPERATOR
+			&& ft_strcmp(tokens->value, "|") == 0)
+			last_pipe = tokens;
+		else if (tokens->type == TOKEN_ERROR)
+		{
+			last_pipe->type = TOKEN_ERROR;
+			break ;
+		}
+		tokens = tokens->next;
+	}
+}
+
+
 int	process_and_validate_input(t_data *data)
 {
+	data->syntax_error = false;
 	if (process_step(data, check_for_unclosed_quotes))
 		return (1);
 	if (process_step(data, check_for_brackets))
 		return (1);
 	if (process_step(data, lexer))
 		return (1);
-	if (process_step(data, validate_syntax))
-		return (1);
+	validate_syntax(data);
+	mark_error_on_pipe(data->tokens);
 	data->cmd_list = parse_tokens(data);
 	if (!data->cmd_list)
 	{
@@ -136,6 +157,8 @@ int	main(int argc, char **argv, char **env_vars)
 		if (process_and_validate_input(&data))
 			continue ;
 		data.last_exit_status = execute_cmd_list(&data);
+		if (data.syntax_error)
+			data.last_exit_status = 2;
 		if (data.exit_flag)
 			return (cleanup_data(&data, true), data.last_exit_status);
 	}

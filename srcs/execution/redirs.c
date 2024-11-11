@@ -30,7 +30,6 @@ static int	handle_heredoc_input_redirection(t_cmd *cmd, t_data *data)
 	}
 	dup2(fd_in, STDIN_FILENO);
 	close(fd_in);
-	unlink(cmd->heredoc_tempfile);
 	free(cmd->heredoc_tempfile);
 	cmd->heredoc_tempfile = NULL;
 	return (0);

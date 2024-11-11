@@ -84,6 +84,8 @@ static int	execute_command_in_list(t_cmd *current, t_data *data,
 static int	execute_single_builtin_if_needed(t_cmd *current,
 	t_data *data, t_exec_context *ctx)
 {
+	if (data->syntax_error)
+		return (2);
 	if (current->args[0] && ft_strcmp(current->args[0], "exit") == 0
 		&& current->next == NULL)
 	{
@@ -110,6 +112,8 @@ static int	execute_all_commands_in_list(t_cmd *current,
 {
 	while (current != NULL)
 	{
+		if (data->syntax_error)
+			current->skip_execution = true;
 		if (current->io_error)
 		{
 			ctx->io_error_status = 1;

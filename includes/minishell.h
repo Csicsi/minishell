@@ -25,6 +25,7 @@ typedef enum e_token_type
 	TOKEN_OPERATOR,
 	TOKEN_UNKNOWN,
 	TOKEN_EMPTY,
+	TOKEN_ERROR,
 	TOKEN_END
 }	t_token_type;
 
@@ -78,6 +79,7 @@ typedef struct s_data
 	int			word_index;
 	bool		in_heredoc;
 	bool		heredoc_single_quote;
+	bool		syntax_error;
 	t_token		*tokens;
 	t_cmd		*cmd_list;
 }	t_data;

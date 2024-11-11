@@ -54,7 +54,7 @@ t_cmd	*parse_tokens(t_data *data)
 	while (data->tokens)
 	{
 		if (!parse_single_token(data, &current_cmd, &context))
-			return (NULL);
+			return (cmd);
 		data->tokens = data->tokens->next;
 	}
 	current_cmd->args[context.arg_index] = NULL;

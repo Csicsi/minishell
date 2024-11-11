@@ -94,9 +94,14 @@ static t_cmd	*handle_pipe(t_cmd *current_cmd,
 		return (NULL);
 }
 
-bool	parse_single_token(t_data *data,
+bool parse_single_token(t_data *data,
 	t_cmd **current_cmd, t_parse_context *context)
 {
+	if (data->tokens->type == TOKEN_ERROR)
+	{
+		data->syntax_error = true;
+		return (false);
+	}
 	if (data->tokens->type == TOKEN_WORD)
 	{
 		(*current_cmd)->skip_execution = false;
