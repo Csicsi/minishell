@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/11 14:54:46 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/11 18:42:26 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int	is_builtin(char *command_name)
 	return (0);
 }
 
-int	execute_builtin(t_cmd *cmd, t_data *data, t_exec_context *ctx, bool print_exit)
+int	execute_builtin(t_cmd *cmd, t_data *data,
+	t_exec_context *ctx, bool print_exit)
 {
 	if (cmd->empty_redir)
 	{

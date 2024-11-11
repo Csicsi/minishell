@@ -1,8 +1,9 @@
 #include "../includes/minishell.h"
 
-static int	print_syntax_error(t_data *data, int error_flag, const char *token,  t_token *current)
+static int	print_syn_err(t_data *data,
+	int error_flag, const char *token, t_token *curr)
 {
-	current->type = TOKEN_ERROR;
+	curr->type = TOKEN_ERROR;
 	if (error_flag == 1)
 		ft_fprintf(2, "syntax error near unexpected token `%s'\n", token);
 	else if (error_flag == 2)
@@ -25,29 +26,29 @@ static int	is_redir(t_token *token)
 
 int	validate_syntax(t_data *data)
 {
-	t_token	*current;
+	t_token	*curr;
 
-	current = data->tokens;
-	if (current && current->type == TOKEN_OPERATOR
-		&& ft_strcmp(current->value, "|") == 0)
-		return (print_syntax_error(data, 3, current->value, current));
-	while (current)
+	curr = data->tokens;
+	if (curr && curr->type == TOKEN_OPERATOR
+		&& ft_strcmp(curr->value, "|") == 0)
+		return (print_syn_err(data, 3, curr->value, curr));
+	while (curr)
 	{
-		if (current->type == TOKEN_OPERATOR)
+		if (curr->type == TOKEN_OPERATOR)
 		{
-			if (is_redir(current) && !current->next)
-				return (print_syntax_error(data, 2, NULL, current));
-			if (ft_strcmp(current->value, "|") != 0 && current->next
-				&& current->next->type == TOKEN_OPERATOR)
-				return (print_syntax_error(data, 1, current->next->value, current));
-			if (ft_strcmp(current->value, "|") == 0 && !current->next)
-				return (print_syntax_error(data, 3, NULL, current));
+			if (is_redir(curr) && !curr->next)
+				return (print_syn_err(data, 2, NULL, curr));
+			if (ft_strcmp(curr->value, "|") != 0 && curr->next
+				&& curr->next->type == TOKEN_OPERATOR)
+				return (print_syn_err(data, 1, curr->next->value, curr));
+			if (ft_strcmp(curr->value, "|") == 0 && !curr->next)
+				return (print_syn_err(data, 3, NULL, curr));
 		}
-		current = current->next;
+		curr = curr->next;
 	}
-	if (current && current->type == TOKEN_OPERATOR
-		&& ft_strcmp(current->value, "|") == 0)
-		return (print_syntax_error(data, 3, current->value, current));
+	if (curr && curr->type == TOKEN_OPERATOR
+		&& ft_strcmp(curr->value, "|") == 0)
+		return (print_syn_err(data, 3, curr->value, curr));
 	data->last_exit_status = 0;
 	return (0);
 }

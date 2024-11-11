@@ -52,9 +52,6 @@ static int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
 static int	handle_command_not_found(t_cmd *cmd, t_data *data, char **cmd_path)
 {
 	data->last_exit_status = 127;
-	//printf("cmd->output: %s\n", cmd->output);
-	//if (cmd->args[0] == NULL && cmd->output)
-	//	return (data->last_exit_status);
 	if (cmd->args[0] == NULL)
 		return (data->last_exit_status);
 	if (ft_strchr(cmd->args[0], '/')

@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-static char	*handle_unquoted_word(char *cursor,
+static char	*handle_unquoted(char *cursor,
 	t_token *new_token, bool *in_heredoc, t_data *data)
 {
 	cursor = extract_unquoted_word(cursor, new_token);
@@ -28,9 +28,10 @@ static char	*process_token(char *cursor, t_token *new_token, t_data *data)
 	{
 		cursor = handle_operator_or_quote(cursor, new_token, data);
 		temp = cursor;
-		while (*temp == ' ')
+		while (*temp++ == ' ')
 			temp++;
-		while (*temp && !ft_isspace(*temp) && *temp != '>' && *temp != '<' && *temp != '|' && *temp != '&')
+		while (*temp && !ft_isspace(*temp) && *temp != '>'
+			&& *temp != '<' && *temp != '|' && *temp != '&')
 		{
 			if (*temp == '\'' || *temp == '"')
 			{
@@ -44,8 +45,7 @@ static char	*process_token(char *cursor, t_token *new_token, t_data *data)
 		|| *cursor == '<' || *cursor == '|' || *cursor == '&')
 		cursor = handle_operator_or_quote(cursor, new_token, data);
 	else
-		cursor = handle_unquoted_word(cursor,
-				new_token, &data->in_heredoc, data);
+		cursor = handle_unquoted(cursor, new_token, &data->in_heredoc, data);
 	return (cursor);
 }
 

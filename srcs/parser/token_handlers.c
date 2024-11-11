@@ -12,35 +12,45 @@ static bool	process_heredoc(t_cmd *cmd, t_token **tokens)
 	return (false);
 }
 
-static bool	handle_output(t_cmd *cmd, t_token **tokens,
-	bool *has_output)
+static bool	add_output_file(t_cmd *cmd, t_token *token, bool append)
 {
 	t_file	*new_output;
 	t_file	*last;
+
+	new_output = malloc(sizeof(t_file));
+	if (!new_output)
+		return (false);
+	new_output->filename = ft_strdup(token->value);
+	new_output->append = append;
+	new_output->next = NULL;
+	if (cmd->output_files == NULL)
+		cmd->output_files = new_output;
+	else
+	{
+		last = cmd->output_files;
+		while (last->next)
+			last = last->next;
+		last->next = new_output;
+	}
+	return (true);
+}
+
+static bool	handle_output(t_cmd *cmd, t_token **tokens, bool *has_output)
+{
+	bool	append;
 
 	if ((*tokens)->next)
 	{
 		if ((*tokens)->next->type == TOKEN_EMPTY)
 		{
-			ft_fprintf(2, "%s: ambiguous redirect\n", (*tokens)->next->old_value);
+			ft_fprintf(2, "%s: ambiguous redirect\n",
+				(*tokens)->next->old_value);
 			cmd->empty_redir = true;
 			return (false);
 		}
-		new_output = malloc(sizeof(t_file));
-		if (!new_output)
+		append = (ft_strcmp((*tokens)->value, ">>") == 0);
+		if (!add_output_file(cmd, (*tokens)->next, append))
 			return (false);
-		new_output->filename = ft_strdup((*tokens)->next->value);
-		new_output->append = (ft_strcmp((*tokens)->value, ">>") == 0);
-		new_output->next = NULL;
-		if (cmd->output_files == NULL)
-			cmd->output_files = new_output;
-		else
-		{
-			last = cmd->output_files;
-			while (last->next)
-				last = last->next;
-			last->next = new_output;
-		}
 		*tokens = (*tokens)->next;
 		*has_output = true;
 		if (cmd->redirection_order == NO_REDIRECTION)
@@ -50,35 +60,42 @@ static bool	handle_output(t_cmd *cmd, t_token **tokens,
 	return (false);
 }
 
-static bool	handle_input(t_cmd *cmd, t_token **tokens,
-	bool *has_input)
+static bool	add_input_file(t_cmd *cmd, t_token *token)
 {
 	t_file	*new_input;
 	t_file	*last;
 
+	new_input = malloc(sizeof(t_file));
+	if (!new_input)
+		return (false);
+	new_input->filename = ft_strdup(token->value);
+	new_input->append = false;
+	new_input->next = NULL;
+	if (cmd->input_files == NULL)
+		cmd->input_files = new_input;
+	else
+	{
+		last = cmd->input_files;
+		while (last->next)
+			last = last->next;
+		last->next = new_input;
+	}
+	return (true);
+}
+
+static bool	handle_input(t_cmd *cmd, t_token **tokens, bool *has_input)
+{
 	if ((*tokens)->next)
 	{
 		if ((*tokens)->next->type == TOKEN_EMPTY)
 		{
-			ft_fprintf(2, "%s: ambiguous redirect\n", (*tokens)->next->old_value);
+			ft_fprintf(2, "%s: ambiguous redirect\n",
+				(*tokens)->next->old_value);
 			cmd->empty_redir = true;
 			return (false);
 		}
-		new_input = malloc(sizeof(t_file));
-		if (!new_input)
+		if (!add_input_file(cmd, (*tokens)->next))
 			return (false);
-		new_input->filename = ft_strdup((*tokens)->next->value);
-		new_input->append = false;
-		new_input->next = NULL;
-		if (cmd->input_files == NULL)
-			cmd->input_files = new_input;
-		else
-		{
-			last = cmd->input_files;
-			while (last->next)
-				last = last->next;
-			last->next = new_input;
-		}
 		*tokens = (*tokens)->next;
 		*has_input = true;
 		if (cmd->redirection_order == NO_REDIRECTION)
@@ -106,7 +123,29 @@ static t_cmd	*handle_pipe(t_cmd *current_cmd,
 		return (NULL);
 }
 
-bool parse_single_token(t_data *data,
+static bool	handle_token_operator(t_data *data,
+	t_cmd **current_cmd, t_parse_context *context)
+{
+	if (ft_strcmp(data->tokens->value, "<<") == 0)
+		process_heredoc(*current_cmd, &data->tokens);
+	else if (ft_strcmp(data->tokens->value, ">") == 0
+		|| ft_strcmp(data->tokens->value, ">>") == 0)
+		handle_output(*current_cmd, &data->tokens, &context->has_output);
+	else if (ft_strcmp(data->tokens->value, "<") == 0)
+		handle_input(*current_cmd, &data->tokens, &context->has_input);
+	else if (ft_strcmp(data->tokens->value, "|") == 0)
+	{
+		*current_cmd = handle_pipe(*current_cmd,
+				&context->arg_index, data->tokens);
+		if (!*current_cmd)
+			return (false);
+		context->has_input = false;
+		context->has_output = false;
+	}
+	return (true);
+}
+
+bool	parse_single_token(t_data *data,
 	t_cmd **current_cmd, t_parse_context *context)
 {
 	if (data->tokens->type == TOKEN_ERROR)
@@ -114,34 +153,20 @@ bool parse_single_token(t_data *data,
 		data->syntax_error = true;
 		return (false);
 	}
-	if (data->tokens->type == TOKEN_WORD)
+	else if (data->tokens->type == TOKEN_WORD)
 	{
 		(*current_cmd)->skip_execution = false;
 		(*current_cmd)->args[context->arg_index++]
 			= ft_strdup(data->tokens->value);
 	}
-	else if (data->tokens->type == TOKEN_EMPTY && !(*current_cmd)->args[0])
-		(*current_cmd)->skip_execution = true;
+	else if (data->tokens->type == TOKEN_EMPTY)
+	{
+		if (!(*current_cmd)->args[0])
+			(*current_cmd)->skip_execution = true;
+	}
 	else if (data->tokens->type == TOKEN_OPERATOR)
 	{
-		if (ft_strcmp(data->tokens->value, "<<") == 0)
-			process_heredoc(*current_cmd, &data->tokens);
-		else if (ft_strcmp(data->tokens->value, ">") == 0
-			|| ft_strcmp(data->tokens->value, ">>") == 0)
-			handle_output(*current_cmd, &data->tokens,
-				&context->has_output);
-		else if (ft_strcmp(data->tokens->value, "<") == 0)
-			handle_input(*current_cmd, &data->tokens,
-				&context->has_input);
-		else if (ft_strcmp(data->tokens->value, "|") == 0)
-		{
-			*current_cmd = handle_pipe(*current_cmd,
-					&context->arg_index, data->tokens);
-			if (!*current_cmd)
-				return (false);
-			context->has_input = false;
-			context->has_output = false;
-		}
+		return (handle_token_operator(data, current_cmd, context));
 	}
 	return (true);
 }

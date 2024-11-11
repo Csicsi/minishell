@@ -49,10 +49,7 @@ char	*extract_double_quoted_word(char *cursor,
 	else
 		expanded = expand_env_var(temp, data->last_exit_status, data);
 	if (expanded)
-	//{
-	//	token->is_expanded = true;
 		token->value = ft_strdup(expanded);
-	//}
 	else
 		token->value = NULL;
 	return (free(expanded), free(temp), cursor);

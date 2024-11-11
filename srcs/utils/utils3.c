@@ -65,7 +65,6 @@ int	check_for_brackets(t_data *data)
 	return (0);
 }
 
-
 bool	check_for_heredoc(t_token *tokens)
 {
 	t_token	*current;

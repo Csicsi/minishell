@@ -66,7 +66,6 @@ void	mark_error_on_pipe(t_token *tokens)
 	}
 }
 
-
 int	process_and_validate_input(t_data *data)
 {
 	data->syntax_error = false;

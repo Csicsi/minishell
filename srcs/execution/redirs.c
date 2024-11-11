@@ -55,31 +55,30 @@ int	handle_input_redirection(t_cmd *cmd, t_data *data)
 
 static int	handle_file_output_redirection(t_file *output_file, t_data *data)
 {
-	int	fd_out;
+	int	fd_o;
+	int	dir_fd;
 
-	int dir_fd = open(output_file->filename, O_DIRECTORY);
+	dir_fd = open(output_file->filename, O_DIRECTORY);
 	if (dir_fd >= 0)
 	{
 		close(dir_fd);
-		write(2, output_file->filename, strlen(output_file->filename));
-		write(2, ": Is a directory\n", 17);
+		ft_fprintf(2, ": %s: Is a directory\n", output_file->filename);
 		data->last_exit_status = 1;
 		return (-1);
 	}
 	if (output_file->append)
-		fd_out = open(output_file->filename,
+		fd_o = open(output_file->filename,
 				O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
-		fd_out = open(output_file->filename,
-				O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd_out < 0)
+		fd_o = open(output_file->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd_o < 0)
 	{
 		ft_fprintf(2, ": %s: Permission denied\n", output_file->filename);
 		data->last_exit_status = 1;
 		return (-1);
 	}
-	dup2(fd_out, STDOUT_FILENO);
-	close(fd_out);
+	dup2(fd_o, STDOUT_FILENO);
+	close(fd_o);
 	return (0);
 }
 

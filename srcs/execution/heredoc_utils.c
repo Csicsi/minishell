@@ -100,7 +100,8 @@ void	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
 		if (!line)
 		{
 			write(2, "\n", 1);
-			ft_fprintf(2, ": warning: here-document at line 25 delimited by end-of-file (wanted `%s')\n", cmd->heredoc_delim);
+			ft_fprintf(2, ": warning: here-document at line 25 delimited by");
+			ft_fprintf(2, " end-of-file (wanted `%s')\n", cmd->heredoc_delim);
 			free(line);
 			break ;
 		}

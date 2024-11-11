@@ -28,10 +28,34 @@ static int	ft_calculate_formatted_str_len(const char *str)
 	return (total_len);
 }
 
+static int	ft_write_tabs_to_buffer(char *buffer,
+	int i, int *j, const char *str)
+{
+	int	tab_count;
+
+	tab_count = 0;
+	buffer[i++] = '$';
+	buffer[i++] = '\'';
+	buffer[i++] = '\\';
+	buffer[i++] = 't';
+	while (str[*j] == '\t')
+	{
+		tab_count++;
+		(*j)++;
+	}
+	(*j)--;
+	while (--tab_count > 0)
+	{
+		buffer[i++] = '\\';
+		buffer[i++] = 't';
+	}
+	buffer[i++] = '\'';
+	return (i);
+}
+
 static void	ft_write_formatted_str_to_buffer(char *buffer, const char *str)
 {
 	int	i;
-	int	tab_count;
 	int	j;
 
 	i = 0;
@@ -39,25 +63,7 @@ static void	ft_write_formatted_str_to_buffer(char *buffer, const char *str)
 	while (str && str[j])
 	{
 		if (str[j] == '\t')
-		{
-			tab_count = 0;
-			buffer[i++] = '$';
-			buffer[i++] = '\'';
-			buffer[i++] = '\\';
-			buffer[i++] = 't';
-			while (str[j] == '\t')
-			{
-				tab_count++;
-				j++;
-			}
-			j--;
-			while (--tab_count > 0)
-			{
-				buffer[i++] = '\\';
-				buffer[i++] = 't';
-			}
-			buffer[i++] = '\'';
-		}
+			i = ft_write_tabs_to_buffer(buffer, i, &j, str);
 		else
 			buffer[i++] = str[j];
 		j++;
@@ -65,19 +71,14 @@ static void	ft_write_formatted_str_to_buffer(char *buffer, const char *str)
 	buffer[i] = '\0';
 }
 
-void	ft_fprintf(int fd, const char *format, ...)
+static int	ft_calculate_total_len(const char *format, va_list args)
 {
-	va_list		args;
 	int			total_len;
 	const char	*str;
-	char		*buffer;
 	int			i;
-	int			pos;
 
 	total_len = 0;
 	i = 0;
-	pos = 0;
-	va_start(args, format);
 	while (format && format[i])
 	{
 		if (format[i] == '%' && format[i + 1] == 's')
@@ -93,12 +94,17 @@ void	ft_fprintf(int fd, const char *format, ...)
 			i++;
 		}
 	}
-	va_end(args);
-	buffer = malloc(total_len + 1);
-	if (!buffer)
-		return ;
-	va_start(args, format);
+	return (total_len);
+}
+
+static void	ft_fill_buffer(char *buffer, const char *format, va_list args)
+{
+	const char	*str;
+	int			i;
+	int			pos;
+
 	i = 0;
+	pos = 0;
 	while (format && format[i])
 	{
 		if (format[i] == '%' && format[i + 1] == 's')
@@ -113,8 +119,24 @@ void	ft_fprintf(int fd, const char *format, ...)
 			buffer[pos++] = format[i++];
 	}
 	buffer[pos] = '\0';
+}
+
+void	ft_fprintf(int fd, const char *format, ...)
+{
+	va_list		args;
+	int			total_len;
+	char		*buffer;
+
+	va_start(args, format);
+	total_len = ft_calculate_total_len(format, args);
 	va_end(args);
-	write(fd, buffer, pos);
+	buffer = malloc(total_len + 1);
+	if (!buffer)
+		return ;
+	va_start(args, format);
+	ft_fill_buffer(buffer, format, args);
+	va_end(args);
+	write(fd, buffer, total_len);
 	free(buffer);
 }
 
