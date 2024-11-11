@@ -105,7 +105,7 @@ void	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
 			break ;
 		}
 		if (ft_strncmp(line, cmd->heredoc_delim, len) == 0
-				&& line[len] == '\n')
+			&& line[len] == '\n')
 		{
 			free(line);
 			break ;

@@ -46,12 +46,25 @@ int	check_for_brackets(t_data *data)
 	input = data->input;
 	while (input[i])
 	{
-		if (input[i] == '(' || input[i] == ')')
+		if (input[i] == '\"')
+		{
+			i++;
+			while (input[i] && input[i] != '\"')
+				i++;
+		}
+		if (input[i] == '\'')
+		{
+			i++;
+			while (input[i] && input[i] != '\'')
+				i++;
+		}
+		else if (input[i] == '(' || input[i] == ')')
 			return (1);
 		i++;
 	}
 	return (0);
 }
+
 
 bool	check_for_heredoc(t_token *tokens)
 {
