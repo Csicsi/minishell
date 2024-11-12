@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:26:10 by dcsicsak          #+#    #+#             */
+/*   Updated: 2024/11/12 13:37:26 by dcsicsak         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 t_token	*create_token(int type, int word_index)
@@ -18,12 +30,11 @@ t_token	*create_token(int type, int word_index)
 
 static char	*check_operator(char *cursor, t_token *token)
 {
-	static const char	*operators[] = {">>", "<<", "&&", "||",
-		">", "<", "|"};
+	static const char	*operators[] = {">>", "<<", ">", "<", "|"};
 	int					i;
 
 	i = 0;
-	while (i < 7)
+	while (i < 5)
 	{
 		if (!ft_strncmp(cursor, operators[i], ft_strlen(operators[i])))
 		{
@@ -87,7 +98,6 @@ int	handle_env_variables(t_token *new_token, t_data *data)
 {
 	char	*expanded;
 
-	new_token->old_value = ft_strdup(new_token->value);
 	expanded = expand_env_var(new_token->value, data->last_exit_status, data);
 	if (!expanded)
 	{
@@ -95,6 +105,7 @@ int	handle_env_variables(t_token *new_token, t_data *data)
 		return (0);
 	}
 	new_token->is_expanded = true;
+	new_token->old_value = ft_strdup(new_token->value);
 	free(new_token->value);
 	new_token->value = expanded;
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/12 10:35:03 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/12 13:24:01 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,29 +112,24 @@ static int	update_env_paths(const char *normalized_path,
 	return (0);
 }
 
-static int	change_directory(const char *curpath, t_data *data)
-{
-	char	*normalized_path;
-	int		ret;
-
-	normalized_path = normalize_path(curpath);
-	if (normalized_path == NULL)
-		return (1);
-	ret = update_env_paths(normalized_path, curpath, data);
-	free(normalized_path);
-	return (ret);
-}
-
 int	builtin_cd(t_cmd *cmd, t_data *data)
 {
 	char	*target_path;
+	char	*normalized_path;
 	int		result;
 
 	target_path = NULL;
 	result = resolve_target_path(cmd, data, &target_path);
 	if (result == 0 && target_path != NULL)
 	{
-		result = change_directory(target_path, data);
+		normalized_path = normalize_path(target_path);
+		if (normalized_path == NULL)
+		{
+			free(target_path);
+			return (1);
+		}
+		result = update_env_paths(normalized_path, target_path, data);
+		free(normalized_path);
 		free(target_path);
 	}
 	return (result);

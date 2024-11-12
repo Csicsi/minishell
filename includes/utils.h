@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:27:33 by dcsicsak          #+#    #+#             */
+/*   Updated: 2024/11/12 13:37:59 by dcsicsak         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef UTILS_H
 # define UTILS_H
 
@@ -9,7 +21,13 @@ typedef struct s_exec_context	t_exec_context;
 
 //cleanup.c
 void	cleanup_data(t_data *data, bool free_env);
-void	free_string_array(char **string_array);
+
+//ft_fprintf_utils.c
+int		ft_calculate_total_len(const char *format, va_list args);
+void	ft_fill_buffer(char *buffer, const char *format, va_list args);
+
+//ft_fprintf.c
+void	ft_fprintf(int fd, const char *format, ...);
 
 //utils1.c
 char	*ft_strjoin_pipex(char *s1, char *s2);
@@ -19,7 +37,6 @@ bool	is_all_spaces(char *str);
 char	*skip_spaces(char *str);
 
 //utils2.c
-void	ft_fprintf(int fd, const char *format, ...);
 char	*ft_strncpy(char *dest, const char *src, size_t n);
 char	*ft_strndup(const char *s, size_t n);
 char	*ft_strcpy(char *dest, const char *src);
@@ -34,5 +51,8 @@ void	ft_free(void **ptr);
 //utils4.c
 void	wait_for_children(t_exec_context ctx, t_data *data);
 char	*ft_strtrim(const char *str, const char *set);
+void	free_string_array(char **string_array);
+void	create_new_tokens(t_token **current,
+			char **split_words, int *word_index);
 
 #endif

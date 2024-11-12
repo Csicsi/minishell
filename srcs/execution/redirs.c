@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirs.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:25:47 by dcsicsak          #+#    #+#             */
+/*   Updated: 2024/11/12 13:25:48 by dcsicsak         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 static int	handle_file_input_redirection(t_file *input_file, t_data *data)

@@ -1,14 +1,16 @@
-#include "../includes/minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:27:23 by dcsicsak          #+#    #+#             */
+/*   Updated: 2024/11/12 13:27:24 by dcsicsak         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int	process_step(t_data *data, int (*func)(t_data *))
-{
-	if (func(data) != 0)
-	{
-		cleanup_data(data, false);
-		return (1);
-	}
-	return (0);
-}
+#include "../includes/minishell.h"
 
 int	handle_null_input(t_data *data)
 {
@@ -68,13 +70,21 @@ void	mark_error_on_pipe(t_token *tokens)
 
 int	process_and_validate_input(t_data *data)
 {
-	data->syntax_error = false;
-	if (process_step(data, check_for_unclosed_quotes))
+	if (check_for_unclosed_quotes(data) != 0)
+	{
+		cleanup_data(data, false);
 		return (1);
-	if (process_step(data, check_for_brackets))
+	}
+	if (check_for_brackets(data) != 0)
+	{
+		cleanup_data(data, false);
 		return (1);
-	if (process_step(data, lexer))
+	}
+	if (lexer(data) != 0)
+	{
+		cleanup_data(data, false);
 		return (1);
+	}
 	validate_syntax(data);
 	mark_error_on_pipe(data->tokens);
 	data->cmd_list = parse_tokens(data);
@@ -86,8 +96,7 @@ int	process_and_validate_input(t_data *data)
 	return (0);
 }
 
-
-//for testing leaks
+/*//for testing leaks
 int	main(int argc, char **argv, char **env_vars)
 {
 	t_data	data;
@@ -115,9 +124,9 @@ int	main(int argc, char **argv, char **env_vars)
 		if (data.exit_flag)
 			return (cleanup_data(&data, true), data.last_exit_status);
 	}
-}
+}*/
 
-/*//for normal testing
+//for normal testing
 int	main(int argc, char **argv, char **env_vars)
 {
 	t_data	data;
@@ -161,4 +170,4 @@ int	main(int argc, char **argv, char **env_vars)
 		if (data.exit_flag)
 			return (cleanup_data(&data, true), data.last_exit_status);
 	}
-}*/
+}

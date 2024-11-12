@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cleanup.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:26:45 by dcsicsak          #+#    #+#             */
+/*   Updated: 2024/11/12 13:34:37 by dcsicsak         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 static void	free_file_list(t_file *file_list)
@@ -60,24 +72,8 @@ void	free_tokens(t_data *data)
 		free(temp);
 		temp = NULL;
 	}
+	free(data->tokens);
 	data->tokens = NULL;
-}
-
-void	free_string_array(char **string_array)
-{
-	int	i;
-
-	if (!string_array)
-		return ;
-	i = 0;
-	while (string_array[i])
-	{
-		free(string_array[i]);
-		string_array[i] = NULL;
-		i++;
-	}
-	free(string_array);
-	string_array = NULL;
 }
 
 static void	cleanup_cmd_list(t_data *data)
@@ -110,10 +106,7 @@ void	cleanup_data(t_data *data, bool free_env)
 {
 	cleanup_cmd_list(data);
 	if (data->tokens)
-	{
 		free_tokens(data);
-		data->tokens = NULL;
-	}
 	if (data->env_vars && free_env)
 	{
 		free_string_array(data->env_vars);

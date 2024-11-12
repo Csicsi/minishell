@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokens_postprocess.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:26:19 by dcsicsak          #+#    #+#             */
+/*   Updated: 2024/11/12 13:36:46 by dcsicsak         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 static void	remove_empty_or_space_tokens(t_data *data,
@@ -19,39 +31,10 @@ static void	remove_empty_or_space_tokens(t_data *data,
 			next_token->word++;
 		}
 		free((*current)->value);
+		free((*current)->old_value);
 		free(*current);
 		*current = next_token;
 	}
-}
-
-static void	create_new_tokens(t_token **current,
-	char **split_words, int *word_index)
-{
-	t_token	*new_token;
-	int		i;
-
-	i = 1;
-	while (split_words[i])
-	{
-		new_token = malloc(sizeof(t_token));
-		if (!new_token)
-			return ;
-		new_token->value = ft_strdup(split_words[i]);
-		if (!new_token->value)
-			return (free(new_token));
-		new_token->old_value = NULL;
-		new_token->type = TOKEN_WORD;
-		new_token->word = ++(*word_index);
-		new_token->is_expanded = false;
-		new_token->next = (*current)->next;
-		(*current)->next = new_token;
-		*current = new_token;
-		i++;
-	}
-	i = 0;
-	while (split_words[i])
-		free(split_words[i++]);
-	free(split_words);
 }
 
 static bool	initialize_split_token(t_token *current,

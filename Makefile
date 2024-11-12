@@ -15,6 +15,7 @@ SRCS =	srcs/minishell.c \
 		srcs/lexer/quotes.c \
 		srcs/lexer/tokens_postprocess.c \
 		srcs/execution/execute_list.c \
+		srcs/execution/execute_child.c \
 		srcs/execution/execute_single.c \
 		srcs/execution/redirs.c \
 		srcs/execution/execute_utils1.c \
@@ -25,6 +26,7 @@ SRCS =	srcs/minishell.c \
 		srcs/execution/heredoc_utils.c \
 		srcs/parser/parser.c \
 		srcs/parser/token_handlers.c \
+		srcs/parser/handle_io.c \
 		srcs/builtins/echo.c \
 		srcs/builtins/cd.c \
 		srcs/builtins/cd_utils1.c \
@@ -40,6 +42,8 @@ SRCS =	srcs/minishell.c \
 		srcs/utils/utils3.c \
 		srcs/utils/utils4.c \
 		srcs/utils/cleanup.c \
+		srcs/utils/ft_fprintf.c \
+		srcs/utils/ft_fprintf_utils.c \
 		srcs/signals/signals.c
 
 OBJS = $(SRCS:.c=.o)

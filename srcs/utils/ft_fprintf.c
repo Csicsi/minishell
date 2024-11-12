@@ -1,33 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc.c                                          :+:      :+:    :+:   */
+/*   ft_fprintf.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/12 13:25:43 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 13:25:44 by dcsicsak         ###   ########.fr       */
+/*   Created: 2024/11/12 13:28:17 by dcsicsak          #+#    #+#             */
+/*   Updated: 2024/11/12 13:28:58 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
-void	handle_heredoc(t_cmd *cmd_list, t_data *data)
+void	ft_fprintf(int fd, const char *format, ...)
 {
-	t_cmd	*current;
-	int		fd;
+	va_list		args;
+	int			total_len;
+	char		*buffer;
 
-	current = cmd_list;
-	while (current)
-	{
-		if (current->is_heredoc)
-		{
-			fd = open_heredoc_file(current);
-			if (fd == -1)
-				return ;
-			read_and_write_heredoc(current, data, fd);
-			close(fd);
-		}
-		current = current->next;
-	}
+	va_start(args, format);
+	total_len = ft_calculate_total_len(format, args);
+	va_end(args);
+	buffer = malloc(total_len + 1);
+	if (!buffer)
+		return ;
+	va_start(args, format);
+	ft_fill_buffer(buffer, format, args);
+	va_end(args);
+	write(fd, buffer, total_len);
+	free(buffer);
 }

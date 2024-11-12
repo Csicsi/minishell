@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
+/*   Updated: 2024/11/12 13:44:17 by dcsicsak         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -134,6 +146,9 @@ int			calculate_expanded_length(char *cursor,
 
 // execute_list.c
 int			execute_cmd_list(t_data *data);
+// execute_child.c
+int			execute_command_in_list(t_cmd *current, t_data *data,
+				t_exec_context *ctx);
 // execute_single.c
 int			execute_single_cmd(t_cmd *cmd, t_data *data,
 				t_exec_context *ctx);
@@ -175,6 +190,10 @@ int			count_tokens(t_token *tokens);
 // token_handlers.c
 bool		parse_single_token(t_data *data,
 				t_cmd **current_cmd, t_parse_context *context);
+//handle_io.c
+bool		process_heredoc(t_cmd *cmd, t_token **tokens);
+bool		handle_output(t_cmd *cmd, t_token **tokens, bool *has_output);
+bool		handle_input(t_cmd *cmd, t_token **tokens, bool *has_input);
 
 /* ******** */
 /* Builtins */

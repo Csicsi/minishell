@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:22:52 by dcsicsak          #+#    #+#             */
+/*   Updated: 2024/11/12 13:22:53 by dcsicsak         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 static char	*handle_unquoted(char *cursor,
@@ -10,6 +22,7 @@ static char	*handle_unquoted(char *cursor,
 	{
 		if (!handle_env_variables(new_token, data))
 		{
+			free(new_token->old_value);
 			free(new_token->value);
 			return (NULL);
 		}
@@ -61,7 +74,8 @@ static char	*create_and_add_token(char *cursor, t_token **token_list,
 		return (NULL);
 	cursor = process_token(cursor, new_token, data);
 	if (!cursor)
-		return (free(new_token->value), free(new_token), NULL);
+		return (free(new_token->value),
+			free(new_token->old_value), free(new_token), NULL);
 	if (!*token_list)
 		*token_list = new_token;
 	else
