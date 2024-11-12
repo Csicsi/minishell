@@ -49,17 +49,50 @@ static int	setup_command_execution(t_cmd *cmd, t_data *data, char **cmd_path)
 }
 */
 
-static int	handle_command_not_found(t_cmd *cmd, t_data *data, char **cmd_path)
+static int	handle_command_not_found(t_cmd *cmd,
+	t_data *data, char **cmd_path, t_exec_context *ctx)
 {
-	data->last_exit_status = 127;
-	if (cmd->args[0] == NULL)
+	struct stat	file_stat;
+
+	if (ctx->path_exists == true)
+	{
+		data->last_exit_status = 127;
+		if (cmd->args[0] == NULL)
+			return (data->last_exit_status);
+
+		if (ft_strchr(cmd->args[0], '/') || (*cmd_path && **cmd_path == '\0'))
+		{
+			if (stat(cmd->args[0], &file_stat) == 0 && access(cmd->args[0], X_OK) != 0)
+			{
+				ft_fprintf(2, ": %s: Permission denied\n", cmd->args[0]);
+				data->last_exit_status = 126;
+			}
+			else
+				ft_fprintf(2, ": %s: No such file or directory\n", cmd->args[0]);
+		}
+		else
+			ft_fprintf(2, ": %s: command not found\n", cmd->args[0]);
 		return (data->last_exit_status);
-	if (ft_strchr(cmd->args[0], '/')
-		|| (*cmd_path && **cmd_path == '\0'))
-		ft_fprintf(2, ": %s: No such file or directory\n", cmd->args[0]);
+	}
 	else
-		ft_fprintf(2, ": %s: command not found\n", cmd->args[0]);
-	return (data->last_exit_status);
+	{
+		if (stat(cmd->args[0], &file_stat) == 0)
+		{
+			if (access(cmd->args[0], X_OK) != 0)
+			{
+				ft_fprintf(2, ": %s: Permission denied\n", cmd->args[0]);
+				data->last_exit_status = 126;
+				cmd->skip_execution = true;
+			}
+		}
+		else
+		{
+			ft_fprintf(2, ": %s: No such file or directory\n", cmd->args[0]);
+			data->last_exit_status = 127;
+			cmd->skip_execution = true;
+		}
+		return (data->last_exit_status);
+	}
 }
 
 static int	setup_command_execution(t_cmd *cmd,
@@ -77,9 +110,9 @@ static int	setup_command_execution(t_cmd *cmd,
 		data->last_exit_status = execute_builtin(cmd, data, ctx, false);
 		return (data->last_exit_status);
 	}
-	*cmd_path = find_cmd_path(cmd->args, data);
+	*cmd_path = find_cmd_path(cmd->args, data, ctx);
 	if (!*cmd_path || **cmd_path == '\0')
-		return (handle_command_not_found(cmd, data, cmd_path));
+		return (handle_command_not_found(cmd, data, cmd_path, ctx));
 	if (update_last_command_env_var(data, *cmd_path) == -1)
 	{
 		free(*cmd_path);

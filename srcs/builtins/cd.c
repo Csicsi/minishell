@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/11 18:42:45 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/12 10:35:03 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,8 @@ static char	*normalize_path(const char *path)
 	return (ft_strdup(normalized_path));
 }
 
-static int	update_env_paths(const char *curpath, t_data *data)
+static int	update_env_paths(const char *normalized_path,
+	const char *curpath, t_data *data)
 {
 	char	cwd[PATH_MAX];
 
@@ -93,7 +94,7 @@ static int	update_env_paths(const char *curpath, t_data *data)
 		return (perror(": cd: getcwd"), 1);
 	if (ft_setenv("OLDPWD", cwd, data) != 0)
 		return (perror(": cd: setenv OLDPWD"), 1);
-	if (chdir(curpath) != 0)
+	if (chdir(normalized_path) != 0)
 	{
 		if (errno == ENOTDIR)
 			ft_fprintf(STDERR_FILENO, "cd: %s: Not a directory\n", curpath);
@@ -119,7 +120,7 @@ static int	change_directory(const char *curpath, t_data *data)
 	normalized_path = normalize_path(curpath);
 	if (normalized_path == NULL)
 		return (1);
-	ret = update_env_paths(normalized_path, data);
+	ret = update_env_paths(normalized_path, curpath, data);
 	free(normalized_path);
 	return (ret);
 }

@@ -159,6 +159,7 @@ int	execute_cmd_list(t_data *data)
 	ctx.prev_fd = -1;
 	ctx.num_children = 0;
 	ctx.io_error_status = 0;
+	ctx.path_exists = true;
 	handle_heredoc(data->cmd_list, data);
 	num_commands = count_cmds(data->cmd_list);
 	ctx.child_pids = malloc(sizeof(pid_t) * num_commands);

@@ -98,6 +98,7 @@ typedef struct s_exec_context
 	int		pipe_fd[2];
 	int		num_children;
 	int		io_error_status;
+	bool	path_exists;
 	pid_t	*child_pids;
 }	t_exec_context;
 
@@ -141,7 +142,7 @@ int			is_builtin(char *command_name);
 int			execute_builtin(t_cmd *cmd, t_data *data,
 				t_exec_context *ctx, bool print_exit);
 //char		*find_cmd_path(char **cmd_args, t_data *data, int *err_flag);
-char		*find_cmd_path(char **cmd_args, t_data *data);
+char		*find_cmd_path(char **cmd_args, t_data *data, t_exec_context *ctx);
 int			count_cmds(t_cmd *cmd_list);
 // execute_utils2.c
 int			update_last_command_env_var(t_data *data, char *cmd_path);

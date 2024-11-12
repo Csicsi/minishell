@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/11 18:42:26 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/12 11:07:26 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ char	*find_cmd_path(char **cmd_args, t_data *data, int *err_flag)
 }
 */
 
-static char	*find_in_path(char *cmd, t_data *data)
+static char	*find_in_path(char *cmd, t_data *data, t_exec_context *ctx)
 {
 	int		i;
 	char	**allpath;
@@ -123,7 +123,10 @@ static char	*find_in_path(char *cmd, t_data *data)
 
 	path_env = ft_getenv(ft_strdup("PATH"), data->env_vars);
 	if (!path_env || *path_env == '\0')
+	{
+		ctx->path_exists = false;
 		return (NULL);
+	}
 	allpath = ft_split(path_env, ':');
 	i = -1;
 	while (allpath[++i])
@@ -132,17 +135,14 @@ static char	*find_in_path(char *cmd, t_data *data)
 		if (!path_for_execve)
 			return (free_string_array(allpath), NULL);
 		if (access(path_for_execve, F_OK | X_OK) == 0)
-		{
-			free_string_array(allpath);
-			return (path_for_execve);
-		}
+			return (free_string_array(allpath), path_for_execve);
 		path_for_execve = free_null(path_for_execve);
 	}
 	free_string_array(allpath);
 	return (NULL);
 }
 
-char	*find_cmd_path(char **cmd_args, t_data *data)
+char	*find_cmd_path(char **cmd_args, t_data *data, t_exec_context *ctx)
 {
 	if (!cmd_args || !cmd_args[0])
 		return (NULL);
@@ -154,7 +154,7 @@ char	*find_cmd_path(char **cmd_args, t_data *data)
 	}
 	if (access(cmd_args[0], F_OK | X_OK) == 0)
 		return (ft_strdup(cmd_args[0]));
-	return (find_in_path(cmd_args[0], data));
+	return (find_in_path(cmd_args[0], data, ctx));
 }
 
 int	count_cmds(t_cmd *cmd_list)

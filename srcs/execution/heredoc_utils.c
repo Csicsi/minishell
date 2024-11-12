@@ -25,7 +25,7 @@ char	*generate_random_filename(void)
 {
 	const char		charset[]
 		= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	unsigned char	random_bytes[FILENAME_LENGTH - 1];
+	unsigned char	random_bytes[FILENAME_LENGTH - 2];
 	char			*filename;
 	size_t			i;
 
@@ -35,11 +35,12 @@ char	*generate_random_filename(void)
 		perror("malloc");
 		exit(1);
 	}
-	generate_random_bytes(random_bytes, FILENAME_LENGTH - 1);
+	filename[0] = '.';
+	generate_random_bytes(random_bytes, FILENAME_LENGTH - 2);
 	i = 0;
-	while (i < FILENAME_LENGTH - 1)
+	while (i < FILENAME_LENGTH - 2)
 	{
-		filename[i] = charset[random_bytes[i] % (sizeof(charset) - 1)];
+		filename[i + 1] = charset[random_bytes[i] % (sizeof(charset) - 1)];
 		i++;
 	}
 	filename[FILENAME_LENGTH - 1] = '\0';

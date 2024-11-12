@@ -86,7 +86,7 @@ int	process_and_validate_input(t_data *data)
 	return (0);
 }
 
-/*
+
 //for testing leaks
 int	main(int argc, char **argv, char **env_vars)
 {
@@ -115,9 +115,9 @@ int	main(int argc, char **argv, char **env_vars)
 		if (data.exit_flag)
 			return (cleanup_data(&data, true), data.last_exit_status);
 	}
-}*/
+}
 
-//for normal testing
+/*//for normal testing
 int	main(int argc, char **argv, char **env_vars)
 {
 	t_data	data;
@@ -161,4 +161,4 @@ int	main(int argc, char **argv, char **env_vars)
 		if (data.exit_flag)
 			return (cleanup_data(&data, true), data.last_exit_status);
 	}
-}
+}*/
