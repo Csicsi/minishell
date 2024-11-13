@@ -31,6 +31,7 @@ SRCS =	srcs/minishell.c \
 		srcs/builtins/cd.c \
 		srcs/builtins/cd_utils1.c \
 		srcs/builtins/cd_utils2.c \
+		srcs/builtins/cd_utils3.c \
 		srcs/builtins/pwd.c \
 		srcs/builtins/export.c \
 		srcs/builtins/export_utils.c \
