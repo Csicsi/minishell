@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:28:22 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 19:53:44 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,14 @@ typedef enum e_cmd_type
 	CMD_OR
 }	t_cmd_type;
 
+typedef struct s_cmd t_cmd;
+
+typedef struct s_cmd_group
+{
+	t_cmd				*cmd_list;
+	struct s_cmd_group	*next_group;
+}	t_cmd_group;
+
 typedef struct s_cmd
 {
 	char				**args;
@@ -79,6 +87,7 @@ typedef struct s_cmd
 	t_cmd_type			type;
 	t_redirection_order	redirection_order;
 	bool				skip_execution;
+	t_cmd_group			*group;
 }	t_cmd;
 
 typedef struct s_token
@@ -249,5 +258,8 @@ void		setup_signal_handlers(void);
 // initialize.c
 char		**duplicate_env_vars(char **env_vars);
 bool		initialize(t_data *data, char **env_vars, int argc, char **argv);
+
+int	execute_all_commands_in_list(t_cmd *current,
+	t_data *data, t_exec_context *ctx);
 
 #endif

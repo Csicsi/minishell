@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:27 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:11:53 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 19:53:19 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ t_cmd	*parse_tokens(t_data *data)
 	while (data->tokens)
 	{
 		if (!parse_single_token(data, &current_cmd, &context))
-			return (cmd);
+			return (data->tokens = tmp, cmd);
 		data->tokens = data->tokens->next;
 	}
 	current_cmd->args[context.arg_index] = NULL;

@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:47 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:11:11 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 14:53:15 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ static int	handle_heredoc_input_redirection(t_cmd *cmd, t_data *data)
 	fd_in = open(cmd->heredoc_tempfile, O_RDONLY);
 	if (fd_in < 0)
 	{
-		perror("open");
 		data->last_exit_status = 1;
 		return (-1);
 	}

@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:12:29 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 19:12:00 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,17 +75,12 @@ int	process_and_validate_input(t_data *data)
 		cleanup_data(data, false);
 		return (1);
 	}
-	if (check_for_brackets(data) != 0)
-	{
-		cleanup_data(data, false);
-		return (1);
-	}
 	if (lexer(data) != 0)
 	{
 		cleanup_data(data, false);
 		return (1);
 	}
-	validate_syntax(data);
+	//validate_syntax(data);
 	mark_error_on_pipe(data->tokens);
 	data->cmd_list = parse_tokens(data);
 	if (!data->cmd_list)

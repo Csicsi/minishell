@@ -90,10 +90,11 @@ int expand_wildcard(t_token *token)
 			free(new_token);
 			return (0);
 		}
+		new_token->old_value = NULL;
 		new_token->type = TOKEN_WORD;
 		new_token->word = current->word + 1;
-		new_token->is_expanded = 1;
-		new_token->is_wildcard = 0;
+		new_token->is_expanded = true;
+		new_token->is_wildcard = false;
 		new_token->next = current->next;
 		current->next = new_token;
 		current = new_token;

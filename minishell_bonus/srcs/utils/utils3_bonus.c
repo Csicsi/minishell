@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:54 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:12:20 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 15:27:46 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,34 +47,6 @@ int	ft_isdigit_str(const char *str)
 		i++;
 	}
 	return (1);
-}
-
-int	check_for_brackets(t_data *data)
-{
-	int		i;
-	char	*input;
-
-	i = 0;
-	input = data->input;
-	while (input[i])
-	{
-		if (input[i] == '\"')
-		{
-			i++;
-			while (input[i] && input[i] != '\"')
-				i++;
-		}
-		if (input[i] == '\'')
-		{
-			i++;
-			while (input[i] && input[i] != '\'')
-				i++;
-		}
-		else if (input[i] == '(' || input[i] == ')')
-			return (1);
-		i++;
-	}
-	return (0);
 }
 
 bool	check_for_heredoc(t_token *tokens)

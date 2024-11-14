@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:00 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:12:23 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 15:05:53 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void	create_new_tokens(t_token **current,
 		new_token->type = TOKEN_WORD;
 		new_token->word = ++(*word_index);
 		new_token->is_expanded = false;
+		new_token->is_wildcard = false;
 		new_token->next = (*current)->next;
 		(*current)->next = new_token;
 		*current = new_token;

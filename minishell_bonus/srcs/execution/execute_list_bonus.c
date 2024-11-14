@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:03 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:42:37 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 19:10:43 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,13 @@ static int	execute_single_builtin_if_needed(t_cmd *current,
 	return (-1);
 }
 
-static int	execute_all_commands_in_list(t_cmd *current,
+int	execute_all_commands_in_list(t_cmd *current,
 	t_data *data, t_exec_context *ctx)
 {
 	t_cmd_type	last_cmd_type;
+	int			status;
 
+	last_cmd_type = CMD_NORMAL;
 	while (current != NULL)
 	{
 		if ((last_cmd_type == CMD_AND && data->last_exit_status != 0)
@@ -70,7 +72,7 @@ static int	execute_all_commands_in_list(t_cmd *current,
 		{
 			last_cmd_type = current->type;
 			current = current->next;
-			continue ;
+			continue;
 		}
 		if (data->syntax_error)
 			current->skip_execution = true;
@@ -78,7 +80,7 @@ static int	execute_all_commands_in_list(t_cmd *current,
 		{
 			ctx->io_error_status = 1;
 			current = current->next;
-			continue ;
+			continue;
 		}
 		else
 		{
@@ -86,6 +88,11 @@ static int	execute_all_commands_in_list(t_cmd *current,
 		}
 		if (execute_command_in_list(current, data, ctx) == 1)
 			return (1);
+		if (waitpid(ctx->child_pids[ctx->num_children - 1], &status, 0) > 0)
+		{
+			if (WIFEXITED(status))
+				data->last_exit_status = WEXITSTATUS(status);
+		}
 		last_cmd_type = current->type;
 		current = current->next;
 	}
@@ -125,7 +132,6 @@ int	execute_cmd_list(t_data *data)
 		return (builtin_status);
 	if (execute_all_commands_in_list(current, data, &ctx) == 1)
 		return (cleanup_data(data, false), free(ctx.child_pids), 1);
-	wait_for_children(ctx, data);
 	cleanup_data(data, false);
 	free(ctx.child_pids);
 	if (ctx.io_error_status && data->last_exit_status == 0)

@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/14 09:31:32 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 14:54:51 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ bool	initialize(t_data *data, char **env_vars, int argc, char **argv)
 	setup_signal_handlers();
 	data->exit_flag = false;
 	data->syntax_error = false;
+	data->heredoc_single_quote = false;
 	data->last_exit_status = 0;
 	data->token_count = 0;
 	data->input = NULL;

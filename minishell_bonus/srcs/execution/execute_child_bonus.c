@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:16 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:57:42 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 19:10:18 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,21 @@ static int	handle_redirections(t_cmd *current, t_data *data)
 	return (0);
 }
 
-static void	execute_child_command(t_cmd *current,
-	t_data *data, t_exec_context *ctx)
+int	execute_cmd_group(t_cmd_group *group, t_data *data, t_exec_context *ctx)
+{
+	while (group != NULL)
+	{
+		if (execute_all_commands_in_list(group->cmd_list, data, ctx) == 1)
+		{
+			return (1);
+		}
+		group = group->next_group;
+	}
+	return data->last_exit_status;
+}
+
+
+static void	execute_child_command(t_cmd *current, t_data *data, t_exec_context *ctx)
 {
 	setup_pipes(ctx, current);
 	if (handle_redirections(current, data) < 0)
@@ -54,20 +67,28 @@ static void	execute_child_command(t_cmd *current,
 		free(ctx->child_pids);
 		exit(data->last_exit_status);
 	}
-	if (is_builtin(current->args[0]))
+	if (current->group != NULL)
+	{
+		data->last_exit_status = execute_cmd_group(current->group, data, ctx);
+	}
+	else if (is_builtin(current->args[0]))
+	{
 		data->last_exit_status = execute_builtin(current, data, ctx, false);
+	}
 	else
+	{
 		data->last_exit_status = execute_single_cmd(current, data, ctx);
+	}
 	cleanup_data(data, true);
 	free(ctx->child_pids);
 	exit(data->last_exit_status);
 }
 
-int	execute_command_in_list(t_cmd *current, t_data *data,
-	t_exec_context *ctx)
+int	execute_command_in_list(t_cmd *current, t_data *data, t_exec_context *ctx)
 {
 	pid_t	pid;
 
+	// Check if the current command has a following command and is a normal type
 	if (current->next != NULL && current->type == CMD_NORMAL)
 	{
 		if (pipe(ctx->pipe_fd) < 0)
@@ -78,11 +99,17 @@ int	execute_command_in_list(t_cmd *current, t_data *data,
 			return (1);
 		}
 	}
+
+	// Fork process to execute the command
 	pid = fork();
 	if (pid == 0)
+	{
+		// Child process handles execution
 		execute_child_command(current, data, ctx);
+	}
 	else if (pid > 0)
 	{
+		// Parent process stores child PID and manages pipes
 		ctx->child_pids[ctx->num_children++] = pid;
 		if (ctx->prev_fd != -1)
 			close(ctx->prev_fd);
@@ -95,6 +122,9 @@ int	execute_command_in_list(t_cmd *current, t_data *data,
 			ctx->prev_fd = -1;
 	}
 	else
+	{
 		return (perror(": fork"), 1);
+	}
 	return (0);
 }
+

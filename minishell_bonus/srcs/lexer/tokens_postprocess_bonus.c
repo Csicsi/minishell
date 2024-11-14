@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:19 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:24:32 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 15:04:56 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void	handle_expanded_tokens(t_data *data)
 	prev = NULL;
 	while (current)
 	{
-		if (current->is_wildcard)
+		if (current && current->is_wildcard)
 		{
 			if (!expand_wildcard(current))
 			{

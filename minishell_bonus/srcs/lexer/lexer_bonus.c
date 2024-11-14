@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:22:52 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:11:25 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 19:54:10 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ static char	*process_token(char *cursor, t_token *new_token, t_data *data)
 		}
 	}
 	else if (*cursor == '"' || *cursor == '\'' || *cursor == '>'
-		|| *cursor == '<' || *cursor == '|' || *cursor == '&')
+		|| *cursor == '<' || *cursor == '|' || *cursor == '&'
+		|| *cursor == '(' || *cursor == ')')
 		cursor = handle_operator_or_quote(cursor, new_token, data);
 	else
 		cursor = handle_unquoted(cursor, new_token, &data->in_heredoc, data);
@@ -85,7 +86,7 @@ static char	*create_and_add_token(char *cursor, t_token **token_list,
 		current->next = new_token;
 	}
 	if (ft_isspace(*cursor) || *cursor == '|' || *cursor == '&'
-		|| *cursor == '>' || *cursor == '<')
+		|| *cursor == '>' || *cursor == '<' || *cursor == '(' || *cursor == ')')
 		data->word_index++;
 	return (cursor);
 }

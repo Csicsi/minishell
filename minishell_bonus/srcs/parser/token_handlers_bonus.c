@@ -6,13 +6,13 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:35 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:27:21 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 19:53:34 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
 
-static t_cmd	*handle_pipe(t_cmd *current_cmd,
+ static t_cmd	*handle_pipe(t_cmd *current_cmd,
 	int *arg_index, t_token *tokens)
 {
 	int	words_count;

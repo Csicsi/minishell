@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:10 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:23:46 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 18:32:18 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,11 @@ t_token	*create_token(int type, int word_index)
 
 static char	*check_operator(char *cursor, t_token *token)
 {
-	static const char	*operators[] = {">>", "<<", ">", "<", "|", "&&", "||"};
+	static const char *operators[] = {"&&", "||", ">>", "<<", ">", "<", "|", "(", ")"};
 	int					i;
 
 	i = 0;
-	while (i < 7)
+	while (i < 9)
 	{
 		if (!ft_strncmp(cursor, operators[i], ft_strlen(operators[i])))
 		{
@@ -86,7 +86,7 @@ char	*extract_unquoted_word(char *cursor, t_token *new_token)
 	length = 0;
 	while (!isspace(*cursor) && *cursor != '|' && *cursor != '&'
 		&& *cursor != '>' && *cursor != '<' && *cursor != '\0'
-		&& *cursor != '"' && *cursor != '\'')
+		&& *cursor != '"' && *cursor != '\'' && *cursor != '(' && *cursor != ')')
 	{
 		if (*cursor == '*')
 			new_token->is_wildcard = true;
