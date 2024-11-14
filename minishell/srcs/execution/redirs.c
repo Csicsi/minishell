@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirs.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:47 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 13:25:48 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:06:32 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ static int	handle_heredoc_input_redirection(t_cmd *cmd, t_data *data)
 	fd_in = open(cmd->heredoc_tempfile, O_RDONLY);
 	if (fd_in < 0)
 	{
-		perror("open");
 		data->last_exit_status = 1;
 		return (-1);
 	}

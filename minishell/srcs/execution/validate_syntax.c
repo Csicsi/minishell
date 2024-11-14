@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validate_syntax.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:58 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 13:25:59 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/14 12:44:19 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,9 @@ static int	is_redir(t_token *token)
 int	validate_syntax(t_data *data)
 {
 	t_token	*curr;
+	t_token	*first;
 
+	first = data->tokens;
 	curr = data->tokens;
 	if (curr && curr->type == TOKEN_OPERATOR
 		&& ft_strcmp(curr->value, "|") == 0)
@@ -54,13 +56,10 @@ int	validate_syntax(t_data *data)
 				&& curr->next->type == TOKEN_OPERATOR)
 				return (print_syn_err(data, 1, curr->next->value, curr));
 			if (ft_strcmp(curr->value, "|") == 0 && !curr->next)
-				return (print_syn_err(data, 3, NULL, curr));
+				return (print_syn_err(data, 3, curr->value, first));
 		}
 		curr = curr->next;
 	}
-	if (curr && curr->type == TOKEN_OPERATOR
-		&& ft_strcmp(curr->value, "|") == 0)
-		return (print_syn_err(data, 3, curr->value, curr));
 	data->last_exit_status = 0;
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/13 10:58:16 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/11/14 12:49:23 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ int	process_and_validate_input(t_data *data)
 }
 
 //for testing leaks
-/*
 int	main(int argc, char **argv, char **env_vars)
 {
 	t_data	data;
@@ -126,9 +125,8 @@ int	main(int argc, char **argv, char **env_vars)
 			return (cleanup_data(&data, true), data.last_exit_status);
 	}
 }
-*/
 
-//for normal testing
+/*//for normal testing
 int	main(int argc, char **argv, char **env_vars)
 {
 	t_data	data;
@@ -172,5 +170,4 @@ int	main(int argc, char **argv, char **env_vars)
 		if (data.exit_flag)
 			return (cleanup_data(&data, true), data.last_exit_status);
 	}
-}
-
+}*/

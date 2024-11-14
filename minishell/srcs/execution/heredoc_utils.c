@@ -6,7 +6,7 @@
 /*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:39 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:02:51 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/14 13:24:38 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,13 +93,17 @@ static void	write_heredoc_line(int fd, char *line, t_data *data)
 			return ;
 		}
 		write(fd, expanded_line, ft_strlen(expanded_line));
+		write(fd, "\n", 1);
 		free(expanded_line);
 	}
 	else
+	{
 		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
+	}
 }
 
-/*void	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
+void	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
 {
 	char	*line;
 	int		len;
@@ -117,37 +121,6 @@ static void	write_heredoc_line(int fd, char *line, t_data *data)
 			break ;
 		}
 		if (ft_strncmp(line, cmd->heredoc_delim, len) == 0 && line[len] == '\0')
-		{
-			free(line);
-			break ;
-		}
-		write_heredoc_line(fd, line, data);
-		free(line);
-	}
-}*/
-
-
-void	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
-{
-	char	*line;
-	int		len;
-
-	len = ft_strlen(cmd->heredoc_delim);
-	while (1)
-	{
-		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "> ", 2);
-		line = get_next_line(STDIN_FILENO);
-		if (!line)
-		{
-			write(2, "\n", 1);
-			ft_fprintf(2, ": warning: here-document at line 25 delimited by");
-			ft_fprintf(2, " end-of-file (wanted `%s')\n", cmd->heredoc_delim);
-			free(line);
-			break ;
-		}
-		if (ft_strncmp(line, cmd->heredoc_delim, len) == 0
-			&& line[len] == '\n')
 		{
 			free(line);
 			break ;

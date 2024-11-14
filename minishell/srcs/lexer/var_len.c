@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_len.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 13:26:24 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:02:20 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ int	calculate_expanded_length(char *cursor, int last_exit_status, t_data *data)
 	{
 		if (*cursor == '$' && *(cursor + 1))
 		{
+			if (*(cursor + 1) == '/')
+				total_length += 1;
 			cursor++;
 			total_length += get_expanded_var_length(cursor,
 					last_exit_status, data, &skip_len);

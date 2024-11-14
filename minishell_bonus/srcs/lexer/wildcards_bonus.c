@@ -4,7 +4,7 @@ int filename_matches_pattern(const char *filename, const char *pattern)
 {
 	size_t filename_len = strlen(filename);
 	size_t pattern_len = strlen(pattern);
-	char *star_pos = strchr(pattern, '*');
+	char *star_pos = ft_strchr(pattern, '*');
 	if (!star_pos)
 	{
 		int result = strcmp(filename, pattern) == 0;

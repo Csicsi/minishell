@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:27 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 13:26:28 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:26:11 by csicsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ t_cmd	*parse_tokens(t_data *data)
 	while (data->tokens)
 	{
 		if (!parse_single_token(data, &current_cmd, &context))
-			return (cmd);
+			return (data->tokens = tmp, cmd);
 		data->tokens = data->tokens->next;
 	}
 	current_cmd->args[context.arg_index] = NULL;
