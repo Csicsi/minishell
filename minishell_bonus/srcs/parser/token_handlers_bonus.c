@@ -6,13 +6,13 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:35 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 12:26:23 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 16:25:34 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
 
- static t_cmd	*handle_pipe(t_cmd *current_cmd,
+static t_cmd	*handle_pipe(t_cmd *current_cmd,
 	int *arg_index, t_token *tokens)
 {
 	int	words_count;
@@ -53,7 +53,8 @@ static bool	handle_token_operator(t_data *data,
 	else if (ft_strcmp(data->tokens->value, "&&") == 0)
 	{
 		(*current_cmd)->type = CMD_AND;
-		*current_cmd = handle_pipe(*current_cmd, &context->arg_index, data->tokens);
+		*current_cmd = handle_pipe(*current_cmd, &context->arg_index,
+				data->tokens);
 		if (!*current_cmd)
 			return (false);
 		context->has_input = false;
@@ -62,7 +63,8 @@ static bool	handle_token_operator(t_data *data,
 	else if (ft_strcmp(data->tokens->value, "||") == 0)
 	{
 		(*current_cmd)->type = CMD_OR;
-		*current_cmd = handle_pipe(*current_cmd, &context->arg_index, data->tokens);
+		*current_cmd = handle_pipe(*current_cmd, &context->arg_index,
+				data->tokens);
 		if (!*current_cmd)
 			return (false);
 		context->has_input = false;

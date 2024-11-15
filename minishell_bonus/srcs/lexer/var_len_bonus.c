@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 13:38:25 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 16:18:13 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,15 @@ static int	get_wildcard_expansion_length(const char *pattern)
 	matches = get_matching_files(pattern);
 	if (!matches)
 		return (0);
-
 	total_length = 0;
-	for (i = 0; matches[i]; i++)
+	i = 0;
+	while (matches[i])
 	{
 		total_length += ft_strlen(matches[i]);
 		if (matches[i + 1])
 			total_length++;
 		free(matches[i]);
+		i++;
 	}
 	free(matches);
 	return (total_length);

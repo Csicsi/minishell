@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/15 12:08:34 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 16:09:06 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,8 +139,6 @@ char	*find_cmd_path(char **cmd_args, t_data *data, t_exec_context *ctx)
 			return (NULL);
 		return (ft_strdup(cmd_args[0]));
 	}
-	if (access(cmd_args[0], F_OK | X_OK) == 0)
-		return (ft_strdup(cmd_args[0]));
 	return (find_in_path(cmd_args[0], data, ctx));
 }
 

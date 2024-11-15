@@ -6,12 +6,12 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 14:29:57 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 16:12:46 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef MINISHELL_BONUS_H
+# define MINISHELL_BONUS_H
 
 # include <unistd.h>
 # include <stdio.h>
@@ -66,7 +66,7 @@ typedef enum e_cmd_type
 	CMD_PIPE
 }	t_cmd_type;
 
-typedef struct s_cmd t_cmd;
+typedef struct s_cmd	t_cmd;
 
 typedef struct s_cmd_group
 {
@@ -161,8 +161,7 @@ void		handle_expanded_tokens(t_data *data);
 // var_len.c
 int			calculate_expanded_length(char *cursor,
 				int last_exit_status, t_data *data);
-
-
+//wildcard.c
 int			expand_wildcard(t_token *token);
 
 /* ********* */
@@ -262,8 +261,8 @@ void		setup_signal_handlers(void);
 char		**duplicate_env_vars(char **env_vars);
 bool		initialize(t_data *data, char **env_vars, int argc, char **argv);
 
-int	execute_all_commands_in_list(t_cmd *current,
-	t_data *data, t_exec_context *ctx);
-char **get_matching_files(const char *pattern);
+int			execute_all_commands_in_list(t_cmd *current,
+				t_data *data, t_exec_context *ctx);
+char		**get_matching_files(const char *pattern);
 
 #endif

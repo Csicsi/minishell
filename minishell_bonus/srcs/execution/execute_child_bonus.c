@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:16 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 12:16:33 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 16:15:40 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ int	execute_cmd_group(t_cmd_group *group, t_data *data, t_exec_context *ctx)
 		}
 		group = group->next_group;
 	}
-	return data->last_exit_status;
+	return (data->last_exit_status);
 }
 
-
-static void	execute_child_command(t_cmd *current, t_data *data, t_exec_context *ctx)
+static void	execute_child_command(t_cmd *current,
+	t_data *data, t_exec_context *ctx)
 {
 	setup_pipes(ctx, current);
 	if (handle_redirections(current, data) < 0)
@@ -84,36 +84,27 @@ static void	execute_child_command(t_cmd *current, t_data *data, t_exec_context *
 	exit(data->last_exit_status);
 }
 
-int	execute_command_in_list(t_cmd *current, t_data *data, t_exec_context *ctx)
+int	execute_command_in_list(t_cmd *current,
+	t_data *data, t_exec_context *ctx)
 {
 	pid_t	pid;
 
-	// Check if the current command has a following command and is a normal type
-	if (current->next != NULL && (current->type == CMD_NORMAL || current->type == CMD_PIPE))
+	if (current->next != NULL && (current->type == CMD_NORMAL
+			|| current->type == CMD_PIPE))
 	{
 		if (pipe(ctx->pipe_fd) < 0)
-		{
-			perror("pipe");
-			cleanup_data(data, false);
-			free(ctx->child_pids);
-			return (1);
-		}
+			return (cleanup_data(data, false), free(ctx->child_pids), 1);
 	}
-
-	// Fork process to execute the command
 	pid = fork();
 	if (pid == 0)
-	{
-		// Child process handles execution
 		execute_child_command(current, data, ctx);
-	}
 	else if (pid > 0)
 	{
-		// Parent process stores child PID and manages pipes
 		ctx->child_pids[ctx->num_children++] = pid;
 		if (ctx->prev_fd != -1)
 			close(ctx->prev_fd);
-		if (current->next != NULL && (current->type == CMD_NORMAL || current->type == CMD_PIPE))
+		if (current->next != NULL && (current->type == CMD_NORMAL
+				|| current->type == CMD_PIPE))
 		{
 			close(ctx->pipe_fd[1]);
 			ctx->prev_fd = ctx->pipe_fd[0];
@@ -122,9 +113,6 @@ int	execute_command_in_list(t_cmd *current, t_data *data, t_exec_context *ctx)
 			ctx->prev_fd = -1;
 	}
 	else
-	{
 		return (perror(": fork"), 1);
-	}
 	return (0);
 }
-

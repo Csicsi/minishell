@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:24:43 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:10:06 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 16:13:16 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
+
 static void	sort_env_vars(char **env_vars, int count)
 {
 	int		i;

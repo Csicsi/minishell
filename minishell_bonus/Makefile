@@ -1,4 +1,4 @@
-NAME = minishell
+NAME = minishell_bonus
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 LDFLAGS = -lreadline

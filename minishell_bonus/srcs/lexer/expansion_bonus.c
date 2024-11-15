@@ -6,18 +6,20 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:05 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 13:30:29 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 16:17:11 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
 
-static int expand_var_into_buffer(char *result,
+static int	expand_var_into_buffer(char *result,
 	int *i, char *cursor, t_data *data)
 {
 	int		len;
 	char	*env_value;
 	char	*status_str;
+	char	**matches;
+	int		j;
 
 	len = 0;
 	if (*cursor == '?')
@@ -37,16 +39,18 @@ static int expand_var_into_buffer(char *result,
 		{
 			if (ft_strchr(env_value, '*'))
 			{
-				char **matches = get_matching_files(env_value);
+				matches = get_matching_files(env_value);
 				if (matches && matches[0])
 				{
-					for (int j = 0; matches[j]; j++)
+					j = 0;
+					while (matches[j])
 					{
 						if (j > 0)
 							result[(*i)++] = ' ';
 						ft_strcpy(&result[*i], matches[j]);
 						*i += ft_strlen(matches[j]);
 						free(matches[j]);
+						j++;
 					}
 					free(matches);
 				}
@@ -60,7 +64,6 @@ static int expand_var_into_buffer(char *result,
 	}
 	return (len);
 }
-
 
 static void	expand_env_vars_into_buffer(char
 	*result, char *cursor, t_data *data)

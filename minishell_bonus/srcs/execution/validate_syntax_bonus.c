@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:58 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 14:48:11 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 15:37:07 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ static int	print_syn_err(t_data *data,
 		ft_fprintf(2, "syntax error near unexpected token `newline'\n");
 	else if (error_flag == 3)
 		ft_fprintf(2, "syntax error near unexpected token `|'\n");
-	else if (error_flag == 4)
-		ft_fprintf(2, "syntax error: unexpected end of file\n");
 	data->last_exit_status = 2;
 	return (-1);
 }
@@ -42,7 +40,9 @@ int	validate_syntax(t_data *data)
 {
 	t_token	*curr;
 	t_token	*first;
+	int		brackets;
 
+	brackets = 0;
 	first = data->tokens;
 	curr = data->tokens;
 	if (curr && curr->type == 1 && ft_strcmp(curr->value, "|") == 0)
@@ -59,10 +59,26 @@ int	validate_syntax(t_data *data)
 			if ((ft_strcmp(curr->value, "|") == 0
 					|| ft_strcmp(curr->value, "&&") == 0
 					|| ft_strcmp(curr->value, "||") == 0) && !curr->next)
-				return (print_syn_err(data, 4, NULL, first));
+				return (print_syn_err(data, 1, curr->value, first));
+		}
+		if (curr->type == TOKEN_OPEN)
+		{
+			if (curr->next && curr->next->type == TOKEN_CLOSE)
+				return (print_syn_err(data, 1, ")", curr));
+			brackets++;
+		}
+		if (curr->type == TOKEN_CLOSE)
+		{
+			if (curr->next && curr->next->type == TOKEN_OPEN)
+				return (print_syn_err(data, 1, "(", curr));
+			brackets--;
 		}
 		curr = curr->next;
 	}
+	if (brackets > 0)
+		return (print_syn_err(data, 1, "newline", first));
+	else if (brackets < 0)
+		return (print_syn_err(data, 1, ")", first));
 	data->last_exit_status = 0;
 	return (0);
 }
