@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 12:14:51 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 13:31:38 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,5 +262,6 @@ bool		initialize(t_data *data, char **env_vars, int argc, char **argv);
 
 int	execute_all_commands_in_list(t_cmd *current,
 	t_data *data, t_exec_context *ctx);
+char **get_matching_files(const char *pattern);
 
 #endif

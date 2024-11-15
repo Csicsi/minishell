@@ -29,6 +29,8 @@ int filename_matches_pattern(const char *filename, const char *pattern)
 		return result;
 	}
 }
+
+
 char **get_matching_files(const char *pattern)
 {
 	DIR				*dir;

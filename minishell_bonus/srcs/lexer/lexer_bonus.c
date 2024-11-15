@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:22:52 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 19:54:10 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 14:06:25 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,8 @@ static void	join_tokens_in_same_word(t_data *data)
 			new_value = ft_strjoin(current->value, next_token->value);
 			free(current->value);
 			current->value = new_value;
+			current->is_wildcard
+				= current->is_wildcard || next_token->is_wildcard;
 			current->next = next_token->next;
 			free(next_token->value);
 			free(next_token->old_value);
@@ -136,6 +138,7 @@ int	lexer(t_data *data)
 			return (1);
 		cursor = skip_spaces(cursor);
 	}
+	join_tokens_in_same_word(data);
 	handle_expanded_tokens(data);
 	join_tokens_in_same_word(data);
 	return (0);

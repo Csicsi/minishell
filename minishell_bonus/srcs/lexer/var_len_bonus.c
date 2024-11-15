@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_len_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 14:55:15 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 13:38:25 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,28 @@ static int	get_var_name_length(char *cursor, int *skip_len)
 	return (len);
 }
 
+static int	get_wildcard_expansion_length(const char *pattern)
+{
+	char	**matches;
+	int		total_length;
+	int		i;
+
+	matches = get_matching_files(pattern);
+	if (!matches)
+		return (0);
+
+	total_length = 0;
+	for (i = 0; matches[i]; i++)
+	{
+		total_length += ft_strlen(matches[i]);
+		if (matches[i + 1])
+			total_length++;
+		free(matches[i]);
+	}
+	free(matches);
+	return (total_length);
+}
+
 static int	get_expanded_var_length(char *cursor,
 	int last_exit_status, t_data *data, int *skip_len)
 {
@@ -51,7 +73,12 @@ static int	get_expanded_var_length(char *cursor,
 			env_value = ft_getenv(ft_strndup(cursor, *skip_len),
 					data->env_vars);
 			if (env_value)
-				var_length = ft_strlen(env_value);
+			{
+				if (ft_strchr(env_value, '*'))
+					var_length = get_wildcard_expansion_length(env_value);
+				else
+					var_length = ft_strlen(env_value);
+			}
 		}
 	}
 	return (var_length);

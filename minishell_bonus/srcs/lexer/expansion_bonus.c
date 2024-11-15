@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:05 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:11:23 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 13:30:29 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
 
-static int	expand_var_into_buffer(char *result,
+static int expand_var_into_buffer(char *result,
 	int *i, char *cursor, t_data *data)
 {
 	int		len;
@@ -35,12 +35,32 @@ static int	expand_var_into_buffer(char *result,
 		env_value = ft_getenv(ft_strndup(cursor, len), data->env_vars);
 		if (env_value)
 		{
-			ft_strcpy(&result[*i], env_value);
-			*i += ft_strlen(env_value);
+			if (ft_strchr(env_value, '*'))
+			{
+				char **matches = get_matching_files(env_value);
+				if (matches && matches[0])
+				{
+					for (int j = 0; matches[j]; j++)
+					{
+						if (j > 0)
+							result[(*i)++] = ' ';
+						ft_strcpy(&result[*i], matches[j]);
+						*i += ft_strlen(matches[j]);
+						free(matches[j]);
+					}
+					free(matches);
+				}
+			}
+			else
+			{
+				ft_strcpy(&result[*i], env_value);
+				*i += ft_strlen(env_value);
+			}
 		}
 	}
 	return (len);
 }
+
 
 static void	expand_env_vars_into_buffer(char
 	*result, char *cursor, t_data *data)
