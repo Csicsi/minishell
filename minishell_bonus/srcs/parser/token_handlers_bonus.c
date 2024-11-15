@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:35 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 16:25:34 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:35:52 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,18 @@ static t_cmd	*handle_pipe(t_cmd *current_cmd,
 		return (NULL);
 }
 
+static bool	handle_pipe_operator(t_cmd **current_cmd,
+	t_parse_context *context, t_token *tokens, int cmd_type)
+{
+	(*current_cmd)->type = cmd_type;
+	*current_cmd = handle_pipe(*current_cmd, &context->arg_index, tokens);
+	if (!*current_cmd)
+		return (false);
+	context->has_input = false;
+	context->has_output = false;
+	return (true);
+}
+
 static bool	handle_token_operator(t_data *data,
 	t_cmd **current_cmd, t_parse_context *context)
 {
@@ -41,35 +53,14 @@ static bool	handle_token_operator(t_data *data,
 	else if (ft_strcmp(data->tokens->value, "<") == 0)
 		handle_input(*current_cmd, &data->tokens, &context->has_input);
 	else if (ft_strcmp(data->tokens->value, "|") == 0)
-	{
-		(*current_cmd)->type = CMD_PIPE;
-		*current_cmd = handle_pipe(*current_cmd,
-				&context->arg_index, data->tokens);
-		if (!*current_cmd)
-			return (false);
-		context->has_input = false;
-		context->has_output = false;
-	}
+		return (handle_pipe_operator(current_cmd, context,
+				data->tokens, CMD_PIPE));
 	else if (ft_strcmp(data->tokens->value, "&&") == 0)
-	{
-		(*current_cmd)->type = CMD_AND;
-		*current_cmd = handle_pipe(*current_cmd, &context->arg_index,
-				data->tokens);
-		if (!*current_cmd)
-			return (false);
-		context->has_input = false;
-		context->has_output = false;
-	}
+		return (handle_pipe_operator(current_cmd, context,
+				data->tokens, CMD_AND));
 	else if (ft_strcmp(data->tokens->value, "||") == 0)
-	{
-		(*current_cmd)->type = CMD_OR;
-		*current_cmd = handle_pipe(*current_cmd, &context->arg_index,
-				data->tokens);
-		if (!*current_cmd)
-			return (false);
-		context->has_input = false;
-		context->has_output = false;
-	}
+		return (handle_pipe_operator(current_cmd, context,
+				data->tokens, CMD_OR));
 	return (true);
 }
 

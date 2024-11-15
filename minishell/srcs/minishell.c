@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 12:49:23 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 18:45:32 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,20 +71,13 @@ void	mark_error_on_pipe(t_token *tokens)
 int	process_and_validate_input(t_data *data)
 {
 	if (check_for_unclosed_quotes(data) != 0)
-	{
-		cleanup_data(data, false);
-		return (1);
-	}
+		return (cleanup_data(data, false), 1);
 	if (check_for_brackets(data) != 0)
-	{
-		cleanup_data(data, false);
-		return (1);
-	}
+		return (cleanup_data(data, false), 1);
+	if (check_for_logical_operators(data) != 0)
+		return (cleanup_data(data, false), 1);
 	if (lexer(data) != 0)
-	{
-		cleanup_data(data, false);
-		return (1);
-	}
+		return (cleanup_data(data, false), 1);
 	validate_syntax(data);
 	mark_error_on_pipe(data->tokens);
 	data->cmd_list = parse_tokens(data);
@@ -96,7 +89,6 @@ int	process_and_validate_input(t_data *data)
 	return (0);
 }
 
-//for testing leaks
 int	main(int argc, char **argv, char **env_vars)
 {
 	t_data	data;
@@ -125,49 +117,3 @@ int	main(int argc, char **argv, char **env_vars)
 			return (cleanup_data(&data, true), data.last_exit_status);
 	}
 }
-
-/*//for normal testing
-int	main(int argc, char **argv, char **env_vars)
-{
-	t_data	data;
-	char	*trimmed_input;
-	size_t	len;
-
-	if (initialize(&data, env_vars, argc, argv))
-		return (1);
-	while (1)
-	{
-		if (isatty(0))
-			data.input = readline("Don'tPanicShell> ");
-		else
-		{
-			data.input = get_next_line(0);
-			if (data.input == NULL)
-			{
-				cleanup_data(&data, true);
-				return (data.last_exit_status);
-			}
-			len = ft_strlen(data.input);
-			if (len > 0 && data.input[len - 1] == '\n')
-				data.input[len - 1] = '\0';
-		}
-		if (handle_null_input(&data))
-			return (data.last_exit_status);
-		trimmed_input = ft_strtrim(data.input, " \t\n");
-		if (!*trimmed_input)
-		{
-			free(trimmed_input);
-			continue ;
-		}
-		free(trimmed_input);
-		if (*data.input)
-			add_history(data.input);
-		if (process_and_validate_input(&data))
-			continue ;
-		data.last_exit_status = execute_cmd_list(&data);
-		if (data.syntax_error)
-			data.last_exit_status = 2;
-		if (data.exit_flag)
-			return (cleanup_data(&data, true), data.last_exit_status);
-	}
-}*/

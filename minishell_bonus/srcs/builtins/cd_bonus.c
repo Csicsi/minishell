@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_bonus.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/12 16:09:42 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 17:37:13 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ static char	*normalize_path(const char *path)
 {
 	char	normalized_path[PATH_MAX];
 
-	if (realpath(path, normalized_path) == NULL)
+	if (ft_realpath(path, normalized_path) == NULL)
 	{
 		if (ft_strncmp(path, "-", 2) != 0)
 			ft_fprintf(2, ": cd: %s: No such file or directory\n", path);

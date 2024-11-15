@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:16 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 16:15:40 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 17:50:15 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,8 @@ int	execute_command_in_list(t_cmd *current,
 	pid_t	pid;
 
 	if (current->next != NULL && (current->type == CMD_NORMAL
-			|| current->type == CMD_PIPE))
-	{
-		if (pipe(ctx->pipe_fd) < 0)
-			return (cleanup_data(data, false), free(ctx->child_pids), 1);
-	}
+			|| current->type == CMD_PIPE) && (pipe(ctx->pipe_fd) < 0))
+		return (cleanup_data(data, false), free(ctx->child_pids), 1);
 	pid = fork();
 	if (pid == 0)
 		execute_child_command(current, data, ctx);

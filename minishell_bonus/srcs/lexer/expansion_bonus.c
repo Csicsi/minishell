@@ -6,20 +6,40 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:05 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 16:17:11 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:09:05 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
 
-static int	expand_var_into_buffer(char *result,
-	int *i, char *cursor, t_data *data)
+static void	expand_env_value(char *result, int *i, t_expand_context *context)
 {
-	int		len;
 	char	*env_value;
-	char	*status_str;
 	char	**matches;
-	int		j;
+
+	env_value = ft_getenv(ft_strndup(context->cursor, context->len),
+			context->data->env_vars);
+	if (!env_value)
+		return ;
+	if (ft_strchr(env_value, '*'))
+	{
+		matches = get_matching_files(env_value);
+		if (matches && matches[0])
+			append_matches_to_result(result, i, matches);
+	}
+	else
+	{
+		ft_strcpy(&result[*i], env_value);
+		*i += ft_strlen(env_value);
+	}
+}
+
+static int	expand_var_into_buffer(char *result, int *i,
+	char *cursor, t_data *data)
+{
+	int					len;
+	char				*status_str;
+	t_expand_context	context;
 
 	len = 0;
 	if (*cursor == '?')
@@ -34,33 +54,10 @@ static int	expand_var_into_buffer(char *result,
 		len++;
 	if (len > 0)
 	{
-		env_value = ft_getenv(ft_strndup(cursor, len), data->env_vars);
-		if (env_value)
-		{
-			if (ft_strchr(env_value, '*'))
-			{
-				matches = get_matching_files(env_value);
-				if (matches && matches[0])
-				{
-					j = 0;
-					while (matches[j])
-					{
-						if (j > 0)
-							result[(*i)++] = ' ';
-						ft_strcpy(&result[*i], matches[j]);
-						*i += ft_strlen(matches[j]);
-						free(matches[j]);
-						j++;
-					}
-					free(matches);
-				}
-			}
-			else
-			{
-				ft_strcpy(&result[*i], env_value);
-				*i += ft_strlen(env_value);
-			}
-		}
+		context.cursor = cursor;
+		context.len = len;
+		context.data = data;
+		expand_env_value(result, i, &context);
 	}
 	return (len);
 }

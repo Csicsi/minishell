@@ -3,31 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utils4_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:00 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 15:05:53 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 18:37:42 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
-
-void	wait_for_children(t_exec_context ctx, t_data *data)
-{
-	int	status;
-	int	i;
-
-	i = 0;
-	while (i < ctx.num_children)
-	{
-		waitpid(ctx.child_pids[i], &status, 0);
-		if (WIFEXITED(status))
-			data->last_exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			data->last_exit_status = 128 + WTERMSIG(status);
-		i++;
-	}
-}
 
 char	*ft_strtrim(const char *str, const char *set)
 {
@@ -94,7 +77,45 @@ void	create_new_tokens(t_token **current,
 		i++;
 	}
 	i = 0;
-	while (split_words[i])
-		free(split_words[i++]);
-	free(split_words);
+	free_string_array(split_words);
+}
+
+char	*ft_strreplace(const char *str, const char *old, const char *new)
+{
+	char	*result;
+	char	*pos;
+	size_t	old_len;
+	size_t	new_len;
+	size_t	result_len;
+
+	pos = ft_strnstr(str, old, ft_strlen(str));
+	if (!str || !old || !new || pos == NULL)
+		return (ft_strdup(str));
+	old_len = ft_strlen(old);
+	new_len = ft_strlen(new);
+	result_len = ft_strlen(str) - old_len + new_len;
+	result = malloc(result_len + 1);
+	if (!result)
+		return (NULL);
+	ft_strlcpy(result, str, pos - str + 1);
+	ft_strlcat(result, new, result_len + 1);
+	ft_strlcat(result, pos + old_len, result_len + 1);
+	return (result);
+}
+
+void	append_matches_to_result(char *result, int *i, char **matches)
+{
+	int	j;
+
+	j = 0;
+	while (matches[j])
+	{
+		if (j > 0)
+			result[(*i)++] = ' ';
+		ft_strcpy(&result[*i], matches[j]);
+		*i += ft_strlen(matches[j]);
+		free(matches[j]);
+		j++;
+	}
+	free(matches);
 }

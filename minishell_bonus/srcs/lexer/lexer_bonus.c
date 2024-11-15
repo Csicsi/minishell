@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:22:52 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 14:06:25 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:12:26 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ static char	*handle_unquoted(char *cursor,
 	return (cursor);
 }
 
-static char	*process_token(char *cursor, t_token *new_token, t_data *data)
+static char	*process_token(char *cur, t_token *new_token, t_data *data)
 {
 	char	*temp;
 
-	if (*cursor == '<' && *(cursor + 1) == '<')
+	if (*cur == '<' && *(cur + 1) == '<')
 	{
-		cursor = handle_operator_or_quote(cursor, new_token, data);
-		temp = cursor;
+		cur = handle_operator_or_quote(cur, new_token, data);
+		temp = cur;
 		while (*temp++ == ' ')
 			temp++;
 		while (*temp && !ft_isspace(*temp) && *temp != '>'
@@ -54,13 +54,12 @@ static char	*process_token(char *cursor, t_token *new_token, t_data *data)
 			temp++;
 		}
 	}
-	else if (*cursor == '"' || *cursor == '\'' || *cursor == '>'
-		|| *cursor == '<' || *cursor == '|' || *cursor == '&'
-		|| *cursor == '(' || *cursor == ')')
-		cursor = handle_operator_or_quote(cursor, new_token, data);
+	else if (*cur == '"' || *cur == '\'' || *cur == '>' || *cur == '<'
+		|| *cur == '|' || *cur == '&' || *cur == '(' || *cur == ')')
+		cur = handle_operator_or_quote(cur, new_token, data);
 	else
-		cursor = handle_unquoted(cursor, new_token, &data->in_heredoc, data);
-	return (cursor);
+		cur = handle_unquoted(cur, new_token, &data->in_heredoc, data);
+	return (cur);
 }
 
 static char	*create_and_add_token(char *cursor, t_token **token_list,

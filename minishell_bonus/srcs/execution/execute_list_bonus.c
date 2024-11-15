@@ -6,28 +6,11 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:03 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 13:01:36 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:40:27 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
-
-static int	handle_errors(t_data *data, t_exec_context *ctx, t_cmd *current)
-{
-	if (data->syntax_error)
-	{
-		cleanup_data(data, false);
-		free(ctx->child_pids);
-		return (2);
-	}
-	if (current->empty_redir)
-	{
-		cleanup_data(data, false);
-		free(ctx->child_pids);
-		return (1);
-	}
-	return (-1);
-}
 
 static int	execute_single_builtin_if_needed(t_cmd *current,
 	t_data *data, t_exec_context *ctx)
@@ -58,47 +41,51 @@ static int	execute_single_builtin_if_needed(t_cmd *current,
 	return (-1);
 }
 
+bool	should_skip_command(t_cmd *current, t_data *data,
+	t_cmd_type *last_cmd_type, bool *skip_piped_group)
+{
+	if (*skip_piped_group)
+	{
+		if (*last_cmd_type == CMD_PIPE)
+		{
+			*last_cmd_type = current->type;
+			return (true);
+		}
+		*skip_piped_group = false;
+	}
+	if ((*last_cmd_type == CMD_AND && data->last_exit_status != 0)
+		|| (*last_cmd_type == CMD_OR && data->last_exit_status == 0))
+	{
+		*skip_piped_group = true;
+		*last_cmd_type = current->type;
+		return (true);
+	}
+	return (false);
+}
+
 int	execute_all_commands_in_list(t_cmd *current,
 	t_data *data, t_exec_context *ctx)
 {
 	t_cmd_type	last_cmd_type;
-	int			status;
 	bool		skip_piped_group;
 
 	last_cmd_type = CMD_NORMAL;
 	skip_piped_group = false;
 	while (current != NULL)
 	{
-		if (skip_piped_group)
+		if (should_skip_command(current, data, &last_cmd_type,
+				&skip_piped_group))
 		{
-			if (last_cmd_type == CMD_PIPE)
-			{
-				current = current->next;
-				continue ;
-			}
-			skip_piped_group = false;
-		}
-		if ((last_cmd_type == CMD_AND && data->last_exit_status != 0)
-			|| (last_cmd_type == CMD_OR && data->last_exit_status == 0))
-		{
-			skip_piped_group = true;
-			last_cmd_type = current->type;
 			current = current->next;
 			continue ;
 		}
-		if (data->syntax_error || current->io_error)
+		if (handle_command_errors(current, data))
 		{
-			current->skip_execution = true;
 			current = current->next;
 			continue ;
 		}
-		if (execute_command_in_list(current, data, ctx) == 1)
+		if (execute_and_wait(current, data, ctx) == 1)
 			return (1);
-		if (waitpid(ctx->child_pids[ctx->num_children - 1], &status, 0) > 0)
-		{
-			if (WIFEXITED(status))
-				data->last_exit_status = WEXITSTATUS(status);
-		}
 		last_cmd_type = current->type;
 		current = current->next;
 	}

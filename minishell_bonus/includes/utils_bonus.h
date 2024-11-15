@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:33 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 16:12:08 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:48:09 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 typedef struct s_data			t_data;
 typedef struct s_token			t_token;
+typedef struct s_cmd			t_cmd;
 typedef struct s_exec_context	t_exec_context;
 
 //cleanup.c
@@ -40,6 +41,9 @@ char	*skip_spaces(char *str);
 char	*ft_strncpy(char *dest, const char *src, size_t n);
 char	*ft_strndup(const char *s, size_t n);
 char	*ft_strcpy(char *dest, const char *src);
+int		create_wildcard_tokens(t_token *current, char **matches);
+int		handle_errors(t_data *data, t_exec_context *ctx,
+			t_cmd *current);
 
 //utils3.c
 void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
@@ -49,10 +53,13 @@ bool	check_for_heredoc(t_token *tokens);
 void	ft_free(void **ptr);
 
 //utils4.c
-void	wait_for_children(t_exec_context ctx, t_data *data);
 char	*ft_strtrim(const char *str, const char *set);
 void	free_string_array(char **string_array);
 void	create_new_tokens(t_token **current,
 			char **split_words, int *word_index);
+char	*ft_strreplace(const char *str, const char *old,
+			const char *new);
+void	append_matches_to_result(char *result, int *i,
+			char **matches);
 
 #endif

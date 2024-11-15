@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 13:28:00 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:46:00 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,23 @@ char	*ft_strcpy(char *dest, const char *src)
 	}
 	dest[i] = '\0';
 	return (dest);
+}
+
+int	check_for_logical_operators(t_data *data)
+{
+	char	*cursor;
+
+	cursor = data->input;
+	while (*cursor)
+	{
+		if ((*cursor == '&' && *(cursor + 1) == '&')
+			|| (*cursor == '|' && *(cursor + 1) == '|'))
+		{
+			ft_fprintf(2, "Syntax error: unexpected token `%c%c'\n",
+				*cursor, *(cursor + 1));
+			return (1);
+		}
+		cursor++;
+	}
+	return (0);
 }

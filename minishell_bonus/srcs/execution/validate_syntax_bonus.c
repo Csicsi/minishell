@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:58 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 15:37:07 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 17:58:29 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,37 @@ static int	is_redir(t_token *token)
 		|| ft_strcmp(token->value, "<<") == 0);
 }
 
+int	check_operator_syntax(t_data *data, t_token *curr)
+{
+	if (is_redir(curr) && !curr->next)
+		return (print_syn_err(data, 2, NULL, curr));
+	if (ft_strcmp(curr->value, "|") != 0 && curr->next
+		&& curr->next->type == TOKEN_OPERATOR)
+		return (print_syn_err(data, 1, curr->next->value, curr));
+	if ((ft_strcmp(curr->value, "|") == 0
+			|| ft_strcmp(curr->value, "&&") == 0
+			|| ft_strcmp(curr->value, "||") == 0) && !curr->next)
+		return (print_syn_err(data, 1, curr->value, curr));
+	return (0);
+}
+
+int	check_brackets_syntax(t_data *data, t_token *curr, int *brackets)
+{
+	if (curr->type == TOKEN_OPEN)
+	{
+		if (curr->next && curr->next->type == TOKEN_CLOSE)
+			return (print_syn_err(data, 1, ")", curr));
+		(*brackets)++;
+	}
+	else if (curr->type == TOKEN_CLOSE)
+	{
+		if (curr->next && curr->next->type == TOKEN_OPEN)
+			return (print_syn_err(data, 1, "(", curr));
+		(*brackets)--;
+	}
+	return (0);
+}
+
 int	validate_syntax(t_data *data)
 {
 	t_token	*curr;
@@ -45,34 +76,16 @@ int	validate_syntax(t_data *data)
 	brackets = 0;
 	first = data->tokens;
 	curr = data->tokens;
-	if (curr && curr->type == 1 && ft_strcmp(curr->value, "|") == 0)
+	if (curr && curr->type == TOKEN_OPERATOR
+		&& ft_strcmp(curr->value, "|") == 0)
 		return (print_syn_err(data, 3, curr->value, curr));
 	while (curr)
 	{
-		if (curr->type == TOKEN_OPERATOR)
-		{
-			if (is_redir(curr) && !curr->next)
-				return (print_syn_err(data, 2, NULL, curr));
-			if (ft_strcmp(curr->value, "|") != 0 && curr->next
-				&& curr->next->type == TOKEN_OPERATOR)
-				return (print_syn_err(data, 1, curr->next->value, curr));
-			if ((ft_strcmp(curr->value, "|") == 0
-					|| ft_strcmp(curr->value, "&&") == 0
-					|| ft_strcmp(curr->value, "||") == 0) && !curr->next)
-				return (print_syn_err(data, 1, curr->value, first));
-		}
-		if (curr->type == TOKEN_OPEN)
-		{
-			if (curr->next && curr->next->type == TOKEN_CLOSE)
-				return (print_syn_err(data, 1, ")", curr));
-			brackets++;
-		}
-		if (curr->type == TOKEN_CLOSE)
-		{
-			if (curr->next && curr->next->type == TOKEN_OPEN)
-				return (print_syn_err(data, 1, "(", curr));
-			brackets--;
-		}
+		if (curr->type == TOKEN_OPERATOR && check_operator_syntax(data, curr))
+			return (1);
+		if ((curr->type == TOKEN_OPEN || curr->type == TOKEN_CLOSE)
+			&& check_brackets_syntax(data, curr, &brackets))
+			return (1);
 		curr = curr->next;
 	}
 	if (brackets > 0)

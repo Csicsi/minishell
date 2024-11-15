@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:33 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 13:37:59 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:46:23 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ char	*skip_spaces(char *str);
 char	*ft_strncpy(char *dest, const char *src, size_t n);
 char	*ft_strndup(const char *s, size_t n);
 char	*ft_strcpy(char *dest, const char *src);
+int		check_for_logical_operators(t_data *data);
 
 //utils3.c
 void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
@@ -54,5 +55,7 @@ char	*ft_strtrim(const char *str, const char *set);
 void	free_string_array(char **string_array);
 void	create_new_tokens(t_token **current,
 			char **split_words, int *word_index);
+char	*ft_strreplace(const char *str, const char *old,
+			const char *new);
 
 #endif

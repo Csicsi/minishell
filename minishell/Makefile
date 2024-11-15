@@ -24,6 +24,7 @@ SRCS =	srcs/minishell.c \
 		srcs/execution/validate_syntax.c \
 		srcs/execution/heredoc.c \
 		srcs/execution/heredoc_utils.c \
+		srcs/execution/find_cmd_path.c \
 		srcs/parser/parser.c \
 		srcs/parser/token_handlers.c \
 		srcs/parser/handle_io.c \
@@ -31,7 +32,7 @@ SRCS =	srcs/minishell.c \
 		srcs/builtins/cd.c \
 		srcs/builtins/cd_utils1.c \
 		srcs/builtins/cd_utils2.c \
-		srcs/builtins/cd_utils3.c \
+		srcs/builtins/ft_realpath.c \
 		srcs/builtins/pwd.c \
 		srcs/builtins/export.c \
 		srcs/builtins/export_utils.c \

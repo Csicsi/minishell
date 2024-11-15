@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 16:12:16 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 18:40:42 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,48 @@ char	*ft_strcpy(char *dest, const char *src)
 	}
 	dest[i] = '\0';
 	return (dest);
+}
+
+int	create_wildcard_tokens(t_token *current, char **matches)
+{
+	t_token	*new_token;
+	int		i;
+
+	i = 1;
+	while (matches[i])
+	{
+		new_token = malloc(sizeof(t_token));
+		if (!new_token)
+			return (0);
+		new_token->value = strdup(matches[i]);
+		if (!new_token->value)
+			return (free(new_token), 0);
+		new_token->old_value = NULL;
+		new_token->type = TOKEN_WORD;
+		new_token->word = current->word + 1;
+		new_token->is_expanded = true;
+		new_token->is_wildcard = false;
+		new_token->next = current->next;
+		current->next = new_token;
+		current = new_token;
+		i++;
+	}
+	return (1);
+}
+
+int	handle_errors(t_data *data, t_exec_context *ctx, t_cmd *current)
+{
+	if (data->syntax_error)
+	{
+		cleanup_data(data, false);
+		free(ctx->child_pids);
+		return (2);
+	}
+	if (current->empty_redir)
+	{
+		cleanup_data(data, false);
+		free(ctx->child_pids);
+		return (1);
+	}
+	return (-1);
 }

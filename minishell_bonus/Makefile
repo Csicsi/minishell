@@ -1,4 +1,4 @@
-NAME = minishell_bonus
+NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 LDFLAGS = -lreadline
@@ -25,6 +25,7 @@ SRCS =	srcs/minishell_bonus.c \
 		srcs/execution/validate_syntax_bonus.c \
 		srcs/execution/heredoc_bonus.c \
 		srcs/execution/heredoc_utils_bonus.c \
+		srcs/execution/find_cmd_path_bonus.c \
 		srcs/parser/parser_bonus.c \
 		srcs/parser/token_handlers_bonus.c \
 		srcs/parser/handle_io_bonus.c \
@@ -38,6 +39,7 @@ SRCS =	srcs/minishell_bonus.c \
 		srcs/builtins/unset_bonus.c \
 		srcs/builtins/env_bonus.c \
 		srcs/builtins/exit_bonus.c \
+		srcs/builtins/ft_realpath_bonus.c \
 		srcs/utils/utils1_bonus.c \
 		srcs/utils/utils2_bonus.c \
 		srcs/utils/utils3_bonus.c \

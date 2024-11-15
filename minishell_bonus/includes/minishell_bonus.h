@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 16:12:46 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:39:41 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,13 @@ typedef struct s_exec_context
 	pid_t	*child_pids;
 }	t_exec_context;
 
+typedef struct s_expand_context
+{
+	char	*cursor;
+	int		len;
+	t_data	*data;
+}	t_expand_context;
+
 /* *******/
 /* Lexer */
 /* ***** */
@@ -180,7 +187,8 @@ int			execute_single_cmd(t_cmd *cmd, t_data *data,
 int			is_builtin(char *command_name);
 int			execute_builtin(t_cmd *cmd, t_data *data,
 				t_exec_context *ctx, bool print_exit);
-//char		*find_cmd_path(char **cmd_args, t_data *data, int *err_flag);
+bool		handle_command_errors(t_cmd *current, t_data *data);
+int			execute_and_wait(t_cmd *current, t_data *data, t_exec_context *ctx);
 char		*find_cmd_path(char **cmd_args, t_data *data, t_exec_context *ctx);
 int			count_cmds(t_cmd *cmd_list);
 // execute_utils2.c
@@ -244,6 +252,8 @@ int			builtin_unset(t_cmd *cmd, t_data *data);
 int			builtin_env(t_data *data);
 // exit.c
 int			builtin_exit(t_cmd *cmd, t_data *data, bool print_exit);
+//ft_realpath.c
+char		*ft_realpath(const char *path, char *resolved_path);
 
 /* ******* */
 /* Signals */

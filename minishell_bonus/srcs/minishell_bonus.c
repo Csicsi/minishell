@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 14:23:37 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 17:52:12 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ int	process_and_validate_input(t_data *data)
 	return (0);
 }
 
-/*//for testing leaks
 int	main(int argc, char **argv, char **env_vars)
 {
 	t_data	data;
@@ -116,52 +115,6 @@ int	main(int argc, char **argv, char **env_vars)
 		if (process_and_validate_input(&data))
 			continue ;
 		data.last_exit_status = execute_cmd_list(&data);
-		if (data.exit_flag)
-			return (cleanup_data(&data, true), data.last_exit_status);
-	}
-}*/
-
-//for normal testing
-int	main(int argc, char **argv, char **env_vars)
-{
-	t_data	data;
-	char	*trimmed_input;
-	size_t	len;
-
-	if (initialize(&data, env_vars, argc, argv))
-		return (1);
-	while (1)
-	{
-		if (isatty(0))
-			data.input = readline("Don'tPanicShell> ");
-		else
-		{
-			data.input = get_next_line(0);
-			if (data.input == NULL)
-			{
-				cleanup_data(&data, true);
-				return (data.last_exit_status);
-			}
-			len = ft_strlen(data.input);
-			if (len > 0 && data.input[len - 1] == '\n')
-				data.input[len - 1] = '\0';
-		}
-		if (handle_null_input(&data))
-			return (data.last_exit_status);
-		trimmed_input = ft_strtrim(data.input, " \t\n");
-		if (!*trimmed_input)
-		{
-			free(trimmed_input);
-			continue ;
-		}
-		free(trimmed_input);
-		if (*data.input)
-			add_history(data.input);
-		if (process_and_validate_input(&data))
-			continue ;
-		data.last_exit_status = execute_cmd_list(&data);
-		if (data.syntax_error)
-			data.last_exit_status = 2;
 		if (data.exit_flag)
 			return (cleanup_data(&data, true), data.last_exit_status);
 	}

@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:00 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 13:37:46 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:37:29 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,4 +96,27 @@ void	create_new_tokens(t_token **current,
 	while (split_words[i])
 		free(split_words[i++]);
 	free(split_words);
+}
+
+char	*ft_strreplace(const char *str, const char *old, const char *new)
+{
+	char	*result;
+	char	*pos;
+	size_t	old_len;
+	size_t	new_len;
+	size_t	result_len;
+
+	pos = ft_strnstr(str, old, ft_strlen(str));
+	if (!str || !old || !new || pos == NULL)
+		return (ft_strdup(str));
+	old_len = ft_strlen(old);
+	new_len = ft_strlen(new);
+	result_len = ft_strlen(str) - old_len + new_len;
+	result = malloc(result_len + 1);
+	if (!result)
+		return (NULL);
+	ft_strlcpy(result, str, pos - str + 1);
+	ft_strlcat(result, new, result_len + 1);
+	ft_strlcat(result, pos + old_len, result_len + 1);
+	return (result);
 }
