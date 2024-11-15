@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validate_syntax_bonus.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:58 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 14:54:11 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 14:48:11 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ static int	print_syn_err(t_data *data,
 		ft_fprintf(2, "syntax error near unexpected token `newline'\n");
 	else if (error_flag == 3)
 		ft_fprintf(2, "syntax error near unexpected token `|'\n");
+	else if (error_flag == 4)
+		ft_fprintf(2, "syntax error: unexpected end of file\n");
 	data->last_exit_status = 2;
 	return (-1);
 }
@@ -43,8 +45,7 @@ int	validate_syntax(t_data *data)
 
 	first = data->tokens;
 	curr = data->tokens;
-	if (curr && curr->type == TOKEN_OPERATOR
-		&& ft_strcmp(curr->value, "|") == 0)
+	if (curr && curr->type == 1 && ft_strcmp(curr->value, "|") == 0)
 		return (print_syn_err(data, 3, curr->value, curr));
 	while (curr)
 	{
@@ -55,8 +56,10 @@ int	validate_syntax(t_data *data)
 			if (ft_strcmp(curr->value, "|") != 0 && curr->next
 				&& curr->next->type == TOKEN_OPERATOR)
 				return (print_syn_err(data, 1, curr->next->value, curr));
-			if (ft_strcmp(curr->value, "|") == 0 && !curr->next)
-				return (print_syn_err(data, 3, NULL, first));
+			if ((ft_strcmp(curr->value, "|") == 0
+					|| ft_strcmp(curr->value, "&&") == 0
+					|| ft_strcmp(curr->value, "||") == 0) && !curr->next)
+				return (print_syn_err(data, 4, NULL, first));
 		}
 		curr = curr->next;
 	}

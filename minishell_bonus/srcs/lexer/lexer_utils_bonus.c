@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:10 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 14:01:04 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 14:29:36 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,12 @@ static char	*check_operator(char *cursor, t_token *token)
 		if (!ft_strncmp(cursor, operators[i], ft_strlen(operators[i])))
 		{
 			token->value = ft_strdup(operators[i]);
+			if (ft_strcmp(token->value, "(") == 0)
+				token->type = TOKEN_OPEN;
+			else if (ft_strcmp(token->value, ")") == 0)
+				token->type = TOKEN_CLOSE;
+			else
+				token->type = TOKEN_OPERATOR;
 			return (cursor + ft_strlen(operators[i]));
 		}
 		i++;
@@ -52,7 +58,6 @@ char	*handle_operator_or_quote(char *cursor,
 {
 	if (*cursor == '<' && *(cursor + 1) == '<')
 	{
-		new_token->type = TOKEN_OPERATOR;
 		cursor = check_operator(cursor, new_token);
 		data->in_heredoc = true;
 		data->word_index++;
@@ -70,7 +75,6 @@ char	*handle_operator_or_quote(char *cursor,
 	}
 	else
 	{
-		new_token->type = TOKEN_OPERATOR;
 		cursor = check_operator(cursor, new_token);
 		data->word_index++;
 	}

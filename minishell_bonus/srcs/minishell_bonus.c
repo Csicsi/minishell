@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 19:12:00 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 14:23:37 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	process_and_validate_input(t_data *data)
 		cleanup_data(data, false);
 		return (1);
 	}
-	//validate_syntax(data);
+	validate_syntax(data);
 	mark_error_on_pipe(data->tokens);
 	data->cmd_list = parse_tokens(data);
 	if (!data->cmd_list)

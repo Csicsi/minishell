@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 13:31:38 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 14:29:57 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ typedef enum e_token_type
 	TOKEN_UNKNOWN,
 	TOKEN_EMPTY,
 	TOKEN_ERROR,
+	TOKEN_OPEN,
+	TOKEN_CLOSE,
 	TOKEN_END
 }	t_token_type;
 
