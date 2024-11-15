@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_child_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:16 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 19:10:18 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 12:16:33 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int	execute_command_in_list(t_cmd *current, t_data *data, t_exec_context *ctx)
 	pid_t	pid;
 
 	// Check if the current command has a following command and is a normal type
-	if (current->next != NULL && current->type == CMD_NORMAL)
+	if (current->next != NULL && (current->type == CMD_NORMAL || current->type == CMD_PIPE))
 	{
 		if (pipe(ctx->pipe_fd) < 0)
 		{
@@ -113,7 +113,7 @@ int	execute_command_in_list(t_cmd *current, t_data *data, t_exec_context *ctx)
 		ctx->child_pids[ctx->num_children++] = pid;
 		if (ctx->prev_fd != -1)
 			close(ctx->prev_fd);
-		if (current->next != NULL && current->type == CMD_NORMAL)
+		if (current->next != NULL && (current->type == CMD_NORMAL || current->type == CMD_PIPE))
 		{
 			close(ctx->pipe_fd[1]);
 			ctx->prev_fd = ctx->pipe_fd[0];

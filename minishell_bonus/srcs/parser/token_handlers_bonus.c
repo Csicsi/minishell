@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_handlers_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:35 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 19:53:34 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 12:26:23 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ static bool	handle_token_operator(t_data *data,
 		handle_input(*current_cmd, &data->tokens, &context->has_input);
 	else if (ft_strcmp(data->tokens->value, "|") == 0)
 	{
+		(*current_cmd)->type = CMD_PIPE;
 		*current_cmd = handle_pipe(*current_cmd,
 				&context->arg_index, data->tokens);
 		if (!*current_cmd)

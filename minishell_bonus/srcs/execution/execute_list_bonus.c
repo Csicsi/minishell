@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_list_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:03 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 19:10:43 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 13:01:36 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,28 +63,34 @@ int	execute_all_commands_in_list(t_cmd *current,
 {
 	t_cmd_type	last_cmd_type;
 	int			status;
+	bool		skip_piped_group;
 
 	last_cmd_type = CMD_NORMAL;
+	skip_piped_group = false;
 	while (current != NULL)
 	{
+		if (skip_piped_group)
+		{
+			if (last_cmd_type == CMD_PIPE)
+			{
+				current = current->next;
+				continue ;
+			}
+			skip_piped_group = false;
+		}
 		if ((last_cmd_type == CMD_AND && data->last_exit_status != 0)
 			|| (last_cmd_type == CMD_OR && data->last_exit_status == 0))
 		{
+			skip_piped_group = true;
 			last_cmd_type = current->type;
 			current = current->next;
-			continue;
+			continue ;
 		}
-		if (data->syntax_error)
+		if (data->syntax_error || current->io_error)
+		{
 			current->skip_execution = true;
-		if (current->io_error)
-		{
-			ctx->io_error_status = 1;
 			current = current->next;
-			continue;
-		}
-		else
-		{
-			ctx->io_error_status = 0;
+			continue ;
 		}
 		if (execute_command_in_list(current, data, ctx) == 1)
 			return (1);

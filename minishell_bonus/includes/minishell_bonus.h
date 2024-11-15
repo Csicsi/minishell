@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_bonus.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 19:53:44 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 12:14:51 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,8 @@ typedef enum e_cmd_type
 {
 	CMD_NORMAL,
 	CMD_AND,
-	CMD_OR
+	CMD_OR,
+	CMD_PIPE
 }	t_cmd_type;
 
 typedef struct s_cmd t_cmd;
