@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/15 17:35:48 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 20:01:56 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,9 @@ static int	resolve_target_path(t_cmd *cmd,
 	char	*resolved_path;
 
 	if (cmd->args[1] != NULL && cmd->args[2] != NULL)
-	{
-		ft_putstr_fd(": cd: too many arguments\n", STDERR_FILENO);
-		return (1);
-	}
+		return (ft_putstr_fd(": cd: too many arguments\n", STDERR_FILENO), 1);
+	if (cmd->args[1] != NULL && ft_strcmp(cmd->args[1], "") == 0)
+		return (target_path = NULL, 0);
 	if (resolve_special_paths(cmd, data, target_path)
 		== 0 && *target_path != NULL)
 		return (0);

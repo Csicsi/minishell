@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 16:18:34 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 18:32:14 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 19:51:15 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ char	**get_matching_files(const char *pattern)
 	count = 0;
 	if (!add_matching_files(dir, pattern, matches, &count))
 	{
+		while (--count >= 0)
+			free(matches[count]);
 		free(matches);
 		closedir(dir);
 		return (NULL);
@@ -108,24 +110,17 @@ int	expand_wildcard(t_token *token)
 {
 	char	**matches;
 	t_token	*current;
-	int		i;
 
 	matches = get_matching_files(token->value);
 	if (!matches || !matches[0])
-		return (0);
+		return (free_string_array(matches), 0);
 	free(token->value);
-	token->value = strdup(matches[0]);
+	token->value = ft_strdup(matches[0]);
 	if (!token->value)
-		return (0);
+		return (free_string_array(matches), 0);
 	current = token;
 	if (!create_wildcard_tokens(current, matches))
-		return (0);
-	i = 0;
-	while (matches[i])
-	{
-		free(matches[i]);
-		i++;
-	}
-	free(matches);
+		return (free_string_array(matches), 0);
+	free_string_array(matches);
 	return (1);
 }

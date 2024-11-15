@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   find_in_path.c                                     :+:      :+:    :+:   */
+/*   find_cmd_path.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 17:06:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 17:07:18 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 19:09:53 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,18 @@ static char	*find_in_path(char *cmd, t_data *data,
 	char	*path_for_execve;
 	char	*path_curdir;
 
+	path_curdir = NULL;
 	allpath = parse_path_env(cmd, data, &path_curdir, ctx);
 	if (!allpath)
+	{
+		if (path_curdir)
+			free(path_curdir);
 		return (NULL);
+	}
 	path_for_execve = find_executable_in_paths(allpath, cmd);
 	free_string_array(allpath);
+	if (path_curdir)
+		free(path_curdir);
 	return (path_for_execve);
 }
 
