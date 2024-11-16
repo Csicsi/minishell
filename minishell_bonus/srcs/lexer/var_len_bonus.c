@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 16:18:13 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 20:31:18 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ static int	get_expanded_var_length(char *cursor,
 
 	if (*cursor == '?')
 		return (get_status_var_length(last_exit_status, skip_len));
+	else if (*cursor == '$')
+		return (get_pid_length(skip_len));
 	else
 	{
 		var_length = get_var_name_length(cursor, skip_len);

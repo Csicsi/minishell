@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:33 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 18:48:09 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 20:31:47 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ int		ft_isdigit_str(const char *str);
 int		check_for_brackets(t_data *data);
 bool	check_for_heredoc(t_token *tokens);
 void	ft_free(void **ptr);
+int		get_pid_length(int *skip_len);
 
 //utils4.c
 char	*ft_strtrim(const char *str, const char *set);

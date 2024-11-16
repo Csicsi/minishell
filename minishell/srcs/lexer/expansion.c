@@ -3,36 +3,60 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:05 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 10:59:31 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/16 07:01:28 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static int	expand_var_into_buffer(char *result,
-	int *i, char *cursor, t_data *data)
+static int	expand_special_var(char *result, int *i, char *cursor,
+	t_data *data)
 {
-	int		len;
-	char	*env_value;
 	char	*status_str;
 
-	len = 0;
 	if (*cursor == '?')
 	{
 		status_str = ft_itoa(data->last_exit_status);
-		ft_strcpy(&result[*i], status_str);
-		*i += ft_strlen(status_str);
-		free(status_str);
+		if (status_str)
+		{
+			ft_strcpy(&result[*i], status_str);
+			*i += ft_strlen(status_str);
+			free(status_str);
+		}
 		return (1);
 	}
+	if (*cursor == '$')
+	{
+		status_str = ft_itoa(getpid());
+		if (status_str)
+		{
+			ft_strcpy(&result[*i], status_str);
+			*i += ft_strlen(status_str);
+			free(status_str);
+		}
+		return (2);
+	}
+	return (0);
+}
+
+static int	expand_normal_var(char *result, int *i, char *cursor, t_data *data)
+{
+	int		len;
+	char	*env_value;
+	char	*key;
+
+	len = 0;
 	while (ft_isalnum(cursor[len]) || cursor[len] == '_')
 		len++;
 	if (len > 0)
 	{
-		env_value = ft_getenv(ft_strndup(cursor, len), data->env_vars);
+		key = ft_strndup(cursor, len);
+		if (!key)
+			return (0);
+		env_value = ft_getenv(ft_strdup(key), data->env_vars);
 		if (env_value)
 		{
 			ft_strcpy(&result[*i], env_value);
@@ -40,6 +64,17 @@ static int	expand_var_into_buffer(char *result,
 		}
 	}
 	return (len);
+}
+
+static int	expand_var_into_buffer(char *result, int *i, char *cursor,
+	t_data *data)
+{
+	int	special_len;
+
+	special_len = expand_special_var(result, i, cursor, data);
+	if (special_len > 0)
+		return (special_len);
+	return (expand_normal_var(result, i, cursor, data));
 }
 
 static void	expand_env_vars_into_buffer(char
@@ -56,16 +91,18 @@ static void	expand_env_vars_into_buffer(char
 			result[i++] = *cursor++;
 			result[i++] = *cursor++;
 		}
+		if (*cursor == '$' && *(cursor + 1) == '$')
+		{
+			cursor += 2;
+			skip_len = expand_var_into_buffer(result, &i, "$$", data);
+		}
 		else if (*cursor == '$' && *(cursor + 1))
 		{
-			cursor++;
-			skip_len = expand_var_into_buffer(result, &i, cursor, data);
+			skip_len = expand_var_into_buffer(result, &i, ++cursor, data);
 			cursor += skip_len;
 		}
 		else
-		{
 			result[i++] = *cursor++;
-		}
 	}
 	result[i] = '\0';
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils3_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:54 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 15:27:46 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/15 20:31:30 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,16 @@ void	ft_free(void **ptr)
 		free(*ptr);
 		*ptr = NULL;
 	}
+}
+
+int	get_pid_length(int *skip_len)
+{
+	char	*pid_str;
+	int		pid_length;
+
+	pid_str = ft_itoa(getpid());
+	pid_length = ft_strlen(pid_str);
+	free(pid_str);
+	*skip_len = 1;
+	return (pid_length);
 }

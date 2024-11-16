@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:05 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 18:09:05 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/15 20:37:20 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,17 @@ static int	expand_var_into_buffer(char *result, int *i,
 		free(status_str);
 		return (1);
 	}
+	if (*cursor == '$')
+	{
+		status_str = ft_itoa(getpid());
+		if (status_str)
+		{
+			ft_strcpy(&result[*i], status_str);
+			*i += ft_strlen(status_str);
+			free(status_str);
+		}
+		return (2);
+	}
 	while (ft_isalnum(cursor[len]) || cursor[len] == '_')
 		len++;
 	if (len > 0)
@@ -76,16 +87,18 @@ static void	expand_env_vars_into_buffer(char
 			result[i++] = *cursor++;
 			result[i++] = *cursor++;
 		}
+		if (*cursor == '$' && *(cursor + 1) == '$')
+		{
+			cursor += 2;
+			skip_len = expand_var_into_buffer(result, &i, "$$", data);
+		}
 		else if (*cursor == '$' && *(cursor + 1))
 		{
-			cursor++;
-			skip_len = expand_var_into_buffer(result, &i, cursor, data);
+			skip_len = expand_var_into_buffer(result, &i, ++cursor, data);
 			cursor += skip_len;
 		}
 		else
-		{
 			result[i++] = *cursor++;
-		}
 	}
 	result[i] = '\0';
 }
