@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:33 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 20:31:47 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 12:10:50 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,8 @@ char	*ft_strreplace(const char *str, const char *old,
 			const char *new);
 void	append_matches_to_result(char *result, int *i,
 			char **matches);
+
+//utils5.c
+void	mark_error_on_pipe(t_token *tokens);
 
 #endif

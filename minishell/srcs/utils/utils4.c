@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:00 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 18:37:29 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 12:37:19 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	wait_for_children(t_exec_context ctx, t_data *data)
 			data->last_exit_status = 128 + WTERMSIG(status);
 		i++;
 	}
+	setup_signal_handlers(0);
 }
 
 char	*ft_strtrim(const char *str, const char *set)

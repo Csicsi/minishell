@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/16 07:15:13 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 12:38:49 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ bool	initialize(t_data *data, char **env_vars, int argc, char **argv)
 {
 	(void)argc;
 	(void)argv;
-	setup_signal_handlers();
+	setup_signal_handlers(0);
 	data->exit_flag = false;
 	data->syntax_error = false;
 	data->heredoc_single_quote = false;

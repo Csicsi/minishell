@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:16 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 08:51:40 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 12:39:07 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,10 @@ int	execute_command_in_list(t_cmd *current,
 		return (cleanup_data(data, false), free(ctx->child_pids), 1);
 	pid = fork();
 	if (pid == 0)
-	{
-		setup_signal_handlers();
 		execute_child_command(current, data, ctx);
-	}
 	else if (pid > 0)
 	{
+		setup_signal_handlers(1);
 		ctx->child_pids[ctx->num_children++] = pid;
 		if (ctx->prev_fd != -1)
 			close(ctx->prev_fd);

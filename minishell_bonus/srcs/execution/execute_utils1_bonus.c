@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/15 18:38:51 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 12:39:36 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,5 +93,6 @@ int	execute_and_wait(t_cmd *current, t_data *data, t_exec_context *ctx)
 		if (WIFEXITED(status))
 			data->last_exit_status = WEXITSTATUS(status);
 	}
+	setup_signal_handlers(0);
 	return (0);
 }

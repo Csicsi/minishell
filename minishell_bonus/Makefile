@@ -44,6 +44,7 @@ SRCS =	srcs/minishell_bonus.c \
 		srcs/utils/utils2_bonus.c \
 		srcs/utils/utils3_bonus.c \
 		srcs/utils/utils4_bonus.c \
+		srcs/utils/utils5_bonus.c \
 		srcs/utils/cleanup_bonus.c \
 		srcs/utils/ft_fprintf_bonus.c \
 		srcs/utils/ft_fprintf_utils_bonus.c \

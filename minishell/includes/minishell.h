@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 10:06:10 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 12:35:59 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,8 +231,7 @@ int			builtin_exit(t_cmd *cmd, t_data *data, bool print_exit);
 /* ******* */
 
 // signals.c
-void		handle_sigint(int sig);
-void		setup_signal_handlers(void);
+void		setup_signal_handlers(int context);
 
 /* ************** */
 /* Initialization */
