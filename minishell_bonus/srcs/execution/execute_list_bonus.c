@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:03 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 18:40:27 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 13:35:09 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,8 @@ int	execute_cmd_list(t_data *data)
 	t_exec_context	ctx;
 	int				builtin_status;
 
-	handle_heredoc(data->cmd_list, data);
+	if (handle_heredoc(data->cmd_list, data) == 1)
+		return (1);
 	if (initialize_exec_context(data, &ctx) != 0)
 		return (1);
 	current = data->cmd_list;

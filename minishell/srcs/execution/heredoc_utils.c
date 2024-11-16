@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:39 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 13:24:38 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/16 13:31:05 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,17 @@ static void	write_heredoc_line(int fd, char *line, t_data *data)
 	}
 }
 
-void	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
+void	cleanup_heredoc_on_interrupt(t_cmd *cmd)
+{
+	if (cmd->heredoc_tempfile)
+	{
+		unlink(cmd->heredoc_tempfile);
+		free(cmd->heredoc_tempfile);
+		cmd->heredoc_tempfile = NULL;
+	}
+}
+
+int	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
 {
 	char	*line;
 	int		len;
@@ -111,6 +121,11 @@ void	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
 	len = ft_strlen(cmd->heredoc_delim);
 	while (1)
 	{
+		if (g_signal_value == SIGINT)
+		{
+			cleanup_heredoc_on_interrupt(cmd);
+			return (1);
+		}
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, "> ", 2);
 		line = readline(NULL);
@@ -127,4 +142,5 @@ void	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
 		}
 		write_heredoc_line(fd, line, data);
 	}
+	return (0);
 }

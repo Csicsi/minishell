@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 12:35:59 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 13:32:39 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,9 +169,9 @@ t_token		*find_token_by_value(t_token *tokens, const char *value);
 // heredoc_utils.c
 char		*generate_random_filename(void);
 int			open_heredoc_file(t_cmd *cmd);
-void		read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd);
+int			read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd);
 // heredoc.c
-void		handle_heredoc(t_cmd *cmd_list, t_data *data);
+int			handle_heredoc(t_cmd *cmd_list, t_data *data);
 // redirs.c
 int			handle_input_redirection(t_cmd *cmd, t_data *data);
 int			handle_output_redirection(t_cmd *cmd, t_data *data);
