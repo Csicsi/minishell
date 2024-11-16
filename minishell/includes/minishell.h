@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 13:32:39 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 16:05:42 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,12 +208,13 @@ int			builtin_echo(t_cmd *cmd);
 int			builtin_cd(t_cmd *cmd, t_data *data);
 // cd_utils1.c
 char		*resolve_cdpath_if_needed(const char *path, t_data *data);
+char		*getcwd_from_env_var(char *cwd, size_t size, t_data *data);
 // cd_utils2.c
 int			ft_setenv(const char *varname, const char *value, t_data *data);
 // cd_utils3.c
 char		*ft_realpath(const char *path, char *resolved_path);
 // pwd.c
-int			builtin_pwd(void);
+int			builtin_pwd(t_data *data);
 // export.c
 int			builtin_export(t_cmd *cmd, t_data *data);
 // export_utils.c

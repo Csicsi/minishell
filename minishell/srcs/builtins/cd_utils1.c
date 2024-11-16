@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils1.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:55:01 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/15 17:35:03 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 15:56:06 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,29 @@ char	*resolve_cdpath_if_needed(const char *path, t_data *data)
 	if (cdpath != NULL)
 		return (resolve_cdpath(cdpath, path));
 	return (NULL);
+}
+
+char	*getcwd_from_env_var(char *cwd, size_t size, t_data *data)
+{
+	char	*pwd_env;
+	char	pwd_from_getcwd[PATH_MAX];
+
+	pwd_env = ft_getenv(ft_strdup("PWD"), data->env_vars);
+	if ((!pwd_env || pwd_env[0] == '\0')
+		&& getcwd(pwd_from_getcwd, sizeof(pwd_from_getcwd)) == NULL)
+		return (NULL);
+	if (cwd)
+	{
+		if (pwd_env)
+		{
+			if (ft_strlcpy(cwd, pwd_env, size) >= size)
+				return (NULL);
+		}
+		else if ((!pwd_env || pwd_env[0] == '\0'))
+		{
+			if (ft_strlcpy(cwd, pwd_from_getcwd, size) >= size)
+				return (NULL);
+		}
+	}
+	return (cwd);
 }
