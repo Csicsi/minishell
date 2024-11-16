@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils2_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:55:16 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/15 17:38:02 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 16:31:44 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,16 @@ static char	*construct_varname_value(const char *varname, const char *value)
 	char	*varname_value;
 
 	len_varname = ft_strlen(varname);
-	len_value = ft_strlen(value);
+	len_value = 0;
+	if (value != NULL)
+		len_value = ft_strlen(value);
 	varname_value = malloc(len_varname + len_value + 2);
 	if (!varname_value)
 		return (NULL);
 	ft_strlcpy(varname_value, varname, len_varname + 1);
 	varname_value[len_varname] = '=';
-	ft_strlcpy(varname_value + len_varname + 1, value, len_value + 1);
+	if (value != NULL)
+		ft_strlcpy(varname_value + len_varname + 1, value, len_value + 1);
 	return (varname_value);
 }
 

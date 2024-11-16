@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd_utils3.c                                        :+:      :+:    :+:   */
+/*   ft_realpath.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 10:55:40 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/15 17:35:05 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 16:27:24 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,3 +108,4 @@ char	*ft_realpath(const char *path, char *resolved_path)
 		return (NULL);
 	return (resolved_path);
 }
+

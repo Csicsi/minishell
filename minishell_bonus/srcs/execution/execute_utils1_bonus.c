@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils1_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 07:31:36 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/16 12:39:36 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 16:04:15 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	execute_builtin(t_cmd *cmd, t_data *data,
 	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
 		return (builtin_unset(cmd, data));
 	else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
-		return (builtin_pwd());
+		return (builtin_pwd(data));
 	return (1);
 }
 

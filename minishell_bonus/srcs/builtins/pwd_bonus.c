@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   pwd_bonus.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 11:11:10 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/12 16:10:09 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/16 16:28:24 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
 
-int	builtin_pwd(void)
+int	builtin_pwd(t_data *data)
 {
 	char	cwd[PATH_MAX];
 
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	if (getcwd_from_env_var(cwd, sizeof(cwd), data) == NULL)
 	{
 		perror(": pwd");
 		return (1);

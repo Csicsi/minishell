@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_bonus.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 10:22:02 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/15 17:37:13 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 16:29:48 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,13 @@ static char	*normalize_path(const char *path)
 
 	if (ft_realpath(path, normalized_path) == NULL)
 	{
+		if (ft_strncmp(path, "..", 3) == 0)
+		{
+			ft_fprintf(2,
+				"cd: error retrieving current directory: getcwd: cannot "
+				"access parent directories: No such file or directory\n");
+			return (NULL);
+		}
 		if (ft_strncmp(path, "-", 2) != 0)
 			ft_fprintf(2, ": cd: %s: No such file or directory\n", path);
 		return (NULL);
@@ -90,9 +97,10 @@ static int	update_env_paths(const char *normalized_path,
 {
 	char	cwd[PATH_MAX];
 
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	if (getcwd_from_env_var(cwd, sizeof(cwd), data) == NULL)
 		return (perror(": cd: getcwd"), 1);
-	if (ft_setenv("OLDPWD", cwd, data) != 0)
+	if (ft_setenv("OLDPWD",
+			ft_getenv(ft_strdup("PWD"), data->env_vars), data) != 0)
 		return (perror(": cd: setenv OLDPWD"), 1);
 	if (chdir(normalized_path) != 0)
 	{
@@ -101,8 +109,10 @@ static int	update_env_paths(const char *normalized_path,
 		else if (errno == EACCES)
 			ft_fprintf(STDERR_FILENO, "cd: %s: Permission denied\n", curpath);
 		else
+		{
 			ft_fprintf(STDERR_FILENO,
 				"cd: %s: No such file or directory\n", curpath);
+		}
 		return (1);
 	}
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
