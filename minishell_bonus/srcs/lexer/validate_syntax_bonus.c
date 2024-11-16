@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:58 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 17:58:29 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 07:32:33 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,5 @@ int	validate_syntax(t_data *data)
 		return (print_syn_err(data, 1, "newline", first));
 	else if (brackets < 0)
 		return (print_syn_err(data, 1, ")", first));
-	data->last_exit_status = 0;
 	return (0);
 }

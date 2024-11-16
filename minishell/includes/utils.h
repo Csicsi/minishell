@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:33 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 18:46:23 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 07:13:10 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ char	*ft_strncpy(char *dest, const char *src, size_t n);
 char	*ft_strndup(const char *s, size_t n);
 char	*ft_strcpy(char *dest, const char *src);
 int		check_for_logical_operators(t_data *data);
+void	mark_error_on_pipe(t_token *tokens);
 
 //utils3.c
 void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);

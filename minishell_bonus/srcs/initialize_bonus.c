@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialize_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/14 14:54:51 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/16 07:15:13 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,16 @@ bool	initialize(t_data *data, char **env_vars, int argc, char **argv)
 		data->exit_flag = true;
 	}
 	return (data->exit_flag);
+}
+
+int	handle_null_input(t_data *data)
+{
+	if (data->input == NULL)
+	{
+		if (isatty(0))
+			ft_fprintf(2, "exit\n");
+		cleanup_data(data, true);
+		return (1);
+	}
+	return (0);
 }

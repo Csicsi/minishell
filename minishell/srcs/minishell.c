@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 18:45:32 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 07:31:48 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	handle_null_input(t_data *data)
 	return (0);
 }
 
-int	check_for_unclosed_quotes(t_data *data)
+int	check_for_unclosed_single_quotes(t_data *data)
 {
 	int		in_quote;
 	char	quote_char;
@@ -35,7 +35,7 @@ int	check_for_unclosed_quotes(t_data *data)
 	quote_char = '\0';
 	while (*cursor)
 	{
-		if ((*cursor == '"' || *cursor == '\'') && in_quote == 0)
+		if ((*cursor == '\'') && in_quote == 0)
 		{
 			in_quote = 1;
 			quote_char = *cursor;
@@ -46,31 +46,43 @@ int	check_for_unclosed_quotes(t_data *data)
 		}
 		cursor++;
 	}
+	if (in_quote == 1)
+		ft_fprintf(2, "syntax error near unexpected token `\''\n");
 	return (in_quote);
 }
 
-void	mark_error_on_pipe(t_token *tokens)
+int	check_for_unclosed_double_quotes(t_data *data)
 {
-	t_token	*last_pipe;
+	int		in_quote;
+	char	quote_char;
+	char	*cursor;
 
-	last_pipe = tokens;
-	while (tokens)
+	cursor = data->input;
+	in_quote = 0;
+	quote_char = '\0';
+	while (*cursor)
 	{
-		if (tokens->type == TOKEN_OPERATOR
-			&& ft_strcmp(tokens->value, "|") == 0)
-			last_pipe = tokens;
-		else if (tokens->type == TOKEN_ERROR)
+		if ((*cursor == '"') && in_quote == 0)
 		{
-			last_pipe->type = TOKEN_ERROR;
-			break ;
+			in_quote = 1;
+			quote_char = *cursor;
 		}
-		tokens = tokens->next;
+		else if (*cursor == quote_char && in_quote == 1)
+		{
+			in_quote = 0;
+		}
+		cursor++;
 	}
+	if (in_quote == 1)
+		ft_fprintf(2, "syntax error near unexpected token `\"'\n");
+	return (in_quote);
 }
 
 int	process_and_validate_input(t_data *data)
 {
-	if (check_for_unclosed_quotes(data) != 0)
+	if (check_for_unclosed_single_quotes(data) != 0)
+		return (cleanup_data(data, false), 1);
+	if (check_for_unclosed_double_quotes(data) != 0)
 		return (cleanup_data(data, false), 1);
 	if (check_for_brackets(data) != 0)
 		return (cleanup_data(data, false), 1);
@@ -82,10 +94,7 @@ int	process_and_validate_input(t_data *data)
 	mark_error_on_pipe(data->tokens);
 	data->cmd_list = parse_tokens(data);
 	if (!data->cmd_list)
-	{
-		cleanup_data(data, false);
-		return (1);
-	}
+		return (cleanup_data(data, false), 1);
 	return (0);
 }
 

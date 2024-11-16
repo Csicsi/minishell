@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:51 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 18:46:00 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 07:12:59 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,23 @@ int	check_for_logical_operators(t_data *data)
 		cursor++;
 	}
 	return (0);
+}
+
+void	mark_error_on_pipe(t_token *tokens)
+{
+	t_token	*last_pipe;
+
+	last_pipe = tokens;
+	while (tokens)
+	{
+		if (tokens->type == TOKEN_OPERATOR
+			&& ft_strcmp(tokens->value, "|") == 0)
+			last_pipe = tokens;
+		else if (tokens->type == TOKEN_ERROR)
+		{
+			last_pipe->type = TOKEN_ERROR;
+			break ;
+		}
+		tokens = tokens->next;
+	}
 }

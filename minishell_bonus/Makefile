@@ -15,20 +15,20 @@ SRCS =	srcs/minishell_bonus.c \
 		srcs/lexer/quotes_bonus.c \
 		srcs/lexer/tokens_postprocess_bonus.c \
 		srcs/lexer/wildcards_bonus.c \
+		srcs/lexer/validate_syntax_bonus.c \
 		srcs/execution/execute_list_bonus.c \
 		srcs/execution/execute_child_bonus.c \
 		srcs/execution/execute_single_bonus.c \
 		srcs/execution/redirs_bonus.c \
 		srcs/execution/execute_utils1_bonus.c \
 		srcs/execution/execute_utils2_bonus.c \
-		srcs/execution/validate_grammar_bonus.c \
-		srcs/execution/validate_syntax_bonus.c \
 		srcs/execution/heredoc_bonus.c \
 		srcs/execution/heredoc_utils_bonus.c \
 		srcs/execution/find_cmd_path_bonus.c \
 		srcs/parser/parser_bonus.c \
 		srcs/parser/token_handlers_bonus.c \
 		srcs/parser/handle_io_bonus.c \
+		srcs/parser/validate_grammar_bonus.c \
 		srcs/builtins/echo_bonus.c \
 		srcs/builtins/cd_bonus.c \
 		srcs/builtins/cd_utils1_bonus.c \

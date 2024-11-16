@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validate_syntax.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:58 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 12:44:19 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/16 07:31:03 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,5 @@ int	validate_syntax(t_data *data)
 		}
 		curr = curr->next;
 	}
-	data->last_exit_status = 0;
 	return (0);
 }

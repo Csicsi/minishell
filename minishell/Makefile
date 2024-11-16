@@ -14,20 +14,20 @@ SRCS =	srcs/minishell.c \
 		srcs/lexer/var_len.c \
 		srcs/lexer/quotes.c \
 		srcs/lexer/tokens_postprocess.c \
+		srcs/lexer/validate_syntax.c \
 		srcs/execution/execute_list.c \
 		srcs/execution/execute_child.c \
 		srcs/execution/execute_single.c \
 		srcs/execution/redirs.c \
 		srcs/execution/execute_utils1.c \
 		srcs/execution/execute_utils2.c \
-		srcs/execution/validate_grammar.c \
-		srcs/execution/validate_syntax.c \
 		srcs/execution/heredoc.c \
 		srcs/execution/heredoc_utils.c \
 		srcs/execution/find_cmd_path.c \
 		srcs/parser/parser.c \
 		srcs/parser/token_handlers.c \
 		srcs/parser/handle_io.c \
+		srcs/parser/validate_grammar.c \
 		srcs/builtins/echo.c \
 		srcs/builtins/cd.c \
 		srcs/builtins/cd_utils1.c \
