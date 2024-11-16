@@ -6,19 +6,20 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:01:08 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/15 20:05:28 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 10:07:39 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+volatile size_t g_signal_value = 0;
+
 void	handle_sigint(int sig)
 {
-	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
+	g_signal_value = sig;
+	ioctl(STDIN_FILENO, TIOCSTI, "\n");
 	rl_on_new_line();
 	rl_replace_line("", 0);
-	rl_redisplay();
 }
 
 void	setup_signal_handlers(void)

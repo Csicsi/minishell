@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 07:31:48 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 10:06:47 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,12 @@ int	main(int argc, char **argv, char **env_vars)
 		return (1);
 	while (1)
 	{
+		if (g_signal_value)
+		{
+			data.last_exit_status = g_signal_value + 128;
+			g_signal_value = 0;
+			continue ;
+		}
 		data.input = readline("Don'tPanicShell> ");
 		if (handle_null_input(&data))
 			return (data.last_exit_status);

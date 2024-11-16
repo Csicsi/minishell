@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 19:41:39 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/16 10:06:10 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <linux/limits.h>
 # include <fcntl.h>
 # include <sys/wait.h>
+# include <sys/ioctl.h>
 # include <string.h>
 # include <ctype.h>
 # include <stdbool.h>
@@ -30,6 +31,8 @@
 # include <readline/history.h>
 # include "../libft/libft.h"
 # include "utils.h"
+
+extern volatile size_t g_signal_value;
 
 typedef enum e_token_type
 {
