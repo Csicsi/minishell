@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 09:55:09 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 13:10:26 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ typedef struct s_cmd
 	int					append_output;
 	int					exit_status;
 	struct s_cmd		*next;
-	char				*heredoc_delim;
+	char				**heredoc_delim;
+	int					heredoc_count;
 	bool				is_heredoc;
 	bool				io_error;
 	bool				empty_redir;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:27 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 19:53:19 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/18 13:12:25 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,31 +47,61 @@ int	count_tokens(t_token *tokens)
 	return (count);
 }
 
+bool	finalize_heredoc(t_cmd *current_cmd)
+{
+	char	**new_delim_array;
+
+	if (current_cmd->heredoc_delim)
+	{
+		new_delim_array = ft_realloc(current_cmd->heredoc_delim,
+				sizeof(char *) * current_cmd->heredoc_count,
+				sizeof(char *) * (current_cmd->heredoc_count + 1));
+		if (!new_delim_array)
+			return (false);
+		current_cmd->heredoc_delim = new_delim_array;
+		current_cmd->heredoc_delim[current_cmd->heredoc_count] = NULL;
+	}
+	return (true);
+}
+
+bool	parse_tokens_loop(t_data *data, t_cmd **current_cmd,
+	t_parse_context *context, t_token *tmp)
+{
+	while (data->tokens)
+	{
+		if (!parse_single_token(data, current_cmd, context))
+		{
+			data->tokens = tmp;
+			return (false);
+		}
+		data->tokens = data->tokens->next;
+	}
+	return (true);
+}
+
 t_cmd	*parse_tokens(t_data *data)
 {
-	int				words_count;
 	t_cmd			*cmd;
 	t_cmd			*current_cmd;
 	t_parse_context	context;
 	t_token			*tmp;
+	int				words_count;
 
 	cmd = initialize_cmd();
 	if (!cmd)
 		return (NULL);
 	current_cmd = cmd;
 	context = (t_parse_context){0, false, false};
+	tmp = data->tokens;
 	words_count = count_tokens(data->tokens);
 	current_cmd->args = ft_calloc(words_count + 1, sizeof(char *));
 	if (!current_cmd->args)
 		return (NULL);
-	tmp = data->tokens;
-	while (data->tokens)
-	{
-		if (!parse_single_token(data, &current_cmd, &context))
-			return (data->tokens = tmp, cmd);
-		data->tokens = data->tokens->next;
-	}
+	if (!parse_tokens_loop(data, &current_cmd, &context, tmp))
+		return (cmd);
 	current_cmd->args[context.arg_index] = NULL;
 	data->tokens = tmp;
+	if (!finalize_heredoc(current_cmd))
+		return (NULL);
 	return (cmd);
 }

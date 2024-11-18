@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/18 09:19:11 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 13:14:13 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,19 +59,23 @@ char	**duplicate_env_vars(char **env_vars)
 	return (new_env_vars);
 }
 
-pid_t	ft_getpid(void)
+pid_t	ft_parse_pid_from_stat(const char *buffer)
 {
-	pid_t	pid;
+	const char	*token = buffer;
+	int			field_count;
+	pid_t		parent_pid;
 
-	pid = fork();
-	if (pid == -1)
+	field_count = 0;
+	while (*token != '\0' && field_count < 4)
 	{
-		perror("fork");
-		return (-1);
+		if (*token == ' ')
+			field_count++;
+		token++;
 	}
-	else if (pid == 0)
-		exit(0);
-	return (pid);
+	if (field_count < 4 || *token == '\0')
+		return (-1);
+	parent_pid = (pid_t)ft_atoi(token);
+	return (parent_pid);
 }
 
 bool	initialize(t_data *data, char **env_vars, int argc, char **argv)

@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:01:08 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/18 07:29:52 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 12:54:49 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	handle_sigint_child(int sig)
 	rl_replace_line("", 0);
 }
 
-static void	handle_sigquit_child(int sig)
+static void	handle_sigquit(int sig)
 {
 	g_signal_value = sig;
 	write(2, "Quit (core dumped)\n", 20);
@@ -38,31 +38,27 @@ static void	handle_sigquit_child(int sig)
 	rl_replace_line("", 0);
 }
 
+static void	handle_sigquit_child(int sig)
+{
+	(void)sig;
+	exit(128 + SIGQUIT);
+}
+
 void	setup_signal_handlers(int context)
 {
-	struct sigaction	sa_int;
-	struct sigaction	sa_quit;
-
 	if (context == 0)
 	{
-		sa_int.sa_handler = handle_sigint;
-		sa_int.sa_flags = SA_RESTART;
-		sigemptyset(&sa_int.sa_mask);
-		sigaction(SIGINT, &sa_int, NULL);
-		sa_quit.sa_handler = SIG_IGN;
-		sa_quit.sa_flags = 0;
-		sigemptyset(&sa_quit.sa_mask);
-		sigaction(SIGQUIT, &sa_quit, NULL);
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, SIG_IGN);
 	}
 	else if (context == 1)
 	{
-		sa_int.sa_handler = handle_sigint_child;
-		sa_int.sa_flags = SA_RESTART;
-		sigemptyset(&sa_int.sa_mask);
-		sigaction(SIGINT, &sa_int, NULL);
-		sa_quit.sa_handler = handle_sigquit_child;
-		sa_quit.sa_flags = 0;
-		sigemptyset(&sa_quit.sa_mask);
-		sigaction(SIGQUIT, &sa_quit, NULL);
+		signal(SIGINT, handle_sigint_child);
+		signal(SIGQUIT, handle_sigquit);
+	}
+	else if (context == 2)
+	{
+		signal(SIGINT, handle_sigint_child);
+		signal(SIGQUIT, handle_sigquit_child);
 	}
 }

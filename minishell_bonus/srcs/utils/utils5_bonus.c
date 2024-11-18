@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 12:09:52 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 09:58:09 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 13:14:27 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,42 @@ int	handle_special_variables(char *result, int *i,
 	*i += ft_strlen(temp_str);
 	free(temp_str);
 	return (1);
+}
+
+static pid_t	ft_parse_pid_from_stat(const char *buffer)
+{
+	const char	*token = buffer;
+	int			field_count;
+	pid_t		parent_pid;
+
+	field_count = 0;
+	while (*token != '\0' && field_count < 4)
+	{
+		if (*token == ' ')
+			field_count++;
+		token++;
+	}
+	if (field_count < 4 || *token == '\0')
+		return (-1);
+	parent_pid = (pid_t)ft_atoi(token);
+	return (parent_pid);
+}
+
+pid_t	ft_getpid(void)
+{
+	int		fd;
+	char	buffer[256];
+	ssize_t	bytes_read;
+
+	fd = open("/proc/self/stat", O_RDONLY);
+	if (fd == -1)
+		return (-1);
+	bytes_read = read(fd, buffer, sizeof(buffer) - 1);
+	close(fd);
+	if (bytes_read <= 0)
+		return (-1);
+	buffer[bytes_read] = '\0';
+	if (bytes_read <= 0)
+		return (-1);
+	return (ft_parse_pid_from_stat(buffer));
 }

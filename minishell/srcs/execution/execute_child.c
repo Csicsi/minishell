@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:16 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 12:36:39 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 13:08:17 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ static int	handle_redirections(t_cmd *current, t_data *data)
 static void	execute_child_command(t_cmd *current,
 	t_data *data, t_exec_context *ctx)
 {
+	setup_signal_handlers(2);
 	setup_pipes(ctx, current);
 	if (handle_redirections(current, data) < 0)
 	{

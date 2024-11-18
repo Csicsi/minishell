@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:16 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 07:48:55 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 13:09:00 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	execute_cmd_group(t_cmd_group *group, t_data *data, t_exec_context *ctx)
 static void	execute_child_command(t_cmd *current,
 	t_data *data, t_exec_context *ctx)
 {
+	setup_signal_handlers(2);
 	setup_pipes(ctx, current);
 	if (handle_redirections(current, data) < 0)
 	{
@@ -87,10 +88,7 @@ int	execute_command_in_list(t_cmd *current, t_data *data,
 		return (cleanup_data(data, false), free(ctx->child_pids), 1);
 	pid = fork();
 	if (pid == 0)
-	{
-		setup_signal_handlers(0);
 		execute_child_command(current, data, ctx);
-	}
 	else if (pid > 0)
 		handle_parent_process(pid, current, ctx);
 	else
