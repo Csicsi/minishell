@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 08:51:32 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:16:20 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,18 @@ static int	get_status_var_length(int last_exit_status, int *skip_len)
 	return (status_length);
 }
 
+static int	get_pid_var_length(int *skip_len, t_data *data)
+{
+	char	*pid_str;
+	int		pid_length;
+
+	pid_str = ft_itoa(data->pid);
+	pid_length = ft_strlen(pid_str);
+	free(pid_str);
+	*skip_len = 1;
+	return (pid_length);
+}
+
 static int	get_var_name_length(char *cursor, int *skip_len)
 {
 	int	len;
@@ -35,18 +47,6 @@ static int	get_var_name_length(char *cursor, int *skip_len)
 	return (len);
 }
 
-static int	get_pid_length(int *skip_len)
-{
-	char	*pid_str;
-	int		pid_length;
-
-	pid_str = ft_itoa(getpid());
-	pid_length = ft_strlen(pid_str);
-	free(pid_str);
-	*skip_len = 1;
-	return (pid_length);
-}
-
 static int	get_expanded_var_length(char *cursor,
 	int last_exit_status, t_data *data, int *skip_len)
 {
@@ -56,7 +56,7 @@ static int	get_expanded_var_length(char *cursor,
 	if (*cursor == '?')
 		return (get_status_var_length(last_exit_status, skip_len));
 	else if (*cursor == '$')
-		return (get_pid_length(skip_len));
+		return (get_pid_var_length(skip_len, data));
 	else
 	{
 		var_length = get_var_name_length(cursor, skip_len);
@@ -66,6 +66,8 @@ static int	get_expanded_var_length(char *cursor,
 					data->env_vars);
 			if (env_value)
 				var_length = ft_strlen(env_value);
+			else
+				var_length = 0;
 		}
 	}
 	return (var_length);

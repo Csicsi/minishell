@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:03 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 13:35:09 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 10:02:50 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ int	initialize_exec_context(t_data *data, t_exec_context *ctx)
 	ctx->num_children = 0;
 	ctx->io_error_status = 0;
 	ctx->path_exists = true;
+	ctx->pipe_fd[0] = -1;
+	ctx->pipe_fd[1] = -1;
 	num_commands = count_cmds(data->cmd_list);
 	ctx->child_pids = malloc(sizeof(pid_t) * num_commands);
 	if (!ctx->child_pids)

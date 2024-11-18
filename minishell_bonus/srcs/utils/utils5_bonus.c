@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 12:09:52 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 07:49:02 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:58:09 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,21 @@ void	setup_pipes(t_exec_context *ctx, t_cmd *current)
 		close(ctx->pipe_fd[0]);
 		close(ctx->pipe_fd[1]);
 	}
+}
+
+int	handle_special_variables(char *result, int *i,
+	char cursor, t_data *data)
+{
+	char	*temp_str;
+
+	if (cursor == '?')
+		temp_str = ft_itoa(data->last_exit_status);
+	else if (cursor == '$')
+		temp_str = ft_itoa(data->pid);
+	else
+		return (0);
+	ft_strcpy(&result[*i], temp_str);
+	*i += ft_strlen(temp_str);
+	free(temp_str);
+	return (1);
 }

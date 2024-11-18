@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:33 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 07:49:20 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:58:33 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,7 @@ void	append_matches_to_result(char *result, int *i,
 //utils5.c
 void	mark_error_on_pipe(t_token *tokens);
 void	setup_pipes(t_exec_context *ctx, t_cmd *current);
+int		handle_special_variables(char *result, int *i,
+			char cursor, t_data *data);
 
 #endif

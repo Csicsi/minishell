@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 07:33:20 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:10:23 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ typedef struct s_token
 
 typedef struct s_data
 {
+	int			pid;
 	bool		exit_flag;
 	int			last_exit_status;
 	int			token_count;
@@ -137,12 +138,6 @@ char		*extract_double_quoted_word(char *cursor,
 char		*expand_env_var(char *cursor, int last_exit_status, t_data *data);
 char		*expand_env_var_in_str(char **ptr_to_cursor,
 				int last_exit_status, t_data *data);
-// expansion_utils.c
-int			expand_special_var(char *result, int *i, char *cursor,
-				t_data *data);
-int			expand_normal_var(char *result, int *i, char *cursor, t_data *data);
-int			expand_var_into_buffer(char *result, int *i, char *cursor,
-				t_data *data);
 // tokens_postprocess.c
 void		handle_expanded_tokens(t_data *data);
 // var_len.c

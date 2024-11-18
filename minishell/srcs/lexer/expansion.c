@@ -6,14 +6,61 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:05 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 08:44:06 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:16:14 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static void	expand_env_vars_into_buffer(char *result,
-	char *cursor, t_data *data)
+static int	expand_special_var(char *result, int *i, char *cursor, t_data *data)
+{
+	char	*status_str;
+	char	*pid_str;
+
+	if (*cursor == '?')
+	{
+		status_str = ft_itoa(data->last_exit_status);
+		ft_strcpy(&result[*i], status_str);
+		*i += ft_strlen(status_str);
+		free(status_str);
+		return (1);
+	}
+	if (*cursor == '$')
+	{
+		pid_str = ft_itoa(data->pid);
+		ft_strcpy(&result[*i], pid_str);
+		*i += ft_strlen(pid_str);
+		free(pid_str);
+		return (1);
+	}
+	return (0);
+}
+
+static int	expand_var_into_buffer(char *result,
+	int *i, char *cursor, t_data *data)
+{
+	int		len;
+	char	*env_value;
+
+	len = 0;
+	if (expand_special_var(result, i, cursor, data))
+		return (1);
+	while (ft_isalnum(cursor[len]) || cursor[len] == '_')
+		len++;
+	if (len > 0)
+	{
+		env_value = ft_getenv(ft_strndup(cursor, len), data->env_vars);
+		if (env_value)
+		{
+			ft_strcpy(&result[*i], env_value);
+			*i += ft_strlen(env_value);
+		}
+	}
+	return (len);
+}
+
+static void	expand_env_vars_into_buffer(char
+	*result, char *cursor, t_data *data)
 {
 	int	i;
 	int	skip_len;
@@ -23,21 +70,19 @@ static void	expand_env_vars_into_buffer(char *result,
 	{
 		if (*cursor == '$' && *(cursor + 1) == '/')
 		{
-			cursor += 2;
-			skip_len = expand_var_into_buffer(result, &i, "$/", data);
-		}
-		if (*cursor == '$' && *(cursor + 1) == '$')
-		{
-			cursor += 2;
-			skip_len = expand_var_into_buffer(result, &i, "$$", data);
+			result[i++] = *cursor++;
+			result[i++] = *cursor++;
 		}
 		else if (*cursor == '$' && *(cursor + 1))
 		{
-			skip_len = expand_var_into_buffer(result, &i, ++cursor, data);
+			cursor++;
+			skip_len = expand_var_into_buffer(result, &i, cursor, data);
 			cursor += skip_len;
 		}
 		else
+		{
 			result[i++] = *cursor++;
+		}
 	}
 	result[i] = '\0';
 }

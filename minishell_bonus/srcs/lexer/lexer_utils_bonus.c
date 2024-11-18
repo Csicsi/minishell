@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:10 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 16:17:48 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:43:46 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ t_token	*create_token(int type, int word_index)
 static char	*check_operator(char *cursor, t_token *token)
 {
 	static const char	*operators[]
-		= {"&&", "||", ">>", "<<", ">", "<", "|", "(", ")"};
+		= {"&&", "||", ">>", "<<", ">", "<", "|", "(", ")", "&"};
 	int					i;
 
 	i = 0;
-	while (i < 9)
+	while (i < 10)
 	{
 		if (!ft_strncmp(cursor, operators[i], ft_strlen(operators[i])))
 		{

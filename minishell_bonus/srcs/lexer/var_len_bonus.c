@@ -6,34 +6,11 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:23 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 08:46:06 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:53:58 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
-
-static int	get_status_var_length(int last_exit_status, int *skip_len)
-{
-	char	*status_str;
-	int		status_length;
-
-	status_str = ft_itoa(last_exit_status);
-	status_length = ft_strlen(status_str);
-	free(status_str);
-	*skip_len = 1;
-	return (status_length);
-}
-
-static int	get_var_name_length(char *cursor, int *skip_len)
-{
-	int	len;
-
-	len = 0;
-	while (cursor[len] && (ft_isalnum(cursor[len]) || cursor[len] == '_'))
-		len++;
-	*skip_len = len;
-	return (len);
-}
 
 static int	get_wildcard_expansion_length(const char *pattern)
 {
@@ -67,7 +44,7 @@ static int	get_expanded_var_length(char *cursor,
 	if (*cursor == '?')
 		return (get_status_var_length(last_exit_status, skip_len));
 	else if (*cursor == '$')
-		return (get_pid_length(skip_len));
+		return (get_pid_var_length(skip_len, data));
 	else
 	{
 		var_length = get_var_name_length(cursor, skip_len);

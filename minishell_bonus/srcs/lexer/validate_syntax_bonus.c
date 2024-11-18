@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:58 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 07:32:33 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 09:47:58 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,15 @@ static int	is_redir(t_token *token)
 
 int	check_operator_syntax(t_data *data, t_token *curr)
 {
+	if (ft_strcmp(curr->value, "&") == 0)
+		return (print_syn_err(data, 1, curr->value, curr));
 	if (is_redir(curr) && !curr->next)
 		return (print_syn_err(data, 2, NULL, curr));
 	if (ft_strcmp(curr->value, "|") != 0 && curr->next
 		&& curr->next->type == TOKEN_OPERATOR)
 		return (print_syn_err(data, 1, curr->next->value, curr));
 	if ((ft_strcmp(curr->value, "|") == 0
+			|| ft_strcmp(curr->value, "&") == 0
 			|| ft_strcmp(curr->value, "&&") == 0
 			|| ft_strcmp(curr->value, "||") == 0) && !curr->next)
 		return (print_syn_err(data, 1, curr->value, curr));
