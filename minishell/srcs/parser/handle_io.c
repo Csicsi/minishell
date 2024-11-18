@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:39:25 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/12 13:39:48 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 10:45:53 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,22 @@
 
 bool	process_heredoc(t_cmd *cmd, t_token **tokens)
 {
-	if (!cmd->is_heredoc && (*tokens)->next)
+	char	**new_delim_array;
+
+	if ((*tokens)->next)
 	{
+		new_delim_array = ft_realloc(cmd->heredoc_delim,
+				sizeof(char *) * cmd->heredoc_count,
+				sizeof(char *) * (cmd->heredoc_count + 1));
+		if (!new_delim_array)
+			return (false);
+		cmd->heredoc_delim = new_delim_array;
+		cmd->heredoc_delim[cmd->heredoc_count]
+			= ft_strdup((*tokens)->next->value);
+		if (!cmd->heredoc_delim[cmd->heredoc_count])
+			return (false);
+		cmd->heredoc_count++;
 		cmd->is_heredoc = true;
-		cmd->heredoc_delim = ft_strdup((*tokens)->next->value);
 		*tokens = (*tokens)->next;
 		return (true);
 	}

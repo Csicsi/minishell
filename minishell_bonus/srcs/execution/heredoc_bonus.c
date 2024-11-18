@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:43 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 07:37:20 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 10:37:42 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,7 @@ static int	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
 	{
 		if (handle_signal_interrupt(cmd))
 			return (1);
-		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "> ", 2);
-		line = readline(NULL);
+		line = readline("> ");
 		if (!line)
 		{
 			ft_fprintf(2, ": warning: here-document at line 25 delimited by");

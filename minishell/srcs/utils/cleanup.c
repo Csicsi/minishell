@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: csicsi <csicsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:45 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/14 12:49:34 by csicsi           ###   ########.fr       */
+/*   Updated: 2024/11/18 10:57:33 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,18 @@ static void	free_cmd_list(t_cmd *cmd_list)
 		{
 			i = 0;
 			while (cmd_list->args[i])
-			{
-				ft_free((void **)&cmd_list->args[i]);
-				i++;
-			}
+				ft_free((void **)&cmd_list->args[i++]);
 			ft_free((void **)&cmd_list->args);
+		}
+		if (cmd_list->heredoc_delim)
+		{
+			i = 0;
+			while (i < cmd_list->heredoc_count)
+				free(cmd_list->heredoc_delim[i++]);
+			free(cmd_list->heredoc_delim);
 		}
 		free_file_list(cmd_list->input_files);
 		free_file_list(cmd_list->output_files);
-		ft_free((void **)&cmd_list->heredoc_delim);
 		cmd_list = cmd_list->next;
 		ft_free((void **)&tmp);
 	}

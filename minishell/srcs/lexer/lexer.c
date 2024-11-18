@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:22:52 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/18 08:58:25 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 11:12:24 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ static char	*process_token(char *cursor, t_token *new_token, t_data *data)
 	{
 		cursor = handle_operator_or_quote(cursor, new_token, data);
 		temp = cursor;
-		while (*temp++ == ' ')
-			temp++;
 		while (*temp && !ft_isspace(*temp) && *temp != '>'
 			&& *temp != '<' && *temp != '|' && *temp != '&')
 		{
