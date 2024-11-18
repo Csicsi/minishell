@@ -6,7 +6,7 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:39 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 13:31:05 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 07:25:45 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	generate_random_bytes(unsigned char *buffer, ssize_t length)
 	close(urandom_fd);
 }
 
-char	*generate_random_filename(void)
+static char	*generate_random_filename(void)
 {
 	const char		charset[]
 		= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -78,7 +78,7 @@ int	open_heredoc_file(t_cmd *cmd)
 	return (fd);
 }
 
-static void	write_heredoc_line(int fd, char *line, t_data *data)
+void	write_heredoc_line(int fd, char *line, t_data *data)
 {
 	char	*expanded_line;
 
@@ -103,44 +103,17 @@ static void	write_heredoc_line(int fd, char *line, t_data *data)
 	}
 }
 
-void	cleanup_heredoc_on_interrupt(t_cmd *cmd)
+int	handle_signal_interrupt(t_cmd *cmd)
 {
-	if (cmd->heredoc_tempfile)
+	if (g_signal_value == SIGINT)
 	{
-		unlink(cmd->heredoc_tempfile);
-		free(cmd->heredoc_tempfile);
-		cmd->heredoc_tempfile = NULL;
-	}
-}
-
-int	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
-{
-	char	*line;
-	int		len;
-
-	len = ft_strlen(cmd->heredoc_delim);
-	while (1)
-	{
-		if (g_signal_value == SIGINT)
+		if (cmd->heredoc_tempfile)
 		{
-			cleanup_heredoc_on_interrupt(cmd);
-			return (1);
+			unlink(cmd->heredoc_tempfile);
+			free(cmd->heredoc_tempfile);
+			cmd->heredoc_tempfile = NULL;
 		}
-		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "> ", 2);
-		line = readline(NULL);
-		if (!line)
-		{
-			ft_fprintf(2, ": warning: here-document at line 25 delimited by");
-			ft_fprintf(2, " end-of-file (wanted `%s')\n", cmd->heredoc_delim);
-			break ;
-		}
-		if (ft_strncmp(line, cmd->heredoc_delim, len) == 0 && line[len] == '\0')
-		{
-			free(line);
-			break ;
-		}
-		write_heredoc_line(fd, line, data);
+		return (1);
 	}
 	return (0);
 }

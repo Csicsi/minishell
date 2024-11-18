@@ -6,72 +6,11 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:26:05 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/15 20:37:20 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 07:38:36 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
-
-static void	expand_env_value(char *result, int *i, t_expand_context *context)
-{
-	char	*env_value;
-	char	**matches;
-
-	env_value = ft_getenv(ft_strndup(context->cursor, context->len),
-			context->data->env_vars);
-	if (!env_value)
-		return ;
-	if (ft_strchr(env_value, '*'))
-	{
-		matches = get_matching_files(env_value);
-		if (matches && matches[0])
-			append_matches_to_result(result, i, matches);
-	}
-	else
-	{
-		ft_strcpy(&result[*i], env_value);
-		*i += ft_strlen(env_value);
-	}
-}
-
-static int	expand_var_into_buffer(char *result, int *i,
-	char *cursor, t_data *data)
-{
-	int					len;
-	char				*status_str;
-	t_expand_context	context;
-
-	len = 0;
-	if (*cursor == '?')
-	{
-		status_str = ft_itoa(data->last_exit_status);
-		ft_strcpy(&result[*i], status_str);
-		*i += ft_strlen(status_str);
-		free(status_str);
-		return (1);
-	}
-	if (*cursor == '$')
-	{
-		status_str = ft_itoa(getpid());
-		if (status_str)
-		{
-			ft_strcpy(&result[*i], status_str);
-			*i += ft_strlen(status_str);
-			free(status_str);
-		}
-		return (2);
-	}
-	while (ft_isalnum(cursor[len]) || cursor[len] == '_')
-		len++;
-	if (len > 0)
-	{
-		context.cursor = cursor;
-		context.len = len;
-		context.data = data;
-		expand_env_value(result, i, &context);
-	}
-	return (len);
-}
 
 static void	expand_env_vars_into_buffer(char
 	*result, char *cursor, t_data *data)

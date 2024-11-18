@@ -11,6 +11,7 @@ SRCS =	srcs/minishell_bonus.c \
 		srcs/lexer/lexer_bonus.c \
 		srcs/lexer/lexer_utils_bonus.c \
 		srcs/lexer/expansion_bonus.c \
+		srcs/lexer/expansion_utils_bonus.c \
 		srcs/lexer/var_len_bonus.c \
 		srcs/lexer/quotes_bonus.c \
 		srcs/lexer/tokens_postprocess_bonus.c \

@@ -6,11 +6,40 @@
 /*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:25:43 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 13:33:02 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 08:08:08 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static int	read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd)
+{
+	char	*line;
+	int		len;
+
+	len = ft_strlen(cmd->heredoc_delim);
+	while (1)
+	{
+		if (handle_signal_interrupt(cmd))
+			return (1);
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, "> ", 2);
+		line = readline(NULL);
+		if (!line)
+		{
+			ft_fprintf(2, ": warning: here-document at line 25 delimited by");
+			ft_fprintf(2, " end-of-file (wanted `%s')\n", cmd->heredoc_delim);
+			break ;
+		}
+		if (ft_strncmp(line, cmd->heredoc_delim, len) == 0 && line[len] == '\0')
+		{
+			free(line);
+			break ;
+		}
+		write_heredoc_line(fd, line, data);
+	}
+	return (0);
+}
 
 int	handle_heredoc(t_cmd *cmd_list, t_data *data)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_realpath.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 10:55:40 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/16 16:27:24 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/11/18 07:21:41 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,4 +108,3 @@ char	*ft_realpath(const char *path, char *resolved_path)
 		return (NULL);
 	return (resolved_path);
 }
-

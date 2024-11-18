@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_bonus.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:27:30 by dcsicsak          #+#    #+#             */
-/*   Updated: 2024/11/16 16:05:38 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/11/18 07:39:44 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@
 # include "../libft/libft.h"
 # include "utils_bonus.h"
 
-extern volatile size_t g_signal_value;
+extern volatile size_t	g_signal_value;
+typedef struct s_cmd	t_cmd;
 
 typedef enum e_token_type
 {
@@ -68,8 +69,6 @@ typedef enum e_cmd_type
 	CMD_OR,
 	CMD_PIPE
 }	t_cmd_type;
-
-typedef struct s_cmd	t_cmd;
 
 typedef struct s_cmd_group
 {
@@ -166,6 +165,12 @@ char		*extract_double_quoted_word(char *cursor,
 char		*expand_env_var(char *cursor, int last_exit_status, t_data *data);
 char		*expand_env_var_in_str(char **ptr_to_cursor,
 				int last_exit_status, t_data *data);
+// expansion_utils.c
+int			expand_special_var(char *result, int *i, char *cursor,
+				t_data *data);
+int			expand_normal_var(char *result, int *i, char *cursor, t_data *data);
+int			expand_var_into_buffer(char *result, int *i, char *cursor,
+				t_data *data);
 // tokens_postprocess.c
 void		handle_expanded_tokens(t_data *data);
 // var_len.c
@@ -199,9 +204,9 @@ int			update_last_command_env_var(t_data *data, char *cmd_path);
 char		*get_directory_from_path(const char *path);
 t_token		*find_token_by_value(t_token *tokens, const char *value);
 // heredoc_utils.c
-char		*generate_random_filename(void);
 int			open_heredoc_file(t_cmd *cmd);
-int			read_and_write_heredoc(t_cmd *cmd, t_data *data, int fd);
+void		write_heredoc_line(int fd, char *line, t_data *data);
+int			handle_signal_interrupt(t_cmd *cmd);
 // heredoc.c
 int			handle_heredoc(t_cmd *cmd_list, t_data *data);
 // redirs.c

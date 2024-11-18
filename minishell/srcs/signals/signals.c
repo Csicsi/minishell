@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:01:08 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/17 13:45:26 by krabitsc         ###   ########.fr       */
+/*   Updated: 2024/11/18 07:29:52 by dcsicsak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-volatile size_t g_signal_value = 0;
+volatile size_t	g_signal_value = 0;
 
 static void	handle_sigint(int sig)
 {
