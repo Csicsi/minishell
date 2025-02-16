@@ -78,8 +78,7 @@ exit	Exits the shell with a status code.
     File descriptors & redirections – Managing pipes via dup2().
     Wildcard Expansion (*) – Implementing pattern matching for filenames.
     Handling pipes & heredocs – Ensuring smooth execution flow.
+## Try Minishell in GitHub Codespaces 🚀
+Click below to launch a fully interactive development environment:
 
-## Try Minishell in Your Browser 🚀
-Click the button below to launch Minishell in your browser:
-
-[![Run on StackBlitz](https://developer.stackblitz.com/img/run_on_stackblitz.svg)](https://stackblitz.com/github/Csicsi/minishell)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=dcsicsak/minishell)
