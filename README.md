@@ -82,4 +82,4 @@ exit	Exits the shell with a status code.
 ## Try Minishell in Your Browser 🚀
 Click the button below to launch Minishell in your browser:
 
-[![Run on StackBlitz](https://developer.stackblitz.com/img/run_on_stackblitz.svg)](https://stackblitz.com/github/dcsicsak/minishell)
+[![Run on StackBlitz](https://developer.stackblitz.com/img/run_on_stackblitz.svg)](https://stackblitz.com/github/Csicsi/minishell)
