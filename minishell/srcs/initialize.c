@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dcsicsak <dcsicsak@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krabitsc <krabitsc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:04:47 by krabitsc          #+#    #+#             */
-/*   Updated: 2024/11/18 13:14:13 by dcsicsak         ###   ########.fr       */
+/*   Updated: 2024/11/18 13:22:45 by krabitsc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	**duplicate_env_vars(char **env_vars)
 	return (new_env_vars);
 }
 
-pid_t	ft_parse_pid_from_stat(const char *buffer)
+static pid_t	ft_parse_pid_from_stat(const char *buffer)
 {
 	const char	*token = buffer;
 	int			field_count;
@@ -76,6 +76,25 @@ pid_t	ft_parse_pid_from_stat(const char *buffer)
 		return (-1);
 	parent_pid = (pid_t)ft_atoi(token);
 	return (parent_pid);
+}
+
+static pid_t	ft_getpid(void)
+{
+	int		fd;
+	char	buffer[256];
+	ssize_t	bytes_read;
+
+	fd = open("/proc/self/stat", O_RDONLY);
+	if (fd == -1)
+		return (-1);
+	bytes_read = read(fd, buffer, sizeof(buffer) - 1);
+	close(fd);
+	if (bytes_read <= 0)
+		return (-1);
+	buffer[bytes_read] = '\0';
+	if (bytes_read <= 0)
+		return (-1);
+	return (ft_parse_pid_from_stat(buffer));
 }
 
 bool	initialize(t_data *data, char **env_vars, int argc, char **argv)
