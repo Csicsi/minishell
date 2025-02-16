@@ -1,0 +1,8 @@
+{
+	"image": "debian:latest",
+	"features": {
+	  "ghcr.io/devcontainers/features/common-utils:1": {}
+	},
+	"postCreateCommand": "apt update && apt install -y build-essential",
+	"forwardPorts": [8080]
+  }
